@@ -1,0 +1,121 @@
+-------------------------------------------------
+Document
+-------------------------------------------------
+h1. Table of Content
+
+* "Cotta Convention":#convention
+* "File Operations":#operations
+* "File Systems":#filesystems
+** "In-memory File System":#inmemory
+** "Zip File System":#zip
+** "FTP File System":#ftp
+** "File Systems for Testing":#test
+* "Utilities":utilities.html
+** "Classpath Support":utilities.html#classpath
+** "Product Info Support":utilities.html#productinfo
+** "jBehave Support":utilities.html#jbehave
+
+<a name="convention"> </a>
+h1. Cotta Convention
+
+Based on the ""Thoughts behind Cotta":power.html", Cotta is designed to match the common expectations for
+file operations:
+
+* One entry point, @TFileFactory@, is strongly recommended, event though not enforced.
+* @TFile@ and @TDirectory@ are totally different classes, even though they have similar methods
+* Return values are used only for retrieving the object state.  @TIoException@ will be thrown whenever an operation
+  fails.
+* All parent of a directory or file will be created automatically, no questions asked.
+
+"API JavaDoc":javadoc/ should only be used for visitors to take a peek at what is inside.
+Please do provide any feedbacks on any cases where you find them useful than this document.
+
+<a name="operations"> </a>
+h1. File Operations
+
+Cotta offers three levels of flexibility for file operations to fit different development needs.
+
+h2. Save and Load
+
+This is used simply for saving and loading text contents.
+
+<div class="Code">TFile fle = ...
+file.save("content to save");
+String loadedContent = file.load();
+</div>
+
+Or:
+
+<div class="Code">TFile file = ...
+file.open(new LineProcessor() {
+  public void process(String line) {
+    System.out.println("Read line: " + line);
+  }
+});</div>
+
+
+
+h2. Managed Resource
+
+All input or output resources created will be tracked and closed automatically, even upon exception.  This is similar
+to the design of Spring template and Ruby file I/O.  All exceptions are wrapped in @TIoException@.
+
+<div class="Code">TFile file = ...
+file.open(new FileIoProcessor() {
+  public void process(FileIoResource io) throws IOException {
+    PrintWriter printer = io.printWriter();
+    printer.println("line one");
+    printer.println("line two");
+  }
+});</div>
+
+h2. I/O Factory
+
+An I/O factory that does not more than allowing the creations of common I/O streams, reader/writer, printer with just one
+method call.
+
+<div class="Code">TFile file = ...
+PrintWriter printer = file.io().printWriter();
+try {
+  printer.println("line one");
+  printer.println("line two");
+} catch (IOException e) {
+  // ... exception handling code here
+} finally {
+  printer.close();
+}</div>
+
+<a name="filesystems"> </a>
+h1. File Systems
+
+h2. PhysicalFileSystem
+
+The wrapper of Java file operations.  This is the default file system that @TFileFactory@ uses.
+
+<a name="inmemory"> </a>
+h2. InMemoryFileSystem
+
+This is used mainly for testing by replacing the FileSystem.  @InMemoryFileSystem@ also treat
+the current directory as a unique location to prevent the bug that caused by the uncertainty of
+current working directory.  You can also configure the @InMemoryFileSystem@ to have different
+path separator or listing order
+
+<a name="zip"> </a>
+h2. ZipFileSystem
+
+A read-only file system that allows archive file browsing.
+
+<a name="ftp"> </a>
+h2. FtpFileSystem
+
+A file system as a FTP client.
+
+<a name="test"> </a>
+h2. ControlledFileSystem and CatastrophicFileSystem
+
+These are wrapper classes used to control the file system read and writer operations.  @CatastrophicFileSystem@
+is specially designed to test the case of file system failure or file lock.
+
+h1. Utilities
+
+Cotta also contains a small set of useful "utilities":utilities.html.

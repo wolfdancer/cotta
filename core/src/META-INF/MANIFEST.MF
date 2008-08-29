@@ -1,0 +1,9 @@
+Implementation-Title: Cotta
+Implementation-Version: 1.3.0
+Implementation-Build: 56
+Implementation-Vendor: SourceForge Cotta
+Implementation-Vendor-Id: net.sf.cotta
+Implementation-URL: http://cotta.sourceforge.net
+
+Name: Dependencies
+Dependency-Count: 0

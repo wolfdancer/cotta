@@ -1,0 +1,39 @@
+--------------------------------------------
+Utilities
+--------------------------------------------
+<a name="classpath"> </a>
+h1. ClassPathLocator and ClassPath
+
+Useful for figure out which jar file is the one that provides the class file.
+
+<div class="Code">ClassPath classPath = new ClassPathLocator(net.sf.util.ClassPath.class).locate();
+System.out.println("Class ClassPath loaded from: " + classPath.path());</div>
+
+<a name="productinfo"> </a>
+h1. ProductInfo
+
+This is a class that can be used to implement "@What's There@" feature for a product.  This class pulls
+the information out of the manifest file of a @ClassPath@.
+
+<div class="Code">ClassPath classPath = ...
+ProductInfo productInfo = new ProductInfo(classPath);
+Version version = productInfo.version();
+System.out.println("Version: " + version.value());
+System.out.println("Build: " + veresion.build());</div>
+
+<a name="jbehave"> </a>
+h1. jBehave Extension
+
+Given a class, Cotta has a "jBehave":http://www.jbehave.org extension that can load all the behaviors defined under 
+the class path of that class, no matter the class path is a directory or a jar file.  This
+will help make sure that your behaviors are always loaded the same way.
+
+<div class="Code">package net.sf.cotta.acceptance;
+import org.jbehave.core.behaviour.Behaviours;
+import net.sf.cotta.jbehave.*;
+public class AllBehaviours implements Behaviours {
+  public Class[] getBehaviours() {
+    // loads all the classes with "Behaviour" at the end
+    return new BehavioursLoader(getClass()).loadBehaviours();
+  }
+}</div>

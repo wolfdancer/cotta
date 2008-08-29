@@ -1,0 +1,3 @@
+The Apache Software License, Version 2.0
+
+http://commons.apache.org/io/license.html

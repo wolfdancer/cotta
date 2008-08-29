@@ -1,0 +1,328 @@
+package net.sf.cotta;
+
+import net.sf.cotta.io.IoResource;
+import net.sf.cotta.memory.InMemoryFileSystem;
+import net.sf.cotta.physical.PhysicalFileSystemTestBase;
+import net.sf.cotta.test.assertion.CodeBlock;
+import net.sf.cotta.zip.ZipFileSystem;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+
+import java.io.File;
+import java.io.IOException;
+
+public class TDirectoryTest extends PhysicalFileSystemTestBase {
+  public void shouldExistAfterCreate() throws Exception {
+    //Given
+    TFileFactory factory = factory();
+    //When
+    TDirectory directory = factory.dir("test");
+    directory.ensureExists();
+    //Ensure
+    ensure.that(directory.exists()).eq(true);
+    TDirectory anotherDirectory = factory.dir("test");
+    ensure.that(anotherDirectory.exists()).eq(true);
+  }
+
+  public void shouldTakePathForDir() throws Exception {
+    TFileFactory factory = factory();
+    TDirectory dir = factory.dir("test");
+    TDirectory subOne = dir.dir("one/two.txt");
+    TDirectory subTwo = dir.dir(TPath.parse("one/two.txt"));
+    TDirectory subThree = dir.dir("one/two.txt");
+    ensure.that(subOne).eq(subTwo);
+    ensure.that(subOne).eq(subThree);
+  }
+
+  private TFileFactory factory() {
+    return new TFileFactory(new InMemoryFileSystem());
+  }
+
+  public void shouldBeCreatedWithCorrectNameAndNotExists() throws Exception {
+    TDirectory directory = factory().dir("directory");
+    ensure.that(directory.exists()).eq(false);
+    ensure.that(directory.name()).eq("directory");
+  }
+
+  public void shouldNotCareIfDirectoryAlreadyExists() throws Exception {
+    TDirectory directory = factory().dir("test");
+    directory.ensureExists();
+    directory.ensureExists();
+  }
+
+  public void shouldBeInstantiateANoneExistingFile() throws Exception {
+    TDirectory directory = factory().dir("test");
+    TFile file = directory.file("test.txt");
+    ensure.that(file.exists()).eq(false);
+  }
+
+  public void shouldBeAbleToInstantiateASubDirectory() {
+    TDirectory directory = factory().dir("parent").dir("test").dir("sub");
+    ensure.that(directory.exists()).eq(false);
+  }
+
+  public void shouldInstantiateAFileGivenRelativePath() throws Exception {
+    TFileFactory factory = factory();
+    TDirectory directory = factory.dir("one/two");
+    ensure.that(directory.file(TPath.parse("../three/txt.txt"))).eq(factory.file("one/three/txt.txt"));
+    ensure.that(directory.file("../three/txt.txt")).eq(factory.file("one/three/txt.txt"));
+  }
+
+  public void shouldInstantiateADirectoryGivenRelativePath() throws Exception {
+    TFileFactory factory = factory();
+    TDirectory directory = factory.dir("one/two");
+    ensure.that(directory.dir(TPath.parse("../three/four"))).eq(factory.dir("one/three/four"));
+  }
+
+  public void shouldBeAbleToListSubDirectories() throws Exception {
+    //Given
+    TDirectory root = factory().dir("root");
+    root.ensureExists();
+    root.dir("one").ensureExists();
+    root.dir("two").ensureExists();
+    //When
+    TDirectory[] subDirectories = root.listDirs();
+    //Ensure
+    ensure.that(subDirectories.length).eq(2);
+  }
+
+  public void shouldBeAbleToLisInMemoryFilesInDirectory() throws Exception {
+    TDirectory root = factory().dir("root");
+    root.ensureExists();
+    root.file("one.txt").create();
+    root.file("two.txt").create();
+    TFile[] files = root.listFiles();
+    ensure.that(files.length).eq(2);
+  }
+
+  public void shouldBeEqualToAnotherDirectoryWithTheSamePathAndFactory() throws Exception {
+    TFileFactory factory = factory();
+    TDirectory one = factory.dir("/tmp/one/two");
+    TDirectory two = factory.dir("/tmp/one/two");
+    ensure.that(one).javaEquals(two);
+  }
+
+  public void shouldKnowItsParent() throws Exception {
+    TDirectory directory = factory().dir("/tmp/one");
+    ensureEquals(directory.parent().name(), "tmp");
+  }
+
+  public void shouldThrowExceptionIfDirectionNotEmpty() throws Exception {
+    TFile file = factory().file("/tmp/test.txt");
+    file.create();
+    try {
+      file.parent().delete();
+      fail("TIoException should have been thrown");
+    } catch (TIoException e) {
+      ensure.that(e).message().contains("/tmp", "not empty");
+    }
+  }
+
+  public void shouldDeleteAll() throws Exception {
+    TDirectory directory = factory().dir("/tmp/directory");
+    directory.file("file.txt").create();
+    TDirectory subdir = directory.dir("sub");
+    subdir.ensureExists();
+    subdir.file("file2.txt").create();
+    directory.deleteAll();
+    ensure.that(directory.exists()).eq(false);
+  }
+
+  public void shouldEqualIfPathAndFileSystemEqual() throws Exception {
+    FileSystem fileSystem = new InMemoryFileSystem();
+    TDirectory directory1 = new TDirectory(fileSystem, TPath.parse("/tmp/test"));
+    TDirectory directory2 = new TDirectory(fileSystem, TPath.parse("/tmp/test"));
+    ensure.that(directory1.equals(directory2)).eq(true);
+  }
+
+  public void shouldThrowExceptionIfDirectoryNotFoundInListingDirectories() throws Exception {
+    FileSystem fileSystem = new InMemoryFileSystem();
+    final TDirectory directory = new TDirectory(fileSystem, TPath.parse("/tmp/test"));
+    runAndCatch(TDirectoryNotFoundException.class, new CodeBlock() {
+      public void execute() throws Exception {
+        directory.listDirs();
+      }
+    });
+  }
+
+  public void shouldThrowExceptionIfDirectoryNotFoundInListingFiles() throws Exception {
+    FileSystem fileSystem = new InMemoryFileSystem();
+    final TDirectory directory = new TDirectory(fileSystem, TPath.parse("/tmp/test"));
+    runAndCatch(TDirectoryNotFoundException.class, new CodeBlock() {
+      public void execute() throws Exception {
+        directory.listFiles();
+      }
+    });
+  }
+
+  public void shouldGetPath() throws Exception {
+    FileSystem fileSystem = new InMemoryFileSystem();
+    TPath path = TPath.parse("/tmp/test");
+    TDirectory directory = new TDirectory(fileSystem, path);
+    ensure.that(directory.path()).eq(fileSystem.pathString(path));
+  }
+
+  public void shouldCopyDirectoryFiles() throws TIoException {
+    FileSystem fileSystem = new InMemoryFileSystem();
+    TPath path = TPath.parse("/tmp/from");
+    TDirectory source = new TDirectory(fileSystem, path);
+    source.file("source.txt").save("source");
+    TDirectory target = new TDirectory(fileSystem, TPath.parse("/tmp/to"));
+    source.mergeTo(target);
+    ensure.that(target.file("source.txt").load()).eq("source");
+  }
+
+  public void shouldCopySubDirectory() throws TIoException {
+    FileSystem fileSystem = new InMemoryFileSystem();
+    TPath path = TPath.parse("/tmp/from");
+    TDirectory source = new TDirectory(fileSystem, path);
+    source.dir("subdirectory").ensureExists();
+    TDirectory target = new TDirectory(fileSystem, TPath.parse("/tmp/to"));
+    source.mergeTo(target);
+    ensure.that(target.dir("subdirectory").exists()).eq(true);
+  }
+
+  public void shouldCopyFilesInSubDirectory() throws TIoException {
+    FileSystem fileSystem = new InMemoryFileSystem();
+    TPath path = TPath.parse("/tmp/from");
+    TDirectory source = new TDirectory(fileSystem, path);
+    source.dir("subdirectory").file("source.txt").save("subsource");
+    TDirectory target = new TDirectory(fileSystem, TPath.parse("/tmp/to"));
+    source.mergeTo(target);
+    ensure.that(target.dir("subdirectory").file("source.txt").load()).eq("subsource");
+  }
+
+  public void shouldMoveDirectory() throws TIoException {
+    FileSystem fileSystem = new InMemoryFileSystem();
+    TPath path = TPath.parse("/tmp/from");
+    TDirectory source = new TDirectory(fileSystem, path);
+    source.dir("subdirectory").file("source.txt").save("subsource");
+    TDirectory target = new TDirectory(fileSystem, TPath.parse("/tmp/to"));
+    source.moveTo(target);
+    ensure.that(target.dir("subdirectory").file("source.txt").load()).eq("subsource");
+    ensure.that(source.exists()).eq(false);
+  }
+
+  public void shouldGetFileObject() {
+    final File expected = new File("test");
+    final TPath path = TPath.parse("test");
+    Mockery context = new Mockery();
+    final FileSystem fileSystem = context.mock(FileSystem.class);
+    context.checking(new Expectations() {
+      {
+        one(fileSystem).toJavaFile(path);
+        will(returnValue(expected));
+      }
+    });
+    TDirectory directory = new TDirectory(fileSystem, path);
+    ensure.that(directory.toJavaFile()).sameAs(expected);
+    context.assertIsSatisfied();
+  }
+
+  public void shouldCreateZipFile() throws Exception {
+    TFileFactory factory = new TFileFactory(fileSystem);
+    TDirectory directory = factory.dir("tmp/source");
+    directory.ensureExists();
+    TFile zipFile = directory.parent().file("target.zip");
+    directory.zipTo(zipFile);
+    ensure.that(zipFile).fileExtists();
+    File javaFile = zipFile.toJavaFile();
+    ZipFileSystem zipFileSystem = new ZipFileSystem(javaFile);
+    registerToClose(resource(zipFileSystem));
+    TFileFactory zipFileFactory = new TFileFactory(zipFileSystem);
+    TDirectory root = zipFileFactory.dir("/");
+    ensure.that(root.exists()).eq(true);
+    ensure.that(root.listDirs()).isEmpty();
+  }
+
+  public void shouldCreateZipFileForOneFile() throws Exception {
+    TFileFactory factory = new TFileFactory(fileSystem);
+    TDirectory directory = factory.dir("tmp/source");
+    TFile file = directory.file("Cotta.txt");
+    file.save("Something...");
+
+    TFile zipFile = directory.parent().file("another.zip");
+    directory.zipTo(zipFile);
+    File javaFile = zipFile.toJavaFile();
+    ZipFileSystem zipFileSystem = new ZipFileSystem(javaFile);
+    registerToClose(resource(zipFileSystem));
+    TFileFactory zipFileFactory = new TFileFactory(zipFileSystem);
+    TDirectory root = zipFileFactory.dir("/");
+    TFile[] actualList = root.listFiles();
+    ensure.that(actualList.length).eq(1);
+    ensure.that(actualList[0].name()).eq("Cotta.txt");
+  }
+
+  public void shouldCreateDirectory() throws IOException {
+    TFileFactory factory = new TFileFactory(fileSystem);
+    TDirectory directory = factory.dir("tmp/source");
+    directory.dir("subdir").ensureExists();
+
+    TFile zipFile = directory.parent().file("zip.zip");
+    directory.zipTo(zipFile);
+    ZipFileSystem zipFileSystem = new ZipFileSystem(zipFile.toJavaFile());
+    registerToClose(resource(zipFileSystem));
+    TFileFactory zipFileFactory = new TFileFactory(zipFileSystem);
+    TDirectory root = zipFileFactory.dir("/");
+    ensure.that(root.listFiles().length).eq(0);
+    ensure.that(root.listDirs().length).eq(1);
+    ensure.that(root.listDirs()[0].name()).eq("subdir");
+  }
+
+  public void shouldListFilesByFilter() throws Exception {
+    TFileFactory factory = new TFileFactory(new InMemoryFileSystem());
+    TFile expected = factory.file("/directory/one.txt").create();
+    factory.file("/directory/two.txt").create();
+    TDirectory directory = factory.dir("/directory");
+    TFile[] files = directory.listFiles(new TFileFilter() {
+      public boolean accept(TFile file) {
+        return file.name().equals("one.txt");
+      }
+    });
+    ensure.that(files.length).eq(1);
+    ensure.that(files[0]).eq(expected);
+  }
+
+  public void shouldLisDirstByFilter() throws Exception {
+    TFileFactory factory = new TFileFactory(new InMemoryFileSystem());
+    TDirectory expected = factory.dir("/directory/one").ensureExists();
+    factory.dir("/directory/two").ensureExists();
+    TDirectory directory = factory.dir("/directory");
+    TDirectory[] dirs = directory.listDirs(new TDirectoryFilter() {
+      public boolean accept(TDirectory directory) {
+        return directory.name().equals("one");
+      }
+    });
+    ensure.that(dirs.length).eq(1);
+    ensure.that(dirs[0]).eq(expected);
+  }
+
+  public void shouldExposePathBehaviours() throws Exception {
+    TDirectory directory = new TDirectory(new InMemoryFileSystem(), TPath.parse("/one/two"));
+    TDirectory subDirectory = directory.dir(TPath.parse("three/four"));
+    ensure.that(subDirectory.isChildOf(directory)).eq(true);
+    ensure.that(subDirectory.pathFrom(directory)).eq(subDirectory.toPath().pathFrom(directory.toPath()));
+  }
+
+  public void shouldProvideVisitAbility() throws Exception {
+    final TDirectory directory = factory().dir("/one/two").ensureExists();
+    Mockery context = new Mockery();
+    final FileVisitor fileVisitor = context.mock(FileVisitor.class);
+    context.checking(new Expectations() {
+      {
+        one(fileVisitor).visit(directory);
+      }
+    });
+    directory.visit(fileVisitor);
+    context.assertIsSatisfied();
+  }
+
+  private IoResource resource(final ZipFileSystem zipFileSystem) {
+    return new IoResource() {
+      public void close() throws IOException {
+        zipFileSystem.close();
+      }
+    };
+  }
+
+}

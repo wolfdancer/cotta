@@ -1,0 +1,205 @@
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+
+  <!-- System beans -->
+
+  <bean id="core" class="com.coldcore.coloradoftp.core.impl.GenericCore"/>
+
+  <bean id="controlConnector" class="com.coldcore.coloradoftp.connection.impl.GenericControlConnector">
+    <property name="port" value="8021"/>
+  </bean>
+
+  <bean id="controlConnectionPool" class="com.coldcore.coloradoftp.connection.impl.GenericConnectionPool"/>
+
+  <bean id="dataConnectionPool" class="com.coldcore.coloradoftp.connection.impl.GenericConnectionPool"/>
+
+  <bean id="commandProcessor" class="com.coldcore.coloradoftp.command.impl.GenericCommandProcessor"/>
+
+  <bean id="controlConnection" class="com.coldcore.coloradoftp.connection.impl.GenericControlConnection"
+        singleton="false">
+    <constructor-arg index="0" value="8192"/>
+  </bean>
+
+  <bean id="dataConnection" class="com.coldcore.coloradoftp.connection.impl.GenericDataConnection" singleton="false">
+    <constructor-arg index="0" value="8192"/>
+  </bean>
+
+  <bean id="dataConnectionInitiator" class="com.coldcore.coloradoftp.connection.impl.GenericDataConnectionInitiator"
+        singleton="false"/>
+
+  <bean id="reply" class="com.coldcore.coloradoftp.command.impl.GenericReply" singleton="false"/>
+
+  <bean id="session" class="com.coldcore.coloradoftp.session.impl.SyncSession" singleton="false"/>
+
+  <bean id="dataPortListener" class="com.coldcore.coloradoftp.connection.impl.GenericDataPortListener"
+        singleton="false"/>
+
+  <bean id="dataPortListenerSet" class="com.coldcore.coloradoftp.connection.impl.GenericDataPortListenerSet">
+    <constructor-arg index="0">
+      <bean class="com.coldcore.coloradoftp.connection.impl.DataPortListenerSequence">
+        <constructor-arg index="0" value="6001"/>
+        <constructor-arg index="1" value="6010"/>
+      </bean>
+    </constructor-arg>
+  </bean>
+
+  <bean id="listingFile" class="com.coldcore.coloradoftp.filesystem.impl.ListingFileBean" singleton="false"/>
+
+  <bean id="filesystem" class="net.sf.cotta.ftp.TestFtpServerFileSystem"/>
+
+  <bean id="dataFilterApplicator" class="com.coldcore.coloradoftp.filter.impl.GenericDataFilterApplicator"/>
+
+  <!-- Data filter factories -->
+
+  <bean id="typeFilterFactory" class="com.coldcore.coloradoftp.filter.impl.GenericDataFilterFactory">
+    <constructor-arg index="0">
+      <map>
+        <entry key="I" value=""/>
+        <entry key="A" value="typeADataFilter"/>
+      </map>
+    </constructor-arg>
+  </bean>
+
+  <bean id="modeFilterFactory" class="com.coldcore.coloradoftp.filter.impl.GenericDataFilterFactory">
+    <constructor-arg index="0">
+      <map>
+        <entry key="S" value=""/>
+      </map>
+    </constructor-arg>
+  </bean>
+
+  <bean id="struFilterFactory" class="com.coldcore.coloradoftp.filter.impl.GenericDataFilterFactory">
+    <constructor-arg index="0">
+      <map>
+        <entry key="F" value=""/>
+      </map>
+    </constructor-arg>
+  </bean>
+
+  <!-- Data filters -->
+
+  <bean id="typeADataFilter" class="com.coldcore.coloradoftp.filter.impl.TypeADataFilter" singleton="false">
+    <property name="windows" value="false"/>
+  </bean>
+
+  <!-- System commands -->
+
+  <bean id="notImplementedCommand" class="com.coldcore.coloradoftp.command.impl.system.NotImplementedCommand"/>
+
+  <bean id="poisonedCommand" class="com.coldcore.coloradoftp.command.impl.system.PoisonedCommand"/>
+
+  <bean id="welcomeCommand" class="com.coldcore.coloradoftp.command.impl.system.WelcomeCommand"/>
+
+  <bean id="localErrorCommand" class="com.coldcore.coloradoftp.command.impl.system.LocalErrorCommand"/>
+
+  <bean id="syntaxErrorCommand" class="com.coldcore.coloradoftp.command.impl.system.SyntaxErrorCommand"/>
+
+  <!-- Command factory -->
+
+  <bean id="commandFactory" class="com.coldcore.coloradoftp.command.impl.GenericCommandFactory" singleton="false">
+    <constructor-arg index="0">
+      <map>
+        <entry key="USER" value="userCommand"/>
+        <entry key="PASS" value="passCommand"/>
+        <entry key="PWD" value="pwdCommand"/>
+        <entry key="HELP" value="helpCommand"/>
+        <entry key="FEAT" value="helpCommand"/>
+        <entry key="SYST" value="systCommand"/>
+        <entry key="ALLO" value="alloCommand"/>
+        <entry key="STRU" value="struCommand"/>
+        <entry key="NOOP" value="noopCommand"/>
+        <entry key="MODE" value="modeCommand"/>
+        <entry key="TYPE" value="typeCommand"/>
+        <entry key="REST" value="restCommand"/>
+        <entry key="PORT" value="portCommand"/>
+        <entry key="PASV" value="pasvCommand"/>
+        <entry key="LIST" value="listCommand"/>
+        <entry key="NLST" value="nlstCommand"/>
+        <entry key="ABOR" value="aborCommand"/>
+        <entry key="QUIT" value="quitCommand"/>
+        <entry key="STAT" value="statCommand"/>
+        <entry key="CWD" value="cwdCommand"/>
+        <entry key="CDUP" value="cdupCommand"/>
+        <entry key="RETR" value="retrCommand"/>
+        <entry key="APPE" value="appeCommand"/>
+        <entry key="STOR" value="storCommand"/>
+        <entry key="STOU" value="stouCommand"/>
+        <entry key="RNFR" value="rnfrCommand"/>
+        <entry key="RNTO" value="rntoCommand"/>
+        <entry key="RMD" value="deleCommand"/>
+        <entry key="DELE" value="deleCommand"/>
+        <entry key="MKD" value="mkdCommand"/>
+        <entry key="OPTS" value="optsCommand"/>
+      </map>
+    </constructor-arg>
+  </bean>
+
+  <!-- Command implementations -->
+
+  <bean id="userCommand" class="com.coldcore.coloradoftp.command.impl.ftp.UserCommand" singleton="false">
+    <property name="anonymous" value="true"/>
+  </bean>
+
+  <bean id="passCommand" class="com.coldcore.coloradoftp.command.impl.ftp.PassCommand" singleton="false"/>
+
+  <bean id="pwdCommand" class="com.coldcore.coloradoftp.command.impl.ftp.PwdCommand" singleton="false"/>
+
+  <bean id="helpCommand" class="com.coldcore.coloradoftp.command.impl.ftp.HelpCommand" singleton="false"/>
+
+  <bean id="systCommand" class="com.coldcore.coloradoftp.command.impl.ftp.SystCommand" singleton="false">
+    <constructor-arg index="0" value="UNIX"/>
+  </bean>
+
+  <bean id="alloCommand" class="com.coldcore.coloradoftp.command.impl.ftp.AlloCommand" singleton="false"/>
+
+  <bean id="struCommand" class="com.coldcore.coloradoftp.command.impl.ftp.StruCommand" singleton="false"/>
+
+  <bean id="noopCommand" class="com.coldcore.coloradoftp.command.impl.ftp.NoopCommand" singleton="false"/>
+
+  <bean id="modeCommand" class="com.coldcore.coloradoftp.command.impl.ftp.ModeCommand" singleton="false"/>
+
+  <bean id="typeCommand" class="com.coldcore.coloradoftp.command.impl.ftp.TypeCommand" singleton="false"/>
+
+  <bean id="restCommand" class="com.coldcore.coloradoftp.command.impl.ftp.RestCommand" singleton="false"/>
+
+  <bean id="portCommand" class="com.coldcore.coloradoftp.command.impl.ftp.PortCommand" singleton="false"/>
+
+  <bean id="pasvCommand" class="com.coldcore.coloradoftp.command.impl.ftp.PasvCommand" singleton="false">
+    <property name="ip" value="127.0.0.1"/>
+  </bean>
+
+  <bean id="listCommand" class="com.coldcore.coloradoftp.command.impl.ftp.ListCommand" singleton="false"/>
+
+  <bean id="nlstCommand" class="com.coldcore.coloradoftp.command.impl.ftp.NlstCommand" singleton="false"/>
+
+  <bean id="aborCommand" class="com.coldcore.coloradoftp.command.impl.ftp.AborCommand" singleton="false"/>
+
+  <bean id="quitCommand" class="com.coldcore.coloradoftp.command.impl.ftp.QuitCommand" singleton="false"/>
+
+  <bean id="statCommand" class="com.coldcore.coloradoftp.command.impl.ftp.StatCommand" singleton="false"/>
+
+  <bean id="cwdCommand" class="com.coldcore.coloradoftp.command.impl.ftp.CwdCommand" singleton="false"/>
+
+  <bean id="cdupCommand" class="com.coldcore.coloradoftp.command.impl.ftp.CdupCommand" singleton="false"/>
+
+  <bean id="retrCommand" class="com.coldcore.coloradoftp.command.impl.ftp.RetrCommand" singleton="false"/>
+
+  <bean id="appeCommand" class="com.coldcore.coloradoftp.command.impl.ftp.AppeCommand" singleton="false"/>
+
+  <bean id="storCommand" class="com.coldcore.coloradoftp.command.impl.ftp.StorCommand" singleton="false"/>
+
+  <bean id="stouCommand" class="com.coldcore.coloradoftp.command.impl.ftp.StouCommand" singleton="false"/>
+
+  <bean id="rnfrCommand" class="com.coldcore.coloradoftp.command.impl.ftp.RnfrCommand" singleton="false"/>
+
+  <bean id="rntoCommand" class="com.coldcore.coloradoftp.command.impl.ftp.RntoCommand" singleton="false"/>
+
+  <bean id="deleCommand" class="com.coldcore.coloradoftp.command.impl.ftp.DeleCommand" singleton="false"/>
+
+  <bean id="mkdCommand" class="com.coldcore.coloradoftp.command.impl.ftp.MkdCommand" singleton="false"/>
+
+  <bean id="optsCommand" class="com.coldcore.coloradoftp.command.impl.ftp.OptsCommand" singleton="false"/>
+
+  <!-- Other beans -->
+
+</beans>

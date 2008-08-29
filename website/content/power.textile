@@ -1,0 +1,61 @@
+----------------------------------------------------------
+Cotta Power
+----------------------------------------------------------
+h1. Domain Driven
+
+In our humble opinion, the current File class in Java, or the FileObject in
+"Apache common VFS":http://jakarta.apache.org/commons/vfs/, or the Url in the VFS system of
+"Borland JBuilder":http://www.borland.com/jbuilder OpenAPI, despite the fact
+that they are all nicely designed,
+have one fundamental problem. For one reason or another,
+they still don't match fully to the domain, which is, in this case, *normal* file system operation.
+
+h2. "A file is NOT a directory".
+
+Namely, you want to list the children of a @Directory@, and the parent of a @File@ should be a @Directory@.
+You should be able read/write only the content of a @File@, not a @Directory@. When your code has a path
+string, it should already know that it is a @Directory@ or a @File@.
+
+h2. "A file/directory operation result should match expectations"
+
+Namely, when one deletes a @Directory@, it should be *gone*, instead of telling me that it is
+not empty. The filesystem implementation should be configured to take any safety measures that are needed.
+
+All file/directory operations should behave normally and throw an exception whenever it detects a problem.
+The client should not have to check the return value of a method call to tell if it worked.
+
+The list can go on for a while.
+
+h2. "All operations should have a real case application"
+
+Cotta was implemented in that way. As it was written, we have already got a project that does file operations,
+so we laid out the expected behaviors of the classes one by one, and implemented the code one by one.
+When it comes down to physical file system operations, there has been no guesses. The resulting API is
+compact, which is exactly what we intended.
+
+h2. Edge Cases
+
+In the end, it is worth to mentioning that we are only speaking of *common* file operations.  The edge cases, like
+treating a zip file as a @File@ and @Directory@ at the same time, are rare enough that it is still worth
+the overhead.
+
+We do intend to provide, and to certain extend have provided API for these cases.
+
+h1. Test Driven
+
+Or Behaviour-Driven to be exact. When one writes a class that operates on filesystem,
+it should be easy to verify the behaviour of that class.
+Even For a seasoned TDD (our understanding of BDD) developer, much value lies in the fact that
+she can spend less time writing more functionality.
+Cutting the time spend on setting up and tearing down environment is always a good choice.  It is
+with the same mentality upon which "XmlFixture":http://www.shaneduan.com/xmlfixture.html,
+and "DbFixture":http://dbfixture.public.thoughtworks.org/ were created.
+
+When it comes to behaviour verification, a common pattern is to go through
+""Dependency Injection":http://www.martinfowler.com/articles/injection.html".
+With Cotta, the domain class just need to work on a @FileSystem@
+or one of the Cotta objects (@TFileFactory@, @TFile@, @TDirectory@) that is passed in.
+During the testing phase, those objects can be easily changed to work on @InMemoryFileSystem@.
+
+Cotta also has FileSystem decorators in place to help verify the behaviour of the system on certain cases
+that you cannot test otherwise (e.g. file system failure or file locks).

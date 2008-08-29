@@ -1,0 +1,22 @@
+------------------------------------------------------
+Contribute
+------------------------------------------------------
+h1. Document It
+
+You can start contributing right away by looking at the "documents":document.html and "API JavaDoc":javadoc, then send us the patch
+that you think will improve the document.
+
+h1. Discussing It
+
+Like it, hate it, has opinion about it?  Post your thoughts on the "forum":http://sourceforge.net/forum/?group_id=171037,
+
+h1. Report It
+
+Try it out, figure it out, and report your grief to the "issue tracker"::http://sourceforge.net/tracker/?group_id=171037&atid=856430, or consider contributing.
+
+||Name||Contribution||
+|"Sergey Abramov":http://coldcore.com|Performance fix for in memory file system|
+
+h1. Roadmap
+
+<iframe width='500' height='3000' frameborder='0' src='http://spreadsheets.google.com/pub?key=panMbb_ywi2r-8rqvl_8KUw&output=html&gid=0&single=true&widget=true'></iframe>

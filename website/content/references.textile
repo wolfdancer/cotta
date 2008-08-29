@@ -1,0 +1,16 @@
+---------------------------------------------------------
+References
+---------------------------------------------------------
+h1. Name
+
+Cotta is short for "Terra-Cotta Army":http://en.wikipedia.org/wiki/Terracotta_Army,
+the most significant archeological excavations of the 20th century, found in the city Xi'an where
+the idea of this project was formed and initial code was written.
+
+h1. Project Management Principle
+
+"Benevolent Dictator":http://en.wikipedia.org/wiki/Benevolent_dictator
+
+h1. Related Websites
+
+* Apache VFS Commons: "http://jakarta.apache.org/commons/vfs/":http://jakarta.apache.org/commons/vfs/

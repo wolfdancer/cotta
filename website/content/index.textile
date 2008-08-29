@@ -1,0 +1,21 @@
+------------------------------------------------
+Home
+------------------------------------------------
+h1. About Cotta
+
+Cotta is a very lightweight file system framework that is created to ease the pain of writing an application
+that involves file handling:
+
+* Simplifies Java File IO related API
+* Greatly enhances the applications testability.
+* Provides other file system implementation that can operate on environment like archive file, FTP server, etc.
+
+Simply put, there have been no such library available, and some of us have put up with Java File IO for too long.
+
+For detail about the thoughts behind Cotta, see "Cotta Power":power.html.
+
+h1. Getting Started
+
+* "Download It":download.html
+* "Use It":getting-started.html
+* "Cotta Document":document.html

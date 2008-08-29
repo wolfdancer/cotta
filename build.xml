@@ -1,0 +1,201 @@
+<project name="cotta.template" default="report.coverage" basedir="core">
+  <property file="../build.properties"/>
+  <property name="product" value="cotta"/>
+  <property name="cfg.coverage.metrics" value="emma.threshold=class:95,method:89,block:87,line:88"/>
+  <property name="cfg.javadoc.packagenames" value="net.sf.*"/>
+
+  <fileset id="lib.dist" dir="../lib/commons-net">
+    <include name="**/*.jar"/>
+  </fileset>
+
+  <path id="dep.cls.prod">
+    <fileset refid="lib.dist"/>
+    <fileset dir="../lib/junit">
+      <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="../lib/hamcrest">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+
+  <path id="dep.cls.behaviour">
+    <path refid="dep.cls.prod"/>
+    <fileset dir="../lib/jmock">
+      <include name="**/*.jar"/>
+    </fileset>
+    <pathelement location="${cls.prod}"/>
+  </path>
+
+  <path id="dep.cls.ftp.behaviour">
+    <path refid="dep.cls.behaviour"/>
+    <pathelement location="${cls.behaviour}"/>
+    <fileset dir="../lib/commons-io">
+      <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="../lib/coloradoftp">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+
+  <path id="dep.cls.prod.instr">
+    <fileset dir="../lib/emma">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+
+  <path id="dep.report.coverage">
+    <path refid="dep.cls.prod.instr"/>
+    <pathelement location="${cls.prod.instr}"/>
+    <path refid="dep.cls.behaviour"/>
+    <pathelement location="${cls.behaviour}"/>
+    <path refid="dep.cls.ftp.behaviour"/>
+    <pathelement location="${cls.ftp.behaviour}"/>
+  </path>
+
+  <taskdef resource="emma_ant.properties" classpathref="dep.cls.prod.instr"/>
+
+  <target name="cls.prod">
+    <mkdir dir="${cls.prod}"/>
+    <javac srcdir="${src.prod}" destdir="${cls.prod}" source="1.5" target="1.5" debug="true"
+           classpathref="dep.cls.prod"/>
+    <copy todir="${cls.prod}">
+      <fileset dir="${src.prod}" excludes="**/*.java"/>
+    </copy>
+  </target>
+
+  <target name="cls.behaviour" depends="cls.prod">
+    <mkdir dir="${cls.behaviour}"/>
+    <javac srcdir="${src.behaviour}" destdir="${cls.behaviour}" source="1.5"
+           target="1.5" debug="true"
+           classpathref="dep.cls.behaviour"/>
+    <copy todir="${cls.behaviour}">
+      <fileset dir="${res.behaviour}"/>
+    </copy>
+  </target>
+
+  <target name="cls.ftp.behaviour" depends="cls.behaviour">
+    <mkdir dir="${cls.ftp.behaviour}"/>
+    <javac srcdir="${src.ftp.behaviour}" destdir="${cls.ftp.behaviour}" source="1.5"
+           target="1.5" debug="true"
+           classpathref="dep.cls.ftp.behaviour"/>
+    <copy todir="${cls.ftp.behaviour}">
+      <fileset dir="${res.ftp.behaviour}"/>
+    </copy>
+  </target>
+
+  <target name="cls.prod.instr" depends="cls.prod">
+    <emma enabled="true">
+      <instr instrpath="${cls.prod}"
+             destdir="${cls.prod.instr}"
+             metadatafile="${report.coverage.metadata}"
+             merge="true">
+        <filter value="${cfg.coverage.includes}"/>
+      </instr>
+    </emma>
+    <copy todir="${cls.prod.instr}">
+      <fileset dir="${cls.prod}" excludes="**/*.class"/>
+    </copy>
+  </target>
+
+  <target name="report.coverage" depends="cls.prod.instr, cls.behaviour, cls.ftp.behaviour">
+    <mkdir dir="${report.test}/core"/>
+    <mkdir dir="${report.test}/ftp"/>
+    <junit printsummary="yes" fork="yes" haltonerror="yes" haltonfailure="yes">
+      <classpath refid="dep.report.coverage"/>
+      <jvmarg line="-Demma.coverage.out.file=${report.coverage}"/>
+      <jvmarg line="-Demma.coverage.out.merge=true"/>
+      <test name="net.sf.cotta.acceptance.AllTests" todir="${report.test}/core">
+        <formatter type="xml"/>
+      </test>
+    </junit>
+    <junit fork="yes" haltonerror="yes" haltonfailure="yes">
+      <classpath refid="dep.report.coverage"/>
+      <!--<jvmarg line="-Demma.coverage.out.file=${report.coverage}"/>-->
+      <!--<jvmarg line="-Demma.coverage.out.merge=true"/>-->
+      <jvmarg line="-Xmx512m"/>
+      <test name="net.sf.cotta.ftp.FtpFileSystemTest" todir="${report.test}/ftp">
+        <formatter type="plain"/>
+      </test>
+    </junit>
+  </target>
+
+  <target name="report.coverage.summary" depends="report.coverage">
+    <emma enabled="true">
+      <report sourcepath="${src.prod}" metrics="${cfg.coverage.metrics}" columns="class,method,block,line,name">
+        <fileset dir=".">
+          <include name="${report.coverage}"/>
+          <include name="${report.coverage.metadata}"/>
+        </fileset>
+        <txt outfile="${basedir}/${report.covereage.txt}"/>
+        <html outfile="${basedir}/${report.covereage.html}"/>
+      </report>
+    </emma>
+    <loadfile srcfile="${basedir}/${report.covereage.txt}" property="report.coverage.summary">
+      <filterchain>
+        <linecontains>
+          <contains value="all classes"/>
+        </linecontains>
+      </filterchain>
+    </loadfile>
+    <echo>Coverage Summary:${line.separator}class, method, block, line${line.separator}${report.coverage.summary}
+    </echo>
+    <condition property="coverage.istoolow">
+      <contains string="${report.coverage.summary}" substring="!"/>
+    </condition>
+    <fail message="Coverage is below threshold: ${cfg.coverage.metrics}" if="coverage.istoolow"/>
+  </target>
+
+  <target name="report.duplication">
+    <taskdef name="cpd" classname="net.sourceforge.pmd.cpd.CPDTask">
+      <classpath>
+        <fileset dir="../lib/pmd">
+          <include name="**/*.jar"/>
+        </fileset>
+      </classpath>
+    </taskdef>
+    <cpd minimumTokenCount="50" outputFile="${report.duplicaiton}">
+      <fileset dir="${src.prod}">
+        <include name="**/*.java"/>
+      </fileset>
+    </cpd>
+  </target>
+
+  <target name="report.javadoc">
+    <echo message="${cfg.javadoc.packagenames}"/>
+    <javadoc packagenames="${cfg.javadoc.packagenames}" sourcepath="${src.prod}" destdir="${report.javadoc}"
+             access="public"/>
+  </target>
+
+  <target name="pkg.cls.prod" depends="cls.prod">
+    <jar basedir="${cls.prod}" file="${pkg.cls.prod}" index="true"
+         manifest="${src.prod}/META-INF/MANIFEST.MF"/>
+  </target>
+
+  <target name="pkg.src.prod">
+    <zip basedir="${src.prod}" destfile="${pkg.src.prod}"/>
+  </target>
+
+  <target name="dist" depends="pkg.cls.prod, pkg.src.prod">
+    <copy file="${pkg.cls.prod}" tofile="../dist/${product}.jar"/>
+    <copy file="${pkg.src.prod}" tofile="../dist/${product}-src.zip"/>
+    <property name="dir.product" value="../dist/${product}"/>
+    <mkdir dir="${dir.product}"/>
+    <copy file="${pkg.cls.prod}" tofile="${dir.product}/${product}.jar"/>
+    <copy file="${pkg.src.prod}" tofile="${dir.product}/${product}-src.zip"/>
+    <copy file="LICENSE.txt" todir="${dir.product}"/>
+    <mkdir dir="${dir.product}/lib"/>
+    <copy todir="${dir.product}/lib">
+      <fileset refid="lib.dist"/>
+    </copy>
+    <zip basedir="${dir.product}" destfile="../dist/${product}-all.zip"/>
+    <delete dir="${dir.product}"/>
+  </target>
+
+  <target name="clean.env">
+    <delete dir="build"/>
+  </target>
+
+  <target name="reports" depends="report.coverage.summary, report.duplication, report.javadoc"/>
+  <target name="all" depends="clean.env, reports, dist"/>
+
+</project>

@@ -1,0 +1,3 @@
+The ColoradoFTP project, its plug-ins and all the side-projects you can download from this web site fall under terms of the GNU General Public License. If you are unfamiliar with this license, you might want to read How To Apply These Terms To Your Program  and the GNU General Public License FAQ.
+
+http://cftp.coldcore.com/license.html

@@ -1,0 +1,41 @@
+----------------------------------------------------
+Getting Started
+----------------------------------------------------
+h1. Create It
+
+The entry point for Cotta is the @TFileFactory@:
+
+<div class="Code">// find src directory under current directory
+TDirectory src = new TFileFactory().dir("src")
+// find buildnumber file
+TFile file = src.file("./buildnumber");</div>
+
+h1. Use It
+
+You can do all the normal operations on @TDirectory@ and @TFile@, including loading the file content:
+
+<div class="Code">public void increaseBuildNumber(TFile file) {
+  String content = file.load();
+  // Increase the build number
+  // (Let's not get into the business of error handling for now)
+  int buildnumber = Integer.parseInt(content);
+  file.save(String.valueOf(buildnumber++));
+}
+</div>
+
+h1. Test It
+
+You can test the code above, *without* any hassle or fear of touching your physical file system:
+
+<div class="Code">public void testShouldIncreaseBuildNumberInFile() throws Exception {
+  TFileFactory factory = new TFileFactory(new InMemoryFileSystem());
+  TFile file = factory.file("./src/buildmaster");
+  file.save("3");
+  ...
+  buildnumber.increaseBuildNumber(file);
+  assert_equals("4", file.load());
+}</div>
+
+h1. More
+
+Like it, want more?  It is all in the "Cotta Document":document.html

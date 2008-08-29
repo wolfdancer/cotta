@@ -1,0 +1,131 @@
+<project name="cotta.template" default="report.coverage">
+    <property file="../build.properties"/>
+    <property name="cls.behaviour.lang" value="1.4"/>
+
+    <path id="dep.cls.prod.instr">
+        <fileset dir="../lib/emma"/>
+    </path>
+
+    <path id="dep.cls.behaviour.common">
+        <path refid="dep.cls.prod"/>
+        <fileset dir="../lib/jbehave"/>
+        <fileset dir="../lib/fest"/>
+        <pathelement location="${cls.prod}"/>
+    </path>
+
+    <path id="dep.report.coverage">
+        <path refid="dep.cls.prod.instr"/>
+        <pathelement location="${cls.prod.instr}"/>
+        <path refid="dep.cls.behaviour"/>
+        <pathelement location="${cls.behaviour}"/>
+    </path>
+
+    <taskdef resource="emma_ant.properties" classpathref="dep.cls.prod.instr"/>
+
+    <target name="cls.prod">
+        <mkdir dir="${cls.prod}"/>
+        <javac srcdir="${src.prod}" destdir="${cls.prod}" source="1.4" target="1.4" debug="true"
+               classpathref="dep.cls.prod"/>
+        <copy todir="${cls.prod}">
+            <fileset dir="${src.prod}" excludes="**/*.java"/>
+        </copy>
+    </target>
+
+    <target name="cls.behaviour" depends="cls.prod">
+        <mkdir dir="${cls.behaviour}"/>
+        <javac srcdir="${src.behaviour}" destdir="${cls.behaviour}" source="${cls.behaviour.lang}"
+               target="${cls.behaviour.lang}" debug="true"
+               classpathref="dep.cls.behaviour"/>
+        <copy todir="${cls.behaviour}">
+            <fileset dir="${res.behaviour}"/>
+        </copy>
+    </target>
+
+    <target name="cls.prod.instr" depends="cls.prod">
+        <emma enabled="true">
+            <instr instrpath="${cls.prod}"
+                   destdir="${cls.prod.instr}"
+                   metadatafile="${report.coverage.metadata}"
+                   merge="true">
+                <filter value="${cfg.coverage.includes}"/>
+            </instr>
+        </emma>
+        <copy todir="${cls.prod.instr}">
+            <fileset dir="${cls.prod}" excludes="**/*.class"/>
+        </copy>
+    </target>
+
+    <target name="report.coverage" depends="cls.prod.instr, cls.behaviour">
+        <taskdef resource="jbehave_ant.properties" classpathref="dep.cls.behaviour"/>
+        <jbehave maxmemory="256" behavioursClassName="${cls.behaviour.entry}"
+                 classpathref="dep.report.coverage">
+            <jvmarg line="-Demma.coverage.out.file=${report.coverage}"/>
+            <jvmarg line="-Demma.coverage.out.merge=true"/>
+        </jbehave>
+    </target>
+
+    <target name="report.coverage.summary" depends="report.coverage">
+        <emma enabled="true">
+            <report sourcepath="${src.prod}" metrics="${cfg.coverage.metrics}" columns="class,method,block,line,name">
+                <fileset dir=".">
+                    <include name="${report.coverage}"/>
+                    <include name="${report.coverage.metadata}"/>
+                </fileset>
+                <txt outfile="${basedir}/${report.covereage.txt}"/>
+                <html outfile="${basedir}/${report.covereage.html}"/>
+            </report>
+        </emma>
+        <loadfile srcfile="${report.covereage.txt}" property="report.coverage.summary">
+            <filterchain>
+                <linecontains>
+                    <contains value="all classes"/>
+                </linecontains>
+            </filterchain>
+        </loadfile>
+        <echo>Coverage Summary:${line.separator}class, method, block, line${line.separator}${report.coverage.summary}
+        </echo>
+        <condition property="coverage.istoolow">
+            <contains string="${report.coverage.summary}" substring="!"/>
+        </condition>
+        <fail message="Coverage is below threshold: ${cfg.coverage.metrics}" if="coverage.istoolow"/>
+    </target>
+
+    <target name="report.duplication">
+        <taskdef name="cpd" classname="net.sourceforge.pmd.cpd.CPDTask">
+            <classpath>
+                <fileset dir="../lib/cpd"/>
+            </classpath>
+        </taskdef>
+        <cpd minimumTokenCount="50" outputFile="${report.duplicaiton}">
+            <fileset dir="${src.prod}">
+                <include name="**/*.java"/>
+            </fileset>
+        </cpd>
+    </target>
+
+    <target name="report.javadoc">
+        <echo message="${cfg.javadoc.packagenames}"      />
+        <javadoc packagenames="${cfg.javadoc.packagenames}" sourcepath="${src.prod}" destdir="${report.javadoc}" access="public"/>
+    </target>
+
+    <target name="dist.dir">
+        <mkdir dir="${dist.dir}"/>
+    </target>
+
+    <target name="dist.cls.prod" depends="dist.dir, cls.prod">
+        <jar basedir="${cls.prod}" file="${dist.dir}/${product}.jar" index="true"
+             manifest="${src.prod}/META-INF/MANIFEST.MF"/>
+    </target>
+
+    <target name="dist.src.prod" depends="dist.dir">
+        <zip basedir="${src.prod}" destfile="${dist.dir}/src-${product}.zip"/>
+    </target>
+
+    <target name="clean.env">
+        <delete dir="build"/>
+    </target>
+
+    <target name="reports" depends="report.coverage.summary, report.duplication, report.javadoc"/>
+    <target name="all" depends="clean.env, reports, dist.cls.prod, dist.src.prod"/>
+
+</project>

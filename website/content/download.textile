@@ -1,0 +1,19 @@
+-------------------------------------------------
+Download
+-------------------------------------------------
+h1. Release
+
+"1.2":http://sourceforge.net/project/showfiles.php?group_id=171037 now available.
+
+h1. Snapshot
+
+Development snapshots can be downloaded from "builds":builds/?M=D page.
+
+h1. Developer Build
+
+You can also check it out of the repository and build it using ANT.
+
+<div class="Shaded">
+<pre>svn checkout https://svn.sourceforge.net/svnroot/cotta/trunk/core</pre>
+</div>
+
