@@ -1,1 +1,3 @@
 *.iws #ignore all iws files
+build #ignore the build directory
+tmp
