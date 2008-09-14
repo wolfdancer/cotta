@@ -112,6 +112,11 @@
           <module name="website" />
         </modules>
       </facet-type>
+      <facet-type id="JRubyFacetType">
+        <modules>
+          <module name="website" />
+        </modules>
+      </facet-type>
     </autodetection-disabled>
   </component>
   <component name="IdProvider" IDEtalkID="F41CAA6E81596D1A0C15ED02912B093E" />
@@ -289,7 +294,10 @@
   <component name="ProjectDetails">
     <option name="projectName" value="cotta" />
   </component>
-  <component name="ProjectFileVersion" converted="true" />
+  <component name="ProjectFileVersion" converted="true">
+    <converter id="javaee-modules" />
+    <converter id="ror-modules" />
+  </component>
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/core/core.iml" filepath="$PROJECT_DIR$/core/core.iml" />
@@ -324,7 +332,7 @@
     <option name="myVersion" value="123" />
   </component>
   <component name="VcsDirectoryMappings">
-    <mapping directory="" vcs="Git" />
+    <mapping directory="" vcs="" />
   </component>
   <component name="WebServicesPlugin" addRequiredLibraries="true" />
   <component name="com.intellij.jsf.UserDefinedFacesConfigs">
@@ -382,5 +390,8 @@
       </SOURCES>
     </library>
   </component>
+  <UsedPathMacros>
+    <macro name="IDEA_HOME" />
+  </UsedPathMacros>
 </project>
 

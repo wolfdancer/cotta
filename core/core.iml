@@ -8,12 +8,16 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/build" />
     </content>
-    <orderEntry type="jdk" jdkName="1.5" jdkType="JavaSDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="junit" level="project" />
     <orderEntry type="library" name="hamcrest" level="project" />
     <orderEntry type="library" name="jmock" level="project" />
     <orderEntry type="module" module-name="testbase" />
+    <orderEntryProperties />
+  </component>
+  <component name="RSpecModuleSettingsStorage">
+    <RSPEC_MODULE_SETTINGS_STORAGE_ID NAME="RSPEC_SUPPORT_TYPE" VALUE="NONE" />
   </component>
 </module>
 

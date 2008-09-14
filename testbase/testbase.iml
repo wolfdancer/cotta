@@ -10,6 +10,10 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="junit" level="project" />
     <orderEntry type="library" name="jmock" level="project" />
+    <orderEntryProperties />
+  </component>
+  <component name="RSpecModuleSettingsStorage">
+    <RSPEC_MODULE_SETTINGS_STORAGE_ID NAME="RSPEC_SUPPORT_TYPE" VALUE="NONE" />
   </component>
 </module>
 
