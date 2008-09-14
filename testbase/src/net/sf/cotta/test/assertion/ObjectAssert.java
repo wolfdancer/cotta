@@ -27,6 +27,11 @@ public class ObjectAssert<T> extends Assert {
     return this.value;
   }
 
+  @SuppressWarnings({"EqualsWhichDoesntCheckParameterClass"})
+  public boolean equals(Object obj) {
+    throw new UnsupportedOperationException("equals method is not supported by assertion, you probably wanted to use eq method");
+  }
+
   public ObjectAssert<T> eq(T expected) {
     matches(IsEqual.equalTo(expected));
     return this;
