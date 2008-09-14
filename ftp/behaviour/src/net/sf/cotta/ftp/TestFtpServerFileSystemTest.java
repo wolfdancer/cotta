@@ -1,6 +1,10 @@
 package net.sf.cotta.ftp;
 
 import net.sf.cotta.TDirectory;
+import net.sf.cotta.TFileFactory;
+import net.sf.cotta.TFileNotFoundException;
+import net.sf.cotta.ftp.client.commonsNet.CommonsNetFtpClient;
+import net.sf.cotta.test.assertion.CodeBlock;
 import net.sf.cotta.io.InputManager;
 import net.sf.cotta.io.InputProcessor;
 import net.sf.cotta.io.OutputManager;
@@ -8,12 +12,9 @@ import net.sf.cotta.io.OutputProcessor;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.net.ftp.FTPClient;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 public class TestFtpServerFileSystemTest extends FtpTestBase {
-
   public void testBeAtRootAndNoFileInitially() throws InterruptedException, IOException {
     String workingDirectory = ftpClient.printWorkingDirectory();
     ensure.string(workingDirectory).eq("/");
@@ -63,6 +64,16 @@ public class TestFtpServerFileSystemTest extends FtpTestBase {
         ensure.bytes(fileContentRead).eq(fileContentRead);
       }
     });
+  }
+
+  public void testFileNotFoundOnServer() throws IOException {
+    ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
+    ensure.code(new CodeBlock() {
+      public void execute() throws Exception {
+        TFileFactory factory = new TFileFactory(new FtpFileSystem(ftpClient));
+        factory.file("notexist").load();
+      }
+    }).throwsException(TFileNotFoundException.class);
   }
 
   public void testBeAbleToRetrieveFile() throws IOException {

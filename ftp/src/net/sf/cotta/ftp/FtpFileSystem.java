@@ -3,7 +3,9 @@ package net.sf.cotta.ftp;
 import net.sf.cotta.FileSystem;
 import net.sf.cotta.TIoException;
 import net.sf.cotta.TPath;
+import net.sf.cotta.ftp.client.commonsNet.CommonsNetFtpClient;
 import net.sf.cotta.io.OutputMode;
+import org.apache.commons.net.ftp.FTPClient;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +22,10 @@ public class FtpFileSystem implements FileSystem {
 
   public FtpFileSystem(FtpClient ftpClient) {
     this.ftpClient = ftpClient;
+  }
+
+  public FtpFileSystem(FTPClient ftpClient) {
+    this(new CommonsNetFtpClient(ftpClient));
   }
 
   public final boolean fileExists(TPath path) {
@@ -48,10 +54,7 @@ public class FtpFileSystem implements FileSystem {
   }
 
   public boolean dirExists(TPath path) {
-    if (isConstantPath(path)) {
-      return true;
-    }
-    return pathExists(path);
+    return isConstantPath(path) || pathExists(path);
   }
 
   public final void createDir(TPath path) throws TIoException {
@@ -73,6 +76,8 @@ public class FtpFileSystem implements FileSystem {
   public final InputStream createInputStream(final TPath path) throws TIoException {
     try {
       return ftpClient.retrieve(path);
+    } catch (TIoException e) {
+      throw e;
     } catch (IOException e) {
       throw new TIoException(path, "Failed to create input stream", e);
     }
@@ -126,8 +131,7 @@ public class FtpFileSystem implements FileSystem {
 
   public final long fileLength(TPath path) {
     FtpFile[] ftpFiles = listFtpDirectory(path.parent());
-    for (int i = 0; i < ftpFiles.length; i++) {
-      FtpFile ftpFile = ftpFiles[i];
+    for (FtpFile ftpFile : ftpFiles) {
       if (ftpFile.getPath().equals(path)) {
         return ftpFile.getSize();
       }
@@ -148,13 +152,7 @@ public class FtpFileSystem implements FileSystem {
   }
 
   private boolean isConstantPath(TPath path) {
-    if (path.equals(ROOT_DIR)) {
-      return true;
-    }
-    if (path.equals(CURRENT_DIR)) {
-      return true;
-    }
-    return false;
+    return path.equals(ROOT_DIR) || path.equals(CURRENT_DIR);
   }
 
   private boolean pathExists(TPath path) {
@@ -162,8 +160,7 @@ public class FtpFileSystem implements FileSystem {
     if (existingFiles == null) {
       return false;
     }
-    for (int i = 0; i < existingFiles.length; i++) {
-      FtpFile existingFile = existingFiles[i];
+    for (FtpFile existingFile : existingFiles) {
       if (existingFile.getPath().equals(path)) {
         return true;
       }
@@ -173,16 +170,15 @@ public class FtpFileSystem implements FileSystem {
 
   private TPath[] listPathsOfType(TPath path, FtpFileType targetFileType) {
     FtpFile[] ftpFiles = listFtpDirectory(path);
-    ArrayList pathList = new ArrayList();
-    for (int i = 0; i < ftpFiles.length; i++) {
-      FtpFile ftpFile = ftpFiles[i];
+    ArrayList<TPath> pathList = new ArrayList<TPath>();
+    for (FtpFile ftpFile : ftpFiles) {
       if (ftpFile.getFileType().equals(targetFileType)) {
         pathList.add(ftpFile.getPath());
       }
     }
     TPath[] paths = new TPath[pathList.size()];
     for (int i = 0; i < pathList.size(); i++) {
-      TPath tPath = (TPath) pathList.get(i);
+      TPath tPath = pathList.get(i);
       paths[i] = tPath;
     }
     return paths;

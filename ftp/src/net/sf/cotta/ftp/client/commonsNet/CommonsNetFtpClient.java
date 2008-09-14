@@ -1,6 +1,7 @@
 package net.sf.cotta.ftp.client.commonsNet;
 
 import net.sf.cotta.TPath;
+import net.sf.cotta.TFileNotFoundException;
 import net.sf.cotta.ftp.FtpClient;
 import net.sf.cotta.ftp.FtpFile;
 import org.apache.commons.net.ftp.FTPClient;
@@ -45,7 +46,11 @@ public final class CommonsNetFtpClient implements FtpClient {
 
   public final InputStream retrieve(TPath path) throws IOException {
     ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
-    return wrapInputStream(ftpClient.retrieveFileStream(path.toPathString()));
+    InputStream inputStream = ftpClient.retrieveFileStream(path.toPathString());
+    if (inputStream == null) {
+      throw new TFileNotFoundException(path);
+    }
+    return wrapInputStream(inputStream);
   }
 
   public final OutputStream append(TPath path) throws IOException {
