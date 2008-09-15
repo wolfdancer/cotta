@@ -1,9 +1,8 @@
 package net.sf.cotta.test.assertion;
 
-import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.hamcrest.core.AllOf;
 import static org.junit.matchers.StringContains.containsString;
 
@@ -19,8 +18,16 @@ public class StringAssert extends ObjectAssert<String> {
     this(value == null ? null : new String(value));
   }
 
+  public void isNotEmpty() {
+    not(empty());
+  }
+
   public void isEmpty() {
-    matches(new BaseMatcher<String>() {
+    matches(empty());
+  }
+
+  private BaseMatcher<String> empty() {
+    return new BaseMatcher<String>() {
       public boolean matches(Object o) {
         String string = (String) o;
         return string != null && string.length() == 0;
@@ -29,7 +36,7 @@ public class StringAssert extends ObjectAssert<String> {
       public void describeTo(Description description) {
         description.appendText("empty string");
       }
-    });
+    };
   }
 
   public void contains(String... expectedValues) {

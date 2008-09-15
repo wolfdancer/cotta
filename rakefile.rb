@@ -65,9 +65,9 @@ task :test do
   cobertura = root.file('lib/cobertura/cobertura-1.9.jar')
   testbase.junit(report.dir('testbase')).for_tests('*Test.java').with_coverage(cobertura).run
   core.junit(report.dir('core')).for_tests('*Test.java').with_coverage(cobertura).run
-  ftp_test = ftp.junit(report.dir('ftp'))
+  ftp_test = ftp.junit(report.dir('ftp')).for_tests('*Test.java').with_coverage(cobertura).run
   ftp_test.jvmargs.push('-Xmx512m')
-  ftp_test.for_test('net.sf.cotta.ftp.AllTests').run
+  ftp_test.for_test('net.sf.cotta.ftp.AllTests')..with_coverage(cobertura).run
 end
 
 task :package do

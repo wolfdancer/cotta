@@ -2,7 +2,7 @@ package net.sf.cotta.test;
 
 class FixtureWrapper {
   private TestFixture fixture;
-  private boolean called;
+  private boolean alarmed;
   private int expectedCalls;
 
   public FixtureWrapper(TestFixture fixture) {
@@ -10,10 +10,10 @@ class FixtureWrapper {
   }
 
   public void setUp() throws Exception {
-    if (called) {
+    if (alarmed) {
       return;
     }
-    called = true;
+    alarmed = true;
     fixture.setUp();
   }
 
@@ -21,6 +21,7 @@ class FixtureWrapper {
     expectedCalls--;
     if (expectedCalls == 0) {
       fixture.tearDown();
+      alarmed = false;
     }
   }
 
