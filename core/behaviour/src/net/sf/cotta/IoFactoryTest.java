@@ -62,6 +62,14 @@ public class IoFactoryTest extends TestBase {
     reader.close();
     ensure.that(stub.isClosed()).eq(true);
   }
+  
+  public void testCreateReaderWithEncoding() throws Exception {
+	final InputStreamStub stub = new InputStreamStub();
+	final StreamFactory streamFactory = mockFactoryForInput(stub);
+	Reader reader = new IoFactory(streamFactory).reader("utf-8");
+	reader.close();
+	ensure.that(stub.isClosed()).eq(true);
+  }
 
   public void testCreateBufferredReader() throws Exception {
     final InputStreamStub stub = new InputStreamStub();
@@ -89,6 +97,16 @@ public class IoFactoryTest extends TestBase {
     ensure.that(output.toString()).eq("content");
   }
 
+  public void testCreateWriterWithEncoding() throws Exception {
+	final ByteArrayOutputStream output = new ByteArrayOutputStream();
+	final StreamFactory streamFactory = mockFactoryForOutput(output);
+	IoFactory factory = new IoFactory(streamFactory);
+	Writer writer = factory.writer(OutputMode.OVERWRITE, "utf-8");
+	writer.write("content".toCharArray());
+	writer.close();
+	ensure.that(output.toString()).eq("content");
+  }
+  
   public void testCreatePrintWriter() throws Exception {
     final ByteArrayOutputStream output = new ByteArrayOutputStream();
     final StreamFactory streamFactory = mockFactoryForOutput(output);

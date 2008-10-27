@@ -21,8 +21,27 @@ public class IoFactory {
     return streamFactory.outputStream(mode);
   }
 
+  /**
+   * Create a Reader using the default encoding
+   * @return a Reader with the default encoding
+   * @throws TIoException for any IO error
+   */
   public Reader reader() throws TIoException {
     return new InputStreamReader(inputStream());
+  }
+  
+  /**
+   * Create a Reader using the provided encoding
+   * @param encoding
+   * @return
+   * @throws TIoException
+   */
+  public Reader reader(String encoding) throws TIoException {
+	try {
+	  return new InputStreamReader(inputStream(), encoding);
+	} catch (UnsupportedEncodingException e) {
+	  throw new TIoException(streamFactory.path(), "Encoding not supported:" + encoding, e);
+	}
   }
 
   public BufferedReader bufferedReader() throws TIoException {
@@ -37,6 +56,14 @@ public class IoFactory {
     return new OutputStreamWriter(outputStream(mode));
   }
 
+  public Writer writer(OutputMode mode, String encoding) throws TIoException {
+	try {
+	  return new OutputStreamWriter(outputStream(mode), encoding);
+	} catch (UnsupportedEncodingException e) {
+	  throw new TIoException(streamFactory.path(), "Encoding not supported:" + encoding, e);
+	}
+  }
+  
   public BufferedWriter bufferedWriter(OutputMode mode) throws TIoException {
     return new BufferedWriter(writer(mode));
   }
