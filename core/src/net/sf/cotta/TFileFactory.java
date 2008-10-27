@@ -108,7 +108,7 @@ public class TFileFactory {
    * @return The TFile that represents the Java file
    * @see net.sf.cotta.physical.PhysicalFileSystem
    * @see #physicalFile(java.io.File)
-   * @deprecated use physicalFile(java.io.File)
+   * @deprecated use file(java.io.File)
    */
   public static TFile fileFromJavaFile(File file) {
     return fileFromPath(new PhysicalFileSystem(), file.getAbsolutePath());
@@ -153,8 +153,11 @@ public class TFileFactory {
     return "jar".equalsIgnoreCase(url.getProtocol());
   }
 
+  /**
+   * File factory backed by a physical file system
+   */
   public static final TFileFactory PHYSICAL_FILE_FACTORY = new TFileFactory(new PhysicalFileSystem());
-
+  
   public static TFile physicalFile(String path) {
     return PHYSICAL_FILE_FACTORY.file(path);
   }

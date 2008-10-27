@@ -7,14 +7,16 @@ require 'rake'
 
 cotta = BuildMaster::Cotta.new
 dir = cotta.file(__FILE__).parent
-svn = BuildMaster::SvnDriver.from_path(dir)
-manifest = BuildMaster::JavaManifest.new(dir.file('core/src/META-INF/MANIFEST.MF'))
+git = BuildMaster::Git.new(dir)
+manifest_fire = dir.file('core/src/META-INF/MANIFEST.MF')
+manifest = BuildMaster::JavaManifest.new(manifest_file)
 
-svn.update
+git.pull
 version = manifest.increase_build
+git.add manifest_file
 load 'rake'
-svn.commit("releasing #{version.number}b#{version.build}")
-svn.tag("version-#{version.number}b#{version.build}")
+git.commit("releasing #{version.number}b#{version.build}")
+git.tag("version-#{version.number}b#{version.build}")
 dist_dir = dir.dir('build/dist')
 cotta_core_jar = dist_dir.file('cotta.jar')
 cotta_core_source_zip = dist_dir.file('cotta-src.zip')
@@ -31,7 +33,7 @@ cotta_testbase_release_source = dist_dir.file("cotta-testbase-src-#{version.numb
 cotta_testbase_jar.move_to(cotta_testbase_release_jar)
 cotta_testbase_source_zip.move_to(cotta_testbase_release_source)
 
-pscp = BuildMaster::PscpDriver.new("#{svn.user}@shell.sourceforge.net")
+pscp = BuildMaster::PscpDriver.new("wolfdancer@shell.sourceforge.net")
 builds_dir = '/home/groups/c/co/cotta/htdocs/builds'
 pscp.copy(cotta_core_release_jar.path, "#{builds_dir}/#{cotta_core_release_jar.name}")
 pscp.copy(cotta_core_release_source.path, "#{builds_dir}/#{cotta_core_release_source.name}")
