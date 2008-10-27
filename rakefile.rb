@@ -69,7 +69,7 @@ task :test do
   # ftp_test = junit.for_tests('*Test.java')
   ftp_test = junit.for_test('net.sf.cotta.ftp.AllTests')
   ftp_test.jvmargs.push('-Xmx512m')
-  ftp_test.with_coverage(cobertura).run
+  # ftp_test.with_coverage(cobertura).run
 end
 
 task :package do

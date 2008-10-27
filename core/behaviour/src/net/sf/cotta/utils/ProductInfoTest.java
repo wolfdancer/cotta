@@ -36,7 +36,7 @@ public class ProductInfoTest extends CottaTestBase {
     ensure.that(productInfo.title()).eq("Cotta");
     ensure.that(productInfo.vendor()).eq("SourceForge Cotta");
     ensure.that(productInfo.url()).eq("http://cotta.sourceforge.net");
-    ensure.that(productInfo.version().value()).eq("1.3.0");
+    ensure.that(productInfo.version().value()).eq("1.3.1");
     ensure.that(productInfo.version().build()).notNull();
   }
 
