@@ -8,7 +8,7 @@ require 'rake'
 cotta = BuildMaster::Cotta.new
 dir = cotta.file(__FILE__).parent
 git = BuildMaster::Git.new(dir)
-manifest_fire = dir.file('core/src/META-INF/MANIFEST.MF')
+manifest_file = dir.file('core/src/META-INF/MANIFEST.MF')
 manifest = BuildMaster::JavaManifest.new(manifest_file)
 
 git.pull

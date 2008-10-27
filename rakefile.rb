@@ -67,7 +67,7 @@ task :test do
   core.junit(report.dir('core')).for_tests('*Test.java').with_coverage(cobertura).run
   ftp_test = ftp.junit(report.dir('ftp')).for_tests('*Test.java').with_coverage(cobertura).run
   ftp_test.jvmargs.push('-Xmx512m')
-  ftp_test.for_test('net.sf.cotta.ftp.AllTests')..with_coverage(cobertura).run
+  #ftp_test.for_test('net.sf.cotta.ftp.AllTests')..with_coverage(cobertura).run
 end
 
 task :package do
