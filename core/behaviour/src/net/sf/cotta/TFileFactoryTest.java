@@ -8,12 +8,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class TFileFactoryTest extends PhysicalFileSystemTestBase {
-  public void shouldNotLoadFromAnHttpUrl() throws Exception {
+  public void testNotLoadFromAnHttpUrl() throws Exception {
     final URL url = new URL("http://cotta.sourceforge.net");
     ensure.that(TFileFactory.canConvertUrl(url)).eq(false);
   }
 
-  public void shouldFailConvertingFromHttpUrl() throws Exception {
+  public void testFailConvertingFromHttpUrl() throws Exception {
     final URL url = new URL("http://cotta.sourceforge.net");
     runAndCatch(IllegalArgumentException.class, new CodeBlock() {
       public void execute() throws Exception {
@@ -22,25 +22,25 @@ public class TFileFactoryTest extends PhysicalFileSystemTestBase {
     });
   }
 
-  public void shouldSupportFileUrl() throws Exception {
+  public void testSupportFileUrl() throws Exception {
     File file = new File("/tmp/directory/file.txt");
     URL url = file.toURL();
     ensure.that(TFileFactory.canConvertUrl(url)).eq(true);
   }
 
-  public void shouldConvertFromFileUrl() throws Exception {
+  public void testConvertFromFileUrl() throws Exception {
     File file = new File("/tmp/directory/file.txt");
     URL url = file.toURL();
     TFile tfile = TFileFactory.fileFromUrl(url);
     ensure.that("file.txt").eq(tfile.name());
   }
 
-  public void shouldSupportJarUrl() throws Exception {
+  public void testSupportJarUrl() throws Exception {
     final URL url = String.class.getResource("String.class");
     ensure.that(TFileFactory.canConvertUrl(url)).eq(true);
   }
 
-  public void shouldLoadTFileFromResourceUrl() {
+  public void testLoadTFileFromResourceUrl() {
     //Given
     URL url = getClass().getResource("/" + String.class.getName().replace('.', '/') + ".class");
     //When
@@ -51,7 +51,7 @@ public class TFileFactoryTest extends PhysicalFileSystemTestBase {
     ensure.that(file.exists()).eq(true);
   }
 
-  public void shouldHandleResourceUrlWithSpaceInIt() throws MalformedURLException {
+  public void testHandleResourceUrlWithSpaceInIt() throws MalformedURLException {
     //Given
     URL url = getClass().getResource("/" + String.class.getName().replace('.', '/') + ".class");
     int index = url.getFile().indexOf('!');
@@ -64,7 +64,7 @@ public class TFileFactoryTest extends PhysicalFileSystemTestBase {
     ensure.that(file.name()).eq("selenium.jar");
   }
 
-  public void shouldCreateTFileDirectlyFromJavaFile() throws Exception {
+  public void testCreateTFileDirectlyFromJavaFile() throws Exception {
     //Given
     TFile file = new TFileFactory(fileSystem()).dir("tmp").file("content.txt");
     file.save("content");
@@ -74,7 +74,7 @@ public class TFileFactoryTest extends PhysicalFileSystemTestBase {
     ensure.that(actual.load()).eq("content");
   }
 
-  public void shouldCreateTDirectoryDirectlyFromJavaFile() throws TIoException {
+  public void testCreateTDirectoryDirectlyFromJavaFile() throws TIoException {
     //Given
     TDirectory directory = new TFileFactory(fileSystem()).dir("tmp").dir("child");
     directory.ensureExists();

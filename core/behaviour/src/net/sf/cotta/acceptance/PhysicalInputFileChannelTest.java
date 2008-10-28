@@ -16,7 +16,7 @@ public class PhysicalInputFileChannelTest extends InputFileChannelTestBase {
     return new PhysicalFileSystem();
   }
 
-  public void shouldMapWithReadOption() throws Exception {
+  public void testMapWithReadOption() throws Exception {
     TFile file = file();
     file.read(new InputProcessor() {
       public void process(InputManager inputManager) throws IOException {
