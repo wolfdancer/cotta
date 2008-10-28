@@ -36,7 +36,6 @@
     <orderEntry type="library" name="commons-net" level="project" />
     <orderEntry type="library" name="junit" level="project" />
     <orderEntry type="module" module-name="testbase" />
-    <orderEntryProperties />
   </component>
   <component name="RSpecModuleSettingsStorage">
     <RSPEC_MODULE_SETTINGS_STORAGE_ID NAME="RSPEC_SUPPORT_TYPE" VALUE="NONE" />
