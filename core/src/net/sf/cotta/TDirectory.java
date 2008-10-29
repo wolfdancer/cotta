@@ -27,18 +27,24 @@ public class TDirectory extends TEntry {
    *
    * @param fileSystem The file system that backs the file
    * @param path       The path to the file
+   * @deprecated Use the other constructor for default encoding support in TFileFactory
+   * @see #TDirectory(TFileFactory, TPath)
    */
   public TDirectory(FileSystem fileSystem, TPath path) {
-    super(fileSystem, path);
+    super(new TFileFactory(fileSystem), path);
+  }
+
+  public TDirectory(TFileFactory factory, TPath path) {
+    super(factory, path);
   }
 
   public boolean exists() {
-    return fileSystem.dirExists(path);
+    return filesystem().dirExists(path);
   }
 
   public TDirectory ensureExists() throws TIoException {
-    if (!fileSystem.dirExists(path)) {
-      fileSystem.createDir(path);
+    if (!filesystem().dirExists(path)) {
+      filesystem().createDir(path);
     }
     return this;
   }
@@ -61,7 +67,7 @@ public class TDirectory extends TEntry {
    * @return The file that is of the relative to the current directory
    */
   public TFile file(TPath relativePath) {
-    return new TFile(fileSystem, path.join(relativePath));
+    return new TFile(factory(), path.join(relativePath));
   }
 
   /**
@@ -81,7 +87,7 @@ public class TDirectory extends TEntry {
    * @return The target directory that is of the given the relative path
    */
   public TDirectory dir(TPath relativePath) {
-    return new TDirectory(fileSystem, path.join(relativePath));
+    return new TDirectory(factory(), path.join(relativePath));
   }
 
   public TDirectory[] listDirs() throws TIoException {
@@ -90,19 +96,19 @@ public class TDirectory extends TEntry {
 
   public TDirectory[] listDirs(TDirectoryFilter directoryFilter) throws TIoException {
     checkDirectoryExists();
-    TPath[] paths = fileSystem.listDirs(this.path);
-    List directories = new ArrayList(paths.length);
-    for (int i = 0; i < paths.length; i++) {
-      TDirectory candidate = new TDirectory(fileSystem, paths[i]);
+    TPath[] paths = filesystem().listDirs(this.path);
+    List<TDirectory> directories = new ArrayList<TDirectory>(paths.length);
+    for (TPath path : paths) {
+      TDirectory candidate = dir(path);
       if (directoryFilter.accept(candidate)) {
         directories.add(candidate);
       }
     }
-    return (TDirectory[]) directories.toArray(new TDirectory[directories.size()]);
+    return directories.toArray(new TDirectory[directories.size()]);
   }
 
   private void checkDirectoryExists() throws TDirectoryNotFoundException {
-    if (!fileSystem.dirExists(path)) {
+    if (!filesystem().dirExists(path)) {
       throw new TDirectoryNotFoundException(path);
     }
   }
@@ -113,15 +119,15 @@ public class TDirectory extends TEntry {
 
   public TFile[] listFiles(TFileFilter fileFilter) throws TIoException {
     checkDirectoryExists();
-    TPath[] tPaths = fileSystem.listFiles(path);
-    List files = new ArrayList(tPaths.length);
-    for (int i = 0; i < tPaths.length; i++) {
-      TFile candidate = new TFile(fileSystem, tPaths[i]);
+    TPath[] tPaths = filesystem().listFiles(path);
+    List<TFile> files = new ArrayList<TFile>(tPaths.length);
+    for (TPath path : tPaths) {
+      TFile candidate = file(path);
       if (fileFilter.accept(candidate)) {
         files.add(candidate);
       }
     }
-    return (TFile[]) files.toArray(new TFile[files.size()]);
+    return files.toArray(new TFile[files.size()]);
   }
 
   public String toString() {
@@ -129,18 +135,18 @@ public class TDirectory extends TEntry {
   }
 
   public void delete() throws TIoException {
-    fileSystem.deleteDirectory(path);
+    filesystem().deleteDirectory(path);
   }
 
   public void deleteAll() throws TIoException {
     TDirectory[] subDirectory = listDirs();
-    for (int i = 0; i < subDirectory.length; i++) {
-      subDirectory[i].deleteAll();
+    for (TDirectory aSubDirectory : subDirectory) {
+      aSubDirectory.deleteAll();
     }
 
     TFile[] files = listFiles();
-    for (int i = 0; i < files.length; i++) {
-      files[i].delete();
+    for (TFile file : files) {
+      file.delete();
     }
     delete();
   }
@@ -151,7 +157,7 @@ public class TDirectory extends TEntry {
 
     final TDirectory directory = (TDirectory) o;
 
-    return fileSystem.equals(directory.fileSystem) && path.equals(directory.path);
+    return filesystem().equals(directory.filesystem()) && path.equals(directory.path);
 
   }
 
@@ -163,16 +169,14 @@ public class TDirectory extends TEntry {
 
   private void copySubDirectories(TDirectory target) throws TIoException {
     TDirectory[] subdirs = listDirs();
-    for (int i = 0; i < subdirs.length; i++) {
-      TDirectory subdir = subdirs[i];
+    for (TDirectory subdir : subdirs) {
       subdir.mergeTo(target.dir(subdir.name()));
     }
   }
 
   private void copyFiles(TDirectory target) throws TIoException {
     TFile[] files = listFiles();
-    for (int i = 0; i < files.length; i++) {
-      TFile file = files[i];
+    for (TFile file : files) {
       file.copyTo(target.file(file.name()));
     }
   }
@@ -184,8 +188,8 @@ public class TDirectory extends TEntry {
     if (target.exists()) {
       throw new TIoException(target.path, "Destination exists");
     }
-    if (fileSystem == target.fileSystem || fileSystem.equals(target.fileSystem)) {
-      fileSystem.moveDirectory(path, target.path);
+    if (filesystem() == target.filesystem() || filesystem().equals(target.filesystem())) {
+      filesystem().moveDirectory(path, target.path);
     } else {
       this.mergeTo(target);
       delete();
@@ -210,12 +214,11 @@ public class TDirectory extends TEntry {
 
       private void addDirEntry(ZipOutputStream zipStream, String path, TDirectory directory) throws IOException {
         TFile[] files = directory.listFiles();
-        for (int i = 0; i < files.length; i++) {
-          addFileEntry(zipStream, path, files[i]);
+        for (TFile file : files) {
+          addFileEntry(zipStream, path, file);
         }
         TDirectory[] directories = directory.listDirs();
-        for (int i = 0; i < directories.length; i++) {
-          TDirectory subDirectory = directories[i];
+        for (TDirectory subDirectory : directories) {
           addDirEntry(zipStream, path + "/" + subDirectory.name(), subDirectory);
         }
         zipStream.putNextEntry(new ZipEntry(path + "/"));

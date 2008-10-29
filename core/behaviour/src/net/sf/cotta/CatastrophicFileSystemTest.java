@@ -69,7 +69,7 @@ public class CatastrophicFileSystemTest extends CottaTestBase {
         fileSystem.createInputStream(one);
       }
     });
-    ensure.that(new TFile(fileSystem, two).load()).eq("");
+    ensure.that(new TFile(new TFileFactory(fileSystem), two).load()).eq("");
   }
 
 }

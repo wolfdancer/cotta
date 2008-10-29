@@ -278,7 +278,7 @@ public class InMemoryFileSystemTest extends CottaTestBase {
     TPath source = TPath.parse("/source.txt");
     TPath dest = TPath.parse("/dest.txt");
     String content = "in memory file";
-    new TFile(fileSystem, source).save(content);
+    new TFile(new TFileFactory(fileSystem), source).save(content);
     fileSystem.moveFile(source, dest);
     ensure.that(fileSystem.fileExists(source)).eq(false);
     ensure.that(fileSystem.fileExists(dest)).eq(true);
@@ -286,7 +286,7 @@ public class InMemoryFileSystemTest extends CottaTestBase {
   }
 
   private String loadContent(InMemoryFileSystem fileSystem, TPath path) throws TIoException {
-    return new TFile(fileSystem, path).load();
+    return new TFile(new TFileFactory(fileSystem), path).load();
   }
 
   public void testGetPathString() throws Exception {
@@ -299,7 +299,7 @@ public class InMemoryFileSystemTest extends CottaTestBase {
     InMemoryFileSystem fileSystem = new InMemoryFileSystem();
     TPath path = TPath.parse("/content.txt");
     String content = "im memory file system";
-    new TFile(fileSystem, path).save(content);
+    new TFile(new TFileFactory(fileSystem), path).save(content);
     ensure.that(fileSystem.fileLength(path)).eq(content.getBytes().length);
   }
 

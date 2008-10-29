@@ -86,13 +86,13 @@ public class ClassPathEntry {
    */
   public void read(ClassPathEntryProcessor processor) throws TIoException {
     TResource resource = TResource.NULL;
-    TDirectory directory = null;
+    TDirectory directory;
     if (ClassPathType.DIRECTORY.equals(type)) {
       directory = this.directory;
     } else {
       ZipFileSystem fileSystem = convertToFileSystem();
       resource = fileSystem;
-      directory = new TDirectory(fileSystem, TPath.parse("/"));
+      directory = new TDirectory(new TFileFactory(fileSystem), TPath.parse("/"));
     }
     callBack(processor, resource, directory);
   }

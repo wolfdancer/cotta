@@ -2,13 +2,27 @@ package net.sf.cotta;
 
 import java.io.File;
 
+/**
+ * Entry instance that represents either a file or a directory.
+ */
 public class TEntry {
   protected TPath path;
-  protected FileSystem fileSystem;
+  private TFileFactory factory;
 
+  /**
+   * Create an instance of TEntry
+   * @param fileSystem file system backing the entry
+   * @param path path for the entry
+   * @deprecated use the other constructor for default encoding support through TFactory
+   * @see #TEntry(TFileFactory, TPath)
+   */
   public TEntry(FileSystem fileSystem, TPath path) {
+    this(new TFileFactory(fileSystem), path);
+  }
+
+  public TEntry(TFileFactory factory, TPath path) {
+    this.factory = factory;
     this.path = path;
-    this.fileSystem = fileSystem;
   }
 
   public boolean isChildOf(TDirectory directory) {
@@ -24,11 +38,19 @@ public class TEntry {
   }
 
   public TDirectory parent() {
-    return new TDirectory(fileSystem, path.parent());
+    return new TDirectory(factory(), path.parent());
   }
 
   public String toCanonicalPath() {
-    return fileSystem.toCanonicalPath(path);
+    return filesystem().toCanonicalPath(path);
+  }
+
+  protected TFileFactory factory() {
+    return factory;
+  }
+
+  protected FileSystem filesystem() {
+    return factory.getFileSystem();
   }
 
   public TPath toPath() {
@@ -43,17 +65,17 @@ public class TEntry {
    * @throws RuntimeException if the underlying file system is not a normal file system.
    */
   public File toJavaFile() {
-    return fileSystem.toJavaFile(path);
+    return filesystem().toJavaFile(path);
   }
 
   public int hashCode() {
     int result;
     result = path.hashCode();
-    result = 29 * result + fileSystem.hashCode();
+    result = 29 * result + filesystem().hashCode();
     return result;
   }
 
   public String path() {
-    return fileSystem.pathString(path);
+    return filesystem().pathString(path);
   }
 }

@@ -14,7 +14,6 @@ public class ClassPathLocator extends ClassPathEntryLocator {
     super(absoluteResourcePath);
   }
 
-  @SuppressWarnings({"deprecation"})
   public ClassPath locate() {
     URL url = getClass().getResource(resourceString);
     if ("jar".equalsIgnoreCase(url.getProtocol())) {

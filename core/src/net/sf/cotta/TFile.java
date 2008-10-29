@@ -17,17 +17,33 @@ import java.nio.channels.FileChannel;
 public class TFile extends TEntry {
   private static final int READ_BUFFER_SIZE = 64;
 
+  /**
+   * Create TFile instance backed up by the file system
+   * @param fileSystem file system backing the file
+   * @param path path for the file
+   * @deprecated use the other constructor for default encoding support
+   * @see #TFile(TFileFactory, TPath)
+   */
   public TFile(FileSystem fileSystem, TPath path) {
-    super(fileSystem, path);
+    this(new TFileFactory(fileSystem), path);
+  }
+
+  /**
+   * Create TFile instance backed up by the factory
+   * @param factory file factory as the file system
+   * @param path path for the file
+   */
+  public TFile(TFileFactory factory, TPath path) {
+    super(factory, path);
   }
 
   public boolean exists() {
-    return fileSystem.fileExists(path);
+    return filesystem().fileExists(path);
   }
 
   public TFile create() throws TIoException {
     parent().ensureExists();
-    fileSystem.createFile(path);
+    filesystem().createFile(path);
     return this;
   }
 
@@ -44,7 +60,7 @@ public class TFile extends TEntry {
   }
 
   public void delete() throws TIoException {
-    fileSystem.deleteFile(path);
+    filesystem().deleteFile(path);
   }
 
   private StreamFactory streamFactory() {
@@ -69,16 +85,16 @@ public class TFile extends TEntry {
   }
 
   private FileChannel inputChannel() throws TIoException {
-    return fileSystem.createInputChannel(path);
+    return filesystem().createInputChannel(path);
   }
 
   private OutputStream outputStream(OutputMode mode) throws TIoException {
     parent().ensureExists();
-    return fileSystem.createOutputStream(path, mode);
+    return filesystem().createOutputStream(path, mode);
   }
 
   private InputStream inputStream() throws TIoException {
-    return fileSystem.createInputStream(path);
+    return filesystem().createInputStream(path);
   }
 
   public void copyTo(final TFile target) throws TIoException {
@@ -113,8 +129,8 @@ public class TFile extends TEntry {
     if (destination.exists()) {
       throw new TIoException(destination.path, "Destination exists");
     }
-    if (fileSystem == destination.fileSystem || fileSystem.equals(destination.fileSystem)) {
-      fileSystem.moveFile(this.path, destination.path);
+    if (filesystem() == destination.filesystem() || filesystem().equals(destination.filesystem())) {
+      filesystem().moveFile(this.path, destination.path);
     } else {
       this.copyTo(destination);
       delete();
@@ -122,7 +138,7 @@ public class TFile extends TEntry {
   }
 
   public long length() {
-    return fileSystem.fileLength(path);
+    return filesystem().fileLength(path);
   }
 
   public TFile ensureExists() throws TIoException {
@@ -208,7 +224,7 @@ public class TFile extends TEntry {
 
     final TFile file = (TFile) o;
 
-    return fileSystem.equals(file.fileSystem) && path.equals(file.path);
+    return filesystem().equals(file.filesystem()) && path.equals(file.path);
   }
 
   public String toString() {

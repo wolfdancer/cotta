@@ -130,14 +130,14 @@ public class TDirectoryTest extends PhysicalFileSystemTestBase {
 
   public void testEqualIfPathAndFileSystemEqual() throws Exception {
     FileSystem fileSystem = new InMemoryFileSystem();
-    TDirectory directory1 = new TDirectory(fileSystem, TPath.parse("/tmp/test"));
-    TDirectory directory2 = new TDirectory(fileSystem, TPath.parse("/tmp/test"));
+    TDirectory directory1 = new TDirectory(new TFileFactory(fileSystem), TPath.parse("/tmp/test"));
+    TDirectory directory2 = new TDirectory(new TFileFactory(fileSystem), TPath.parse("/tmp/test"));
     ensure.that(directory1.equals(directory2)).eq(true);
   }
 
   public void testThrowExceptionIfDirectoryNotFoundInListingDirectories() throws Exception {
     FileSystem fileSystem = new InMemoryFileSystem();
-    final TDirectory directory = new TDirectory(fileSystem, TPath.parse("/tmp/test"));
+    final TDirectory directory = new TDirectory(new TFileFactory(fileSystem), TPath.parse("/tmp/test"));
     runAndCatch(TDirectoryNotFoundException.class, new CodeBlock() {
       public void execute() throws Exception {
         directory.listDirs();
@@ -147,7 +147,7 @@ public class TDirectoryTest extends PhysicalFileSystemTestBase {
 
   public void testThrowExceptionIfDirectoryNotFoundInListingFiles() throws Exception {
     FileSystem fileSystem = new InMemoryFileSystem();
-    final TDirectory directory = new TDirectory(fileSystem, TPath.parse("/tmp/test"));
+    final TDirectory directory = new TDirectory(new TFileFactory(fileSystem), TPath.parse("/tmp/test"));
     runAndCatch(TDirectoryNotFoundException.class, new CodeBlock() {
       public void execute() throws Exception {
         directory.listFiles();
@@ -158,16 +158,16 @@ public class TDirectoryTest extends PhysicalFileSystemTestBase {
   public void testGetPath() throws Exception {
     FileSystem fileSystem = new InMemoryFileSystem();
     TPath path = TPath.parse("/tmp/test");
-    TDirectory directory = new TDirectory(fileSystem, path);
+    TDirectory directory = new TDirectory(new TFileFactory(fileSystem), path);
     ensure.that(directory.path()).eq(fileSystem.pathString(path));
   }
 
   public void testCopyDirectoryFiles() throws TIoException {
     FileSystem fileSystem = new InMemoryFileSystem();
     TPath path = TPath.parse("/tmp/from");
-    TDirectory source = new TDirectory(fileSystem, path);
+    TDirectory source = new TDirectory(new TFileFactory(fileSystem), path);
     source.file("source.txt").save("source");
-    TDirectory target = new TDirectory(fileSystem, TPath.parse("/tmp/to"));
+    TDirectory target = new TDirectory(new TFileFactory(fileSystem), TPath.parse("/tmp/to"));
     source.mergeTo(target);
     ensure.that(target.file("source.txt").load()).eq("source");
   }
@@ -175,9 +175,9 @@ public class TDirectoryTest extends PhysicalFileSystemTestBase {
   public void testCopySubDirectory() throws TIoException {
     FileSystem fileSystem = new InMemoryFileSystem();
     TPath path = TPath.parse("/tmp/from");
-    TDirectory source = new TDirectory(fileSystem, path);
+    TDirectory source = new TDirectory(new TFileFactory(fileSystem), path);
     source.dir("subdirectory").ensureExists();
-    TDirectory target = new TDirectory(fileSystem, TPath.parse("/tmp/to"));
+    TDirectory target = new TDirectory(new TFileFactory(fileSystem), TPath.parse("/tmp/to"));
     source.mergeTo(target);
     ensure.that(target.dir("subdirectory").exists()).eq(true);
   }
@@ -185,9 +185,9 @@ public class TDirectoryTest extends PhysicalFileSystemTestBase {
   public void testCopyFilesInSubDirectory() throws TIoException {
     FileSystem fileSystem = new InMemoryFileSystem();
     TPath path = TPath.parse("/tmp/from");
-    TDirectory source = new TDirectory(fileSystem, path);
+    TDirectory source = new TDirectory(new TFileFactory(fileSystem), path);
     source.dir("subdirectory").file("source.txt").save("subsource");
-    TDirectory target = new TDirectory(fileSystem, TPath.parse("/tmp/to"));
+    TDirectory target = new TDirectory(new TFileFactory(fileSystem), TPath.parse("/tmp/to"));
     source.mergeTo(target);
     ensure.that(target.dir("subdirectory").file("source.txt").load()).eq("subsource");
   }
@@ -195,9 +195,9 @@ public class TDirectoryTest extends PhysicalFileSystemTestBase {
   public void testMoveDirectory() throws TIoException {
     FileSystem fileSystem = new InMemoryFileSystem();
     TPath path = TPath.parse("/tmp/from");
-    TDirectory source = new TDirectory(fileSystem, path);
+    TDirectory source = new TDirectory(new TFileFactory(fileSystem), path);
     source.dir("subdirectory").file("source.txt").save("subsource");
-    TDirectory target = new TDirectory(fileSystem, TPath.parse("/tmp/to"));
+    TDirectory target = new TDirectory(new TFileFactory(fileSystem), TPath.parse("/tmp/to"));
     source.moveTo(target);
     ensure.that(target.dir("subdirectory").file("source.txt").load()).eq("subsource");
     ensure.that(source.exists()).eq(false);
@@ -214,7 +214,7 @@ public class TDirectoryTest extends PhysicalFileSystemTestBase {
         will(returnValue(expected));
       }
     });
-    TDirectory directory = new TDirectory(fileSystem, path);
+    TDirectory directory = new TDirectory(new TFileFactory(fileSystem), path);
     ensure.that(directory.toJavaFile()).sameAs(expected);
     context.assertIsSatisfied();
   }
@@ -298,7 +298,7 @@ public class TDirectoryTest extends PhysicalFileSystemTestBase {
   }
 
   public void testExposePathBehaviours() throws Exception {
-    TDirectory directory = new TDirectory(new InMemoryFileSystem(), TPath.parse("/one/two"));
+    TDirectory directory = new TDirectory(new TFileFactory(new InMemoryFileSystem()), TPath.parse("/one/two"));
     TDirectory subDirectory = directory.dir(TPath.parse("three/four"));
     ensure.that(subDirectory.isChildOf(directory)).eq(true);
     ensure.that(subDirectory.pathFrom(directory)).eq(subDirectory.toPath().pathFrom(directory.toPath()));

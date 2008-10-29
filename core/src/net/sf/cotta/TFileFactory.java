@@ -29,7 +29,11 @@ public class TFileFactory {
     this.fileSystem = fileSystem;
   }
 
-  /**
+  FileSystem getFileSystem() {
+    return fileSystem;
+  }
+
+    /**
    * Create the TFile that is represented by the path and backed by the file system
    *
    * @param pathString The path string that represents the file
@@ -48,7 +52,7 @@ public class TFileFactory {
    * @see net.sf.cotta.TPath#parse(String)
    */
   public TDirectory dir(String pathString) {
-    return new TDirectory(fileSystem, TPath.parse(pathString));
+    return new TDirectory(this, TPath.parse(pathString));
   }
 
   /**
@@ -115,7 +119,7 @@ public class TFileFactory {
   }
 
   private static TFile fileFromPath(FileSystem fileSystem, String pathString) {
-    return new TFile(fileSystem, TPath.parse(pathString));
+    return new TFile(new TFileFactory(fileSystem), TPath.parse(pathString));
   }
 
   /**
@@ -132,7 +136,7 @@ public class TFileFactory {
   }
 
   private static TDirectory directoryFromPath(FileSystem fileSystem, String pathString) {
-    return new TDirectory(fileSystem, TPath.parse(pathString));
+    return new TDirectory(new TFileFactory(fileSystem), TPath.parse(pathString));
   }
 
   /**

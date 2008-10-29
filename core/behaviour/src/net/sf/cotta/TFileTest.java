@@ -51,17 +51,17 @@ public class TFileTest extends CottaTestBase {
 
   public void testBeEqualIfPathAndFileSystemAreEqual() throws Exception {
     InMemoryFileSystem fileSystem = new InMemoryFileSystem();
-    TFile fileOne = new TFile(fileSystem, TPath.parse("/tmp/test"));
-    TFile fileTwo = new TFile(fileSystem, TPath.parse("/tmp/test"));
+    TFile fileOne = new TFile(new TFileFactory(fileSystem), TPath.parse("/tmp/test"));
+    TFile fileTwo = new TFile(new TFileFactory(fileSystem), TPath.parse("/tmp/test"));
     ensure.that(fileOne.equals(fileTwo)).eq(true);
   }
 
   public void testCopyToAnotherFile() throws Exception {
     InMemoryFileSystem fileSystem = new InMemoryFileSystem();
     String content = "This is a sample content";
-    TFile source = new TFile(fileSystem, TPath.parse("/source.txt"));
+    TFile source = new TFile(new TFileFactory(fileSystem), TPath.parse("/source.txt"));
     source.save(content);
-    TFile dest = new TFile(fileSystem, TPath.parse("/dest.txt"));
+    TFile dest = new TFile(new TFileFactory(fileSystem), TPath.parse("/dest.txt"));
     source.copyTo(dest);
     ensure.that(dest.exists()).eq(true);
     ensure.that(dest.load()).eq(content);
@@ -71,9 +71,9 @@ public class TFileTest extends CottaTestBase {
     Mockery context = new Mockery();
     final FileSystem fileSystem = context.mock(FileSystem.class);
     final TPath sourcePath = TPath.parse("/source.txt");
-    TFile source = new TFile(fileSystem, sourcePath);
+    TFile source = new TFile(new TFileFactory(fileSystem), sourcePath);
     final TPath destPath = TPath.parse("/dest.txt");
-    TFile dest = new TFile(fileSystem, destPath);
+    TFile dest = new TFile(new TFileFactory(fileSystem), destPath);
     context.checking(new Expectations() {
       {
         one(fileSystem).moveFile(sourcePath, destPath);
@@ -117,8 +117,8 @@ public class TFileTest extends CottaTestBase {
     String content = "move file behaviour";
     InMemoryFileSystem source = new InMemoryFileSystem();
     InMemoryFileSystem dest = new InMemoryFileSystem();
-    TFile sourceFile = new TFile(source, TPath.parse("/source.txt"));
-    TFile destFile = new TFile(dest, TPath.parse("/dest.txt"));
+    TFile sourceFile = new TFile(new TFileFactory(source), TPath.parse("/source.txt"));
+    TFile destFile = new TFile(new TFileFactory(dest), TPath.parse("/dest.txt"));
     sourceFile.save(content);
     sourceFile.moveTo(destFile);
     ensure.that(sourceFile.exists()).eq(false);
@@ -128,24 +128,24 @@ public class TFileTest extends CottaTestBase {
 
   public void testEnsureExists() throws Exception {
     InMemoryFileSystem fileSystem = new InMemoryFileSystem();
-    TFile file = new TFile(fileSystem, TPath.parse("/source.txt")).ensureExists();
+    TFile file = new TFile(new TFileFactory(fileSystem), TPath.parse("/source.txt")).ensureExists();
     ensure.that(file.load()).eq("");
   }
 
   public void testKnowExteionAndBaseName() throws Exception {
-    TFile file = new TFile(new InMemoryFileSystem(), TPath.parse("/tmp/source/content.txt"));
+    TFile file = new TFile(new TFileFactory(new InMemoryFileSystem()), TPath.parse("/tmp/source/content.txt"));
     ensure.that("txt").eq(file.extname());
     ensure.that("content").eq(file.basename());
   }
 
   public void testReturnEmptyStringForNoExtensionName() {
-    TFile file = new TFile(new InMemoryFileSystem(), TPath.parse("/tmp/source/run_all"));
+    TFile file = new TFile(new TFileFactory(new InMemoryFileSystem()), TPath.parse("/tmp/source/run_all"));
     ensure.that("").eq(file.extname());
     ensure.that("run_all").eq(file.basename());
   }
 
   public void testReturnEmptyStringForNoBaseName() throws Exception {
-    TFile file = new TFile(new InMemoryFileSystem(), TPath.parse("/tmp/.vimrc"));
+    TFile file = new TFile(new TFileFactory(new InMemoryFileSystem()), TPath.parse("/tmp/.vimrc"));
     ensure.that("vimrc").eq(file.extname());
     ensure.that("").eq(file.basename());
   }
@@ -154,7 +154,7 @@ public class TFileTest extends CottaTestBase {
     TPath path = TPath.parse("/tmp/test.txt");
     Mockery context = new Mockery();
     FileSystem fileSystem = context.mock(FileSystem.class);
-    TFile file = new TFile(fileSystem, path);
+    TFile file = new TFile(new TFileFactory(fileSystem), path);
     final IoProcessor ioProcessor = context.mock(IoProcessor.class);
     context.checking(new Expectations() {
       {
@@ -170,7 +170,7 @@ public class TFileTest extends CottaTestBase {
     Mockery context = new Mockery();
     final FileSystem fileSystem = context.mock(FileSystem.class);
     final TPath path = TPath.parse("/tmp/test.txt");
-    TFile file = new TFile(fileSystem, path);
+    TFile file = new TFile(new TFileFactory(fileSystem), path);
     context.checking(new Expectations() {
       {
         one(fileSystem).createInputStream(path);
@@ -270,13 +270,13 @@ public class TFileTest extends CottaTestBase {
         will(returnValue(expected));
       }
     });
-    TFile file = new TFile(fileSystem, path);
+    TFile file = new TFile(new TFileFactory(fileSystem), path);
     ensure.that(file.toJavaFile()).sameAs(expected);
     context.assertIsSatisfied();
   }
 
   public void testExposePathBehaviours() throws Exception {
-    TDirectory directory = new TDirectory(new InMemoryFileSystem(), TPath.parse("/one/two"));
+    TDirectory directory = new TDirectory(new TFileFactory(new InMemoryFileSystem()), TPath.parse("/one/two"));
     TFile file = directory.file(TPath.parse("three/four.txt"));
     ensure.that(file.isChildOf(directory)).eq(true);
     ensure.that(file.pathFrom(directory)).eq(file.toPath().pathFrom(directory.toPath()));

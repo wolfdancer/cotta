@@ -3,6 +3,7 @@ package net.sf.cotta.physical;
 import net.sf.cotta.TFile;
 import net.sf.cotta.TIoException;
 import net.sf.cotta.TPath;
+import net.sf.cotta.TFileFactory;
 import net.sf.cotta.io.OutputMode;
 import net.sf.cotta.test.assertion.CodeBlock;
 
@@ -62,10 +63,10 @@ public class PhysicalFileSystemTest extends PhysicalFileSystemTestBase {
     String content = "move file directly";
     TPath source = TPath.parse("tmp/source.txt");
     TPath dest = TPath.parse("tmp/target.txt");
-    new TFile(fileSystem, source).save(content);
+    new TFile(new TFileFactory(fileSystem), source).save(content);
     fileSystem.moveFile(source, dest);
     ensure.that(fileSystem.fileExists(source)).eq(false);
-    ensure.that(new TFile(fileSystem, dest).load()).eq(content);
+    ensure.that(new TFile(new TFileFactory(fileSystem), dest).load()).eq(content);
   }
 
   public void testGetFilePath() throws Exception {
@@ -76,7 +77,7 @@ public class PhysicalFileSystemTest extends PhysicalFileSystemTestBase {
   public void testGetFileLength() throws Exception {
     TPath path = TPath.parse("tmp/source.txt");
     String content = "my content";
-    new TFile(fileSystem, path).save(content);
+    new TFile(new TFileFactory(fileSystem), path).save(content);
     ensure.that(fileSystem.fileLength(path)).eq(content.getBytes().length);
   }
 
