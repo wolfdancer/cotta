@@ -99,7 +99,7 @@ public class TDirectory extends TEntry {
     TPath[] paths = filesystem().listDirs(this.path);
     List<TDirectory> directories = new ArrayList<TDirectory>(paths.length);
     for (TPath path : paths) {
-      TDirectory candidate = dir(path);
+      TDirectory candidate = new TDirectory(factory(), path);
       if (directoryFilter.accept(candidate)) {
         directories.add(candidate);
       }
@@ -119,10 +119,10 @@ public class TDirectory extends TEntry {
 
   public TFile[] listFiles(TFileFilter fileFilter) throws TIoException {
     checkDirectoryExists();
-    TPath[] tPaths = filesystem().listFiles(path);
-    List<TFile> files = new ArrayList<TFile>(tPaths.length);
-    for (TPath path : tPaths) {
-      TFile candidate = file(path);
+    TPath[] paths = filesystem().listFiles(path);
+    List<TFile> files = new ArrayList<TFile>(paths.length);
+    for (TPath path : paths) {
+      TFile candidate = new TFile(factory(), path);
       if (fileFilter.accept(candidate)) {
         files.add(candidate);
       }

@@ -15,6 +15,7 @@ import java.net.URL;
  */
 public class TFileFactory {
   private FileSystem fileSystem;
+  private String defaultEncoding;
 
   /**
    * Creat the factory using physical file system
@@ -26,7 +27,12 @@ public class TFileFactory {
   }
 
   public TFileFactory(FileSystem fileSystem) {
+    this(fileSystem, null);
+  }
+
+  public TFileFactory(FileSystem fileSystem, String defaultEncoding) {
     this.fileSystem = fileSystem;
+    this.defaultEncoding = defaultEncoding;
   }
 
   FileSystem getFileSystem() {
@@ -184,5 +190,9 @@ public class TFileFactory {
 
   public static TDirectory dir(File file) {
     return physicalDir(file);
+  }
+
+  public String defaultEncoding() {
+    return defaultEncoding;
   }
 }

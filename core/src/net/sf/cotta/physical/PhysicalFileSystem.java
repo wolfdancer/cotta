@@ -38,8 +38,9 @@ public class PhysicalFileSystem implements FileSystem {
   }
 
   public void deleteFile(TPath path) throws TIoException {
-    if (!file(path).delete()) {
-      throw new TIoException(path, "Deleting file failed");
+    File file = file(path);
+    if (!file.delete()) {
+      throw new TIoException(path, "Deleting file failed:" + file.getAbsolutePath());
     }
   }
 

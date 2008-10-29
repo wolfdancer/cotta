@@ -153,7 +153,7 @@ public class TFile extends TEntry {
   }
 
   public void open(IoProcessor processor) throws TIoException {
-    new IoManager(streamFactory()).open(processor);
+    new IoManager(streamFactory(), factory().defaultEncoding()).open(processor);
   }
 
   public void read(final InputProcessor processor) throws TIoException {

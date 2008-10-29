@@ -13,10 +13,16 @@ public class IoManager {
   private static final int INITIAL_CAPACITY = 3;
 
   private IoFactory ioFactory;
+  private String defaultEncoding;
   private List resourceList = new ArrayList(INITIAL_CAPACITY);
 
   public IoManager(StreamFactory streamFactory) {
+    this(streamFactory, null);
+  }
+
+  public IoManager(StreamFactory streamFactory, String defaultEncoding) {
     this.ioFactory = new IoFactory(streamFactory);
+    this.defaultEncoding = defaultEncoding;
   }
 
   public InputStream inputStream() throws TIoException {
