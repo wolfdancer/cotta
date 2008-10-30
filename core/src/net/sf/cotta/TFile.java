@@ -19,10 +19,11 @@ public class TFile extends TEntry {
 
   /**
    * Create TFile instance backed up by the file system
+   *
    * @param fileSystem file system backing the file
-   * @param path path for the file
-   * @deprecated use the other constructor for default encoding support
+   * @param path       path for the file
    * @see #TFile(TFileFactory, TPath)
+   * @deprecated use the other constructor for default encoding support
    */
   public TFile(FileSystem fileSystem, TPath path) {
     this(new TFileFactory(fileSystem), path);
@@ -30,8 +31,9 @@ public class TFile extends TEntry {
 
   /**
    * Create TFile instance backed up by the factory
+   *
    * @param factory file factory as the file system
-   * @param path path for the file
+   * @param path    path for the file
    */
   public TFile(TFileFactory factory, TPath path) {
     super(factory, path);
@@ -149,7 +151,7 @@ public class TFile extends TEntry {
   }
 
   public IoFactory io() {
-    return new IoFactory(streamFactory());
+    return new IoFactory(streamFactory(), factory().defaultEncoding());
   }
 
   public void open(IoProcessor processor) throws TIoException {

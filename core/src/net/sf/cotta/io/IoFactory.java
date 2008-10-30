@@ -8,9 +8,15 @@ import java.nio.channels.FileChannel;
 
 public class IoFactory {
   private StreamFactory streamFactory;
+  private String defaultEncoding;
 
   public IoFactory(StreamFactory streamFactory) {
+    this(streamFactory, null);
+  }
+
+  public IoFactory(StreamFactory streamFactory, String defaultEncoding) {
     this.streamFactory = streamFactory;
+    this.defaultEncoding = defaultEncoding;
   }
 
   public InputStream inputStream() throws TIoException {
@@ -23,25 +29,29 @@ public class IoFactory {
 
   /**
    * Create a Reader using the default encoding
+   *
    * @return a Reader with the default encoding
    * @throws TIoException for any IO error
    */
   public Reader reader() throws TIoException {
-    return new InputStreamReader(inputStream());
+    return defaultEncoding == null ?
+        new InputStreamReader(inputStream()) :
+        reader(defaultEncoding);
   }
-  
+
   /**
    * Create a Reader using the provided encoding
-   * @param encoding
-   * @return
-   * @throws TIoException
+   *
+   * @param encoding encoding for the reader
+   * @return Reader with specified encoding
+   * @throws TIoException if any IOException thrown
    */
   public Reader reader(String encoding) throws TIoException {
-	try {
-	  return new InputStreamReader(inputStream(), encoding);
-	} catch (UnsupportedEncodingException e) {
-	  throw new TIoException(streamFactory.path(), "Encoding not supported:" + encoding, e);
-	}
+    try {
+      return new InputStreamReader(inputStream(), encoding);
+    } catch (UnsupportedEncodingException e) {
+      throw new TIoException(streamFactory.path(), "Encoding not supported:" + encoding, e);
+    }
   }
 
   public BufferedReader bufferedReader() throws TIoException {
@@ -53,17 +63,19 @@ public class IoFactory {
   }
 
   public Writer writer(OutputMode mode) throws TIoException {
-    return new OutputStreamWriter(outputStream(mode));
+    return defaultEncoding == null ?
+        new OutputStreamWriter(outputStream(mode)) :
+        writer(mode, defaultEncoding);
   }
 
   public Writer writer(OutputMode mode, String encoding) throws TIoException {
-	try {
-	  return new OutputStreamWriter(outputStream(mode), encoding);
-	} catch (UnsupportedEncodingException e) {
-	  throw new TIoException(streamFactory.path(), "Encoding not supported:" + encoding, e);
-	}
+    try {
+      return new OutputStreamWriter(outputStream(mode), encoding);
+    } catch (UnsupportedEncodingException e) {
+      throw new TIoException(streamFactory.path(), "Encoding not supported:" + encoding, e);
+    }
   }
-  
+
   public BufferedWriter bufferedWriter(OutputMode mode) throws TIoException {
     return new BufferedWriter(writer(mode));
   }

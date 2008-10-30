@@ -26,7 +26,7 @@ public class IoFactoryTest extends TestBase {
     ensure.that(new IoFactory(factory).inputStream()).sameAs(stub);
   }
 
-  private StreamFactory mockFactoryForInput(final InputStreamStub stub) throws TIoException {
+  private StreamFactory mockFactoryForInput(final InputStream stub) throws TIoException {
     Mockery context = new Mockery();
     final StreamFactory factory = context.mock(StreamFactory.class);
     context.checking(new Expectations() {
@@ -62,13 +62,16 @@ public class IoFactoryTest extends TestBase {
     reader.close();
     ensure.that(stub.isClosed()).eq(true);
   }
-  
+
   public void testCreateReaderWithEncoding() throws Exception {
-	final InputStreamStub stub = new InputStreamStub();
-	final StreamFactory streamFactory = mockFactoryForInput(stub);
-	Reader reader = new IoFactory(streamFactory).reader("utf-8");
-	reader.close();
-	ensure.that(stub.isClosed()).eq(true);
+    String value = "\u00c7\u00c9";
+    ByteArrayInputStream inputStream = new ByteArrayInputStream(value.getBytes("utf-16"));
+    final StreamFactory streamFactory = mockFactoryForInput(inputStream);
+    Reader reader = new IoFactory(streamFactory).reader("utf-16");
+    char[] ch = new char[2];
+    reader.read(ch, 0, 2);
+    reader.close();
+    ensure.that(new String(ch)).eq(value);
   }
 
   public void testCreateBufferredReader() throws Exception {
@@ -98,15 +101,25 @@ public class IoFactoryTest extends TestBase {
   }
 
   public void testCreateWriterWithEncoding() throws Exception {
-	final ByteArrayOutputStream output = new ByteArrayOutputStream();
-	final StreamFactory streamFactory = mockFactoryForOutput(output);
-	IoFactory factory = new IoFactory(streamFactory);
-	Writer writer = factory.writer(OutputMode.OVERWRITE, "utf-8");
-	writer.write("content".toCharArray());
-	writer.close();
-	ensure.that(output.toString()).eq("content");
+    final ByteArrayOutputStream output = new ByteArrayOutputStream();
+    final StreamFactory streamFactory = mockFactoryForOutput(output);
+    IoFactory factory = new IoFactory(streamFactory);
+    Writer writer = factory.writer(OutputMode.OVERWRITE, "utf-8");
+    writer.write("\u00c7\u00c9".toCharArray());
+    writer.close();
+    ensure.that(output.toString("utf-8")).eq("\u00c7\u00c9");
   }
-  
+
+  public void testCreateWriterUsingDefaultEncoding() throws Exception {
+    final ByteArrayOutputStream output = new ByteArrayOutputStream();
+    final StreamFactory streamFactory = mockFactoryForOutput(output);
+    IoFactory factory = new IoFactory(streamFactory, "utf-8");
+    Writer writer = factory.writer(OutputMode.OVERWRITE);
+    writer.write("\u00c7\u00c9".toCharArray());
+    writer.close();
+    ensure.that(output.toString("utf-8")).eq("\u00c7\u00c9");
+  }
+
   public void testCreatePrintWriter() throws Exception {
     final ByteArrayOutputStream output = new ByteArrayOutputStream();
     final StreamFactory streamFactory = mockFactoryForOutput(output);

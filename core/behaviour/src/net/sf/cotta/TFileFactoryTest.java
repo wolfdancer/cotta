@@ -1,5 +1,6 @@
 package net.sf.cotta;
 
+import net.sf.cotta.memory.InMemoryFileSystem;
 import net.sf.cotta.physical.PhysicalFileSystemTestBase;
 import net.sf.cotta.test.assertion.CodeBlock;
 
@@ -8,6 +9,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class TFileFactoryTest extends PhysicalFileSystemTestBase {
+
+  public void testEncodingForConstructor() {
+    TFileFactory factory = new TFileFactory(new InMemoryFileSystem());
+    ensure.that(factory.defaultEncoding()).isNotEmpty();
+
+    TFileFactory factoryWithEncoding = new TFileFactory(new InMemoryFileSystem(), "encoding");
+    ensure.that(factoryWithEncoding.defaultEncoding()).eq("encoding");
+  }
+
   public void testNotLoadFromAnHttpUrl() throws Exception {
     final URL url = new URL("http://cotta.sourceforge.net");
     ensure.that(TFileFactory.canConvertUrl(url)).eq(false);
@@ -83,6 +93,6 @@ public class TFileFactoryTest extends PhysicalFileSystemTestBase {
     //Ensure
     ensure.that(actual.exists()).eq(true);
   }
-  
+
 
 }

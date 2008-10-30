@@ -7,10 +7,7 @@ import net.sf.cotta.io.StreamFactory;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.Writer;
+import java.io.*;
 
 public class IoManagerTest extends CottaTestBase {
   private Mockery context;
@@ -116,6 +113,7 @@ public class IoManagerTest extends CottaTestBase {
       });
       fail("TIoException should have been thrown");
     } catch (TIoException e) {
+      //noinspection ThrowableResultOfMethodCallIgnored
       ensure.that(e.getCause()).isA(IOException.class);
     }
     ensure.that(inputStream.isClosed()).eq(true);
@@ -142,6 +140,45 @@ public class IoManagerTest extends CottaTestBase {
       }
     });
     //Ensure nothing fails
+  }
+
+  public void testUseDefaultEncodingForWriter() throws Exception {
+    final String string = "\u00c7\u00c9";
+    final ByteArrayOutputStream os = new ByteArrayOutputStream();
+    final StreamFactory factory = context.mock(StreamFactory.class);
+    context.checking(new Expectations() {
+      {
+        one(factory).outputStream(OutputMode.OVERWRITE);
+        will(returnValue(os));
+      }
+    });
+    IoManager manager = new IoManager(factory, "utf-16");
+    manager.open(new IoProcessor() {
+      public void process(IoManager io) throws IOException {
+        io.writer(OutputMode.OVERWRITE).write(string);
+      }
+    });
+    ensure.that(os.toString("utf-16")).eq(string);
+  }
+
+  public void testUseDefaultEncodingForReader() throws Exception {
+    final String string = "\u00c7\u00c9";
+    final ByteArrayInputStream is = new ByteArrayInputStream(string.getBytes("utf-16"));
+    final StreamFactory factory = context.mock(StreamFactory.class);
+    context.checking(new Expectations() {
+      {
+        one(factory).inputStream();
+        will(returnValue(is));
+      }
+    });
+    IoManager manager = new IoManager(factory, "utf-16");
+    final char[] actual = new char[2];
+    manager.open(new IoProcessor() {
+      public void process(IoManager io) throws IOException {
+        io.reader().read(actual, 0, 2);
+      }
+    });
+    ensure.that(new String(actual)).eq(string);
   }
 
 }

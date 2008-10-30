@@ -6,23 +6,20 @@ import java.io.*;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 public class IoManager {
   private static final int INITIAL_CAPACITY = 3;
 
   private IoFactory ioFactory;
-  private String defaultEncoding;
-  private List resourceList = new ArrayList(INITIAL_CAPACITY);
+  private List<IoResource> resourceList = new ArrayList<IoResource>(INITIAL_CAPACITY);
 
   public IoManager(StreamFactory streamFactory) {
     this(streamFactory, null);
   }
 
   public IoManager(StreamFactory streamFactory, String defaultEncoding) {
-    this.ioFactory = new IoFactory(streamFactory);
-    this.defaultEncoding = defaultEncoding;
+    this.ioFactory = new IoFactory(streamFactory, defaultEncoding);
   }
 
   public InputStream inputStream() throws TIoException {
@@ -81,8 +78,7 @@ public class IoManager {
 
   private void close() throws IOException {
     Collections.reverse(resourceList);
-    for (Iterator iterator = resourceList.iterator(); iterator.hasNext();) {
-      IoResource ioResource = (IoResource) iterator.next();
+    for (IoResource ioResource : resourceList) {
       ioResource.close();
     }
   }
