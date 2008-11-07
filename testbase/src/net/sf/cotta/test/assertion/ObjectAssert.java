@@ -8,7 +8,7 @@ import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsNot;
 import org.hamcrest.core.IsNull;
 import org.junit.Assert;
-import org.junit.matchers.CombinableMatcher;
+import org.junit.matchers.JUnitMatchers;
 
 public class ObjectAssert<T> extends Assert {
   private String description = "";
@@ -76,9 +76,7 @@ public class ObjectAssert<T> extends Assert {
   }
 
   public void javaEquals(T expected) {
-    matches(new CombinableMatcher<T>(IsEqual.equalTo(expected))
-        .and(hashEq(expected))
-    );
+    matches(JUnitMatchers.both(IsEqual.equalTo(expected)).and(hashEq(expected)));
   }
 
   private Matcher<T> hashEq(final T expected) {

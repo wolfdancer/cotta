@@ -4,7 +4,7 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.core.AllOf;
-import static org.junit.matchers.StringContains.containsString;
+import org.junit.matchers.JUnitMatchers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +41,7 @@ public class StringAssert extends ObjectAssert<String> {
 
   public void contains(String... expectedValues) {
     Matcher<String> matcher = expectedValues.length == 1 ?
-        containsString(expectedValues[0]) :
+        JUnitMatchers.containsString(expectedValues[0]) :
         allof(expectedValues);
     matches(matcher);
   }
@@ -49,7 +49,7 @@ public class StringAssert extends ObjectAssert<String> {
   private Matcher<String> allof(String[] expectedValues) {
     List<Matcher<? extends String>> matchers = new ArrayList<Matcher<? extends String>>(expectedValues.length);
     for (String item : expectedValues) {
-      matchers.add(containsString(item));
+      matchers.add(JUnitMatchers.containsString(item));
     }
     return new AllOf<String>(matchers);
   }

@@ -4,6 +4,7 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
+import org.hamcrest.core.IsNot;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,7 +31,11 @@ public class ListAssert<T> extends ObjectAssert<List<T>> {
   }
 
   public void isEmpty() {
-    matches(new BaseMatcher<List<T>>() {
+    matches(matcherIsEmpty());
+  }
+
+  private BaseMatcher<List<T>> matcherIsEmpty() {
+    return new BaseMatcher<List<T>>() {
 
       @SuppressWarnings({"unchecked"})
       public boolean matches(Object item) {
@@ -40,7 +45,7 @@ public class ListAssert<T> extends ObjectAssert<List<T>> {
       public void describeTo(Description description) {
         description.appendText("list should be empty");
       }
-    });
+    };
   }
 
   public T hasOneItem() {
@@ -48,16 +53,24 @@ public class ListAssert<T> extends ObjectAssert<List<T>> {
     return value().get(0);
   }
 
-  public void hasSize(final int expected) {
+  public void hasSize(int expected) {
+    isOfSize(expected);
+  }
+
+  public void isOfSize(final int expected) {
     matches(new BaseMatcher<List<T>>() {
       @SuppressWarnings({"unchecked"})
       public boolean matches(Object o) {
-        return ((List<T>)o).size() == expected;
+        return ((List<T>) o).size() == expected;
       }
 
       public void describeTo(Description description) {
         description.appendText("list should have size of <").appendValue(expected).appendText(">");
       }
     });
+  }
+
+  public void notEmpty() {
+    matches(IsNot.not(matcherIsEmpty()));
   }
 }

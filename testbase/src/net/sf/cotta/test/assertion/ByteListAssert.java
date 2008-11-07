@@ -39,4 +39,5 @@ public class ByteListAssert extends ListAssert<Byte> {
     }
     eq(list);
   }
+
 }
