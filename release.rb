@@ -24,12 +24,12 @@ cotta_testbase_jar = dist_dir.file('cotta-testbase.jar')
 cotta_testbase_source_zip = dist_dir.file('cotta-testbase-src.zip')
 
 cotta_core_release_jar = dist_dir.file("cotta-#{version.number}b#{version.build}.jar")
-cotta_core_release_source = dist_dir.file("cotta-src-#{version.number}b#{version.build}.zip")
+cotta_core_release_source = dist_dir.file("cotta-#{version.number}b#{version.build}-src.zip")
 cotta_core_jar.move_to(cotta_core_release_jar)
 cotta_core_source_zip.move_to(cotta_core_release_source)
 
 cotta_testbase_release_jar = dist_dir.file("cotta-testbase-#{version.number}b#{version.build}.jar")
-cotta_testbase_release_source = dist_dir.file("cotta-testbase-src-#{version.number}b#{version.build}.zip")
+cotta_testbase_release_source = dist_dir.file("cotta-testbase-#{version.number}b#{version.build}-src.zip")
 cotta_testbase_jar.move_to(cotta_testbase_release_jar)
 cotta_testbase_source_zip.move_to(cotta_testbase_release_source)
 
