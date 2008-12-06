@@ -13,6 +13,13 @@ public class PhysicalTfsTest extends TfsTestBase {
     }
   }
 
+/*
+  // manual test because it depends on the windows machine this test is running on
+  public void testNetworkPath() {
+    ensure.that(new TFileFactory(new PhysicalFileSystem()).dir("\\\\wolfdancer\\TempDownload")).exists();
+  }
+*/
+
   protected FileSystem fileSystem() {
     return ControlledFileSystem.pathControlledFileSystem(new PhysicalFileSystem(), TPath.parse("./tmp"));
   }

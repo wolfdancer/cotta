@@ -12,6 +12,7 @@ public class TPath {
   private TPath parent;
   private String[] elements;
   private static final String WINDOWS_SEPERATOR_PATTERN = "\\\\";
+  private static final String WINDOWOS_NETWORK_PATh = "\\\\";
   private static final char NATIVE_SEPERATOR_CHAR = '/';
   private static final String NATIVE_SEPERATOR = "/";
 
@@ -80,7 +81,7 @@ public class TPath {
    * @see TDirectory#dir(TPath)
    */
   public TPath join(TPath path) {
-    Stack result = new Stack();
+    Stack<String> result = new Stack<String>();
     result.addAll(Arrays.asList(elements));
     for (int i = 0; i < path.elements.length; i++) {
       String element = path.elements[i];
@@ -100,7 +101,7 @@ public class TPath {
         result.push(element);
       }
     }
-    return new TPath((String[]) result.toArray(new String[result.size()]));
+    return new TPath(result.toArray(new String[result.size()]));
   }
 
   public boolean equals(Object o) {
@@ -114,8 +115,7 @@ public class TPath {
 
   public int hashCode() {
     int result = 0;
-    for (int i = 0; i < elements.length; i++) {
-      String element = elements[i];
+    for (String element : elements) {
       result = 29 * result + element.hashCode();
     }
     return result;
@@ -143,12 +143,17 @@ public class TPath {
     if (pathString == null || pathString.length() == 0) {
       throw new IllegalArgumentException("null or empty path string is not allowed");
     }
-    return new TPath(convertToElementArray(pathString.replaceAll(WINDOWS_SEPERATOR_PATTERN, NATIVE_SEPERATOR)));
+    String head = "";
+    if (pathString.startsWith(WINDOWOS_NETWORK_PATh)) {
+      head = WINDOWOS_NETWORK_PATh;
+      pathString = pathString.substring(WINDOWOS_NETWORK_PATh.length());
+    }
+    return new TPath(convertToElementArray(head + pathString.replaceAll(WINDOWS_SEPERATOR_PATTERN, NATIVE_SEPERATOR)));
   }
 
   private static String[] convertToElementArray(String pathString) {
     boolean identifiedAsReferencedByRoot = false;
-    List list = new ArrayList();
+    List<String> list = new ArrayList<String>();
     if (pathString.startsWith("/")) {
       list.add("");
       identifiedAsReferencedByRoot = true;
@@ -156,20 +161,28 @@ public class TPath {
     for (StringTokenizer tokenizer = new StringTokenizer(pathString, NATIVE_SEPERATOR); tokenizer.hasMoreTokens();) {
       list.add(tokenizer.nextToken());
     }
-    if (!identifiedAsReferencedByRoot && !isTopElementADrivePath(list) && !isTopElementWorkingDirectory(list)) {
+    if (!identifiedAsReferencedByRoot
+        && !isTopElementADrivePath(list)
+        && !isTopElementWorkingDirectory(list)
+        && !isTopElementWindowsNetworkHost(list)) {
       list.add(0, ".");
     }
-    return (String[]) list.toArray(new String[list.size()]);
+    return list.toArray(new String[list.size()]);
   }
 
-  private static boolean isTopElementWorkingDirectory(List list) {
-    String top = (String) list.get(0);
+  private static boolean isTopElementWorkingDirectory(List<String> list) {
+    String top = list.get(0);
     return top.equals(".");
   }
 
-  private static boolean isTopElementADrivePath(List list) {
-    String top = (String) list.get(0);
+  private static boolean isTopElementADrivePath(List<String> list) {
+    String top = list.get(0);
     return top.matches("[A-Z|a-z]:");
+  }
+
+  private static boolean isTopElementWindowsNetworkHost(List<String> list) {
+    String top = list.get(0);
+    return top.startsWith(WINDOWOS_NETWORK_PATh);
   }
 
   public String toPathString() {
@@ -186,8 +199,7 @@ public class TPath {
 
   private String toPathStringImpl(char seperator) {
     StringBuffer buffer = new StringBuffer();
-    for (int i = 0; i < elements.length; i++) {
-      String element = elements[i];
+    for (String element : elements) {
       buffer.append(element).append(seperator);
     }
     if (buffer.length() > 1) {

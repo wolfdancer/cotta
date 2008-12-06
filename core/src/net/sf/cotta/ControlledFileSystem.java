@@ -8,7 +8,9 @@ import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 
 /**
- * @noinspection JavaDoc
+ * A file system that delegates all file operations to a controller
+ *
+ * @see net.sf.cotta.ControlledFileSystem.Controller
  */
 public class ControlledFileSystem implements FileSystem {
   private FileSystem fileSystem;

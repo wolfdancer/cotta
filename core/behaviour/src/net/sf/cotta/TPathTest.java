@@ -27,6 +27,15 @@ public class TPathTest extends CottaTestBase {
     ensure.that(path.parent().lastElementName()).eq(".");
   }
 
+  public void testSupportWindowsNetworkPath() {
+    TPath path = TPath.parse("\\\\host\\dir\\file");
+    ensure.that(path.lastElementName()).eq("file");
+    TPath parent = path.parent();
+    ensure.that(parent.lastElementName()).eq("dir");
+    TPath host = parent.parent();
+    ensure.that(host.lastElementName()).eq("\\\\host");
+  }
+
   public void testBeAbleToGetLastElementName() throws Exception {
     ensure.that(TPath.parse("c:\\tmp\\cotta\\testDir").lastElementName()).eq("testDir");
     ensure.that(TPath.parse("c:/tmp/cotta/testDir").lastElementName()).eq("testDir");
