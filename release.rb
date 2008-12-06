@@ -11,7 +11,7 @@ git = BuildMaster::Git.new(dir)
 manifest_file = dir.file('core/src/META-INF/MANIFEST.MF')
 manifest = BuildMaster::JavaManifest.new(manifest_file)
 
-git.pull
+# git.pull(origin master
 version = manifest.increase_build
 git.add manifest_file
 load 'rake'
