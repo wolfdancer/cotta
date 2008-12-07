@@ -3,7 +3,7 @@ Download
 -------------------------------------------------
 h1. Release
 
-"1.2":http://sourceforge.net/project/showfiles.php?group_id=171037 now available.
+<template:text property="release"/> "is now available":http://sourceforge.net/project/showfiles.php?group_id=171037.
 
 h1. Snapshot
 

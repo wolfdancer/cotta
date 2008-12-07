@@ -12,9 +12,9 @@ Like it, hate it, has opinion about it?  Post your thoughts on the "forum":http:
 
 h1. Report It
 
-Try it out, figure it out, and report your grief to the "issue tracker"::http://sourceforge.net/tracker/?group_id=171037&atid=856430, or consider contributing.
+Try it out, figure it out, and report your grief to the "issue tracker":http://sourceforge.net/tracker/?group_id=171037&atid=856430, or consider contributing.
 
-||Name||Contribution||
+|_.Name|_.Contribution|
 |"Sergey Abramov":http://coldcore.com|Performance fix for in memory file system|
 
 h1. Roadmap
