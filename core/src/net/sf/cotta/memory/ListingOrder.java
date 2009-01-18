@@ -2,7 +2,10 @@ package net.sf.cotta.memory;
 
 import net.sf.cotta.TPath;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Random;
 
 /**
  * Listing order used to sort the listing to return
@@ -12,25 +15,25 @@ public interface ListingOrder {
    * NULL value that does not do any sorting
    */
   ListingOrder NULL = new ListingOrder() {
-    public List sort(List paths) {
+    public List<TPath> sort(List<TPath> paths) {
       return paths;
     }
   };
   ListingOrder AToZ = new ListingOrder() {
-    public List /*TPath*/ sort(List /*TPath*/ paths) {
-      Collections.sort(paths, new Comparator() {
-        public int compare(Object o1, Object o2) {
-          return ((TPath) o1).lastElementName().compareTo(((TPath) o2).lastElementName());
+    public List<TPath> sort(List<TPath> paths) {
+      Collections.sort(paths, new Comparator<TPath>() {
+        public int compare(TPath o1, TPath o2) {
+          return o1.lastElementName().compareTo(o2.lastElementName());
         }
       });
       return paths;
     }
   };
   ListingOrder ZToA = new ListingOrder() {
-    public List /*TPath*/ sort(List /*TPath*/ paths) {
-      Collections.sort(paths, new Comparator() {
-        public int compare(Object o1, Object o2) {
-          return ((TPath) o2).lastElementName().compareTo(((TPath) o1).lastElementName());
+    public List<TPath> sort(List<TPath> paths) {
+      Collections.sort(paths, new Comparator<TPath>() {
+        public int compare(TPath o1, TPath o2) {
+          return o2.lastElementName().compareTo(o1.lastElementName());
         }
       });
       return paths;
@@ -39,11 +42,11 @@ public interface ListingOrder {
 
 
   ListingOrder Random = new ListingOrder() {
-    public List /*TPath*/ sort(List /*TPath*/ paths) {
+    public List<TPath> sort(List<TPath> paths) {
       Random random = new Random(System.currentTimeMillis());
       for (int i = paths.size(); i > 0; i--) {
         int swap = random.nextInt(i);
-        Object object = paths.get(swap);
+        TPath object = paths.get(swap);
         paths.set(swap, paths.get(i - 1));
         paths.set(i - 1, object);
       }
@@ -53,8 +56,9 @@ public interface ListingOrder {
 
   /**
    * Sort the list being passed in.  The paths can be modified directly
+   *
    * @param paths the multable list to sort
    * @return the sorted list
    */
-  List /*TPath*/ sort(List /*TPath*/ paths);
+  List<TPath> sort(List<TPath> paths);
 }

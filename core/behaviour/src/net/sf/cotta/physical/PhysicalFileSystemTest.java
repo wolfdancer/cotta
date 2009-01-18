@@ -1,14 +1,15 @@
 package net.sf.cotta.physical;
 
 import net.sf.cotta.TFile;
+import net.sf.cotta.TFileFactory;
 import net.sf.cotta.TIoException;
 import net.sf.cotta.TPath;
-import net.sf.cotta.TFileFactory;
 import net.sf.cotta.io.OutputMode;
 import net.sf.cotta.test.assertion.CodeBlock;
 
 import java.io.File;
 import java.io.OutputStream;
+import java.util.Date;
 
 public class PhysicalFileSystemTest extends PhysicalFileSystemTestBase {
 
@@ -79,6 +80,14 @@ public class PhysicalFileSystemTest extends PhysicalFileSystemTestBase {
     String content = "my content";
     new TFile(new TFileFactory(fileSystem), path).save(content);
     ensure.that(fileSystem.fileLength(path)).eq(content.getBytes().length);
+  }
+
+  public void testGetFileLastModified() throws TIoException {
+    TPath path = TPath.parse("tmp/source.txt");
+    String content = "content";
+    Date timeBeforeCreation = new Date();
+    new TFile(new TFileFactory(fileSystem), path).save(content);
+    ensure.that(fileSystem.fileLastModified(path)).ge(timeBeforeCreation.getTime());
   }
 
   public void testThrowExceptionInCaseListReturnsNull() throws Exception {

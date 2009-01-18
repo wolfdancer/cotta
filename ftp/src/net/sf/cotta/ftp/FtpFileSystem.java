@@ -151,6 +151,10 @@ public class FtpFileSystem implements FileSystem {
     throw new UnsupportedOperationException("FtpFileSystem");
   }
 
+  public long fileLastModified(TPath path) {
+    throw new UnsupportedOperationException("FtpFileSystem");
+  }
+
   private boolean isConstantPath(TPath path) {
     return path.equals(ROOT_DIR) || path.equals(CURRENT_DIR);
   }

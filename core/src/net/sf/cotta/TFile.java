@@ -1,8 +1,22 @@
 package net.sf.cotta;
 
-import net.sf.cotta.io.*;
+import net.sf.cotta.io.InputManager;
+import net.sf.cotta.io.InputProcessor;
+import net.sf.cotta.io.IoFactory;
+import net.sf.cotta.io.IoManager;
+import net.sf.cotta.io.IoProcessor;
+import net.sf.cotta.io.LineProcessor;
+import net.sf.cotta.io.OutputManager;
+import net.sf.cotta.io.OutputMode;
+import net.sf.cotta.io.OutputProcessor;
+import net.sf.cotta.io.StreamFactory;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
 import java.nio.channels.FileChannel;
 
 /**
@@ -143,6 +157,10 @@ public class TFile extends TEntry {
     return filesystem().fileLength(path);
   }
 
+  public long lastModified() {
+    return filesystem().fileLastModified(path);
+  }
+
   public TFile ensureExists() throws TIoException {
     if (!exists()) {
       create();
@@ -221,8 +239,12 @@ public class TFile extends TEntry {
   }
 
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
 
     final TFile file = (TFile) o;
 

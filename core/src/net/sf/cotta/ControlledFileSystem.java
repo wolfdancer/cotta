@@ -97,6 +97,10 @@ public class ControlledFileSystem implements FileSystem {
     return fileSystem.fileLength(path);
   }
 
+  public long fileLastModified(TPath path) {
+    return fileSystem.fileLastModified(path);
+  }
+
   public File toJavaFile(TPath path) {
     return fileSystem.toJavaFile(path);
   }

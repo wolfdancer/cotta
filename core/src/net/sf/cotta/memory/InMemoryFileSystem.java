@@ -1,6 +1,11 @@
 package net.sf.cotta.memory;
 
-import net.sf.cotta.*;
+import net.sf.cotta.FileSystem;
+import net.sf.cotta.PathSeparator;
+import net.sf.cotta.TDirectoryNotFoundException;
+import net.sf.cotta.TFileNotFoundException;
+import net.sf.cotta.TIoException;
+import net.sf.cotta.TPath;
 import net.sf.cotta.io.OutputMode;
 
 import java.io.File;
@@ -8,11 +13,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class InMemoryFileSystem implements FileSystem {
-  private Map createDirs = new HashMap();
-  private Map createFiles = new HashMap();
+  private Map<TPath, DirectoryContent> createDirs = new HashMap<TPath, DirectoryContent>();
+  private Map<TPath, FileContent> createFiles = new HashMap<TPath, FileContent>();
   private PathSeparator separator;
   private ListingOrder order;
   private int fileInitialCapacity = 0;
@@ -100,18 +109,18 @@ public class InMemoryFileSystem implements FileSystem {
     return sort(getChildren(path, createDirs).dirs());
   }
 
-  private TPath[] sort(Collection dirs) {
-    List collection = new ArrayList(dirs);
+  private TPath[] sort(Collection<TPath> dirs) {
+    List<TPath> collection = new ArrayList<TPath>(dirs);
     collection = order.sort(collection);
-    return (TPath[]) collection.toArray(new TPath[collection.size()]);
+    return collection.toArray(new TPath[collection.size()]);
   }
 
   public TPath[] listFiles(TPath path) {
     return sort(getChildren(path, createDirs).files());
   }
 
-  private DirectoryContent getChildren(TPath parent, Map collection) {
-    return ((DirectoryContent) collection.get(parent));
+  private DirectoryContent getChildren(TPath parent, Map<TPath, DirectoryContent> collection) {
+    return (collection.get(parent));
   }
 
   public InputStream createInputStream(TPath path) throws TIoException {
@@ -127,7 +136,7 @@ public class InMemoryFileSystem implements FileSystem {
   }
 
   private FileContent fileContent(TPath path) {
-    return (FileContent) createFiles.get(path);
+    return createFiles.get(path);
   }
 
   public OutputStream createOutputStream(TPath path, OutputMode mode) throws TIoException {
@@ -173,7 +182,7 @@ public class InMemoryFileSystem implements FileSystem {
   public void moveFile(TPath source, TPath destination) throws TIoException {
     FileContent sourceFile = fileContent(source);
     FileContent destFile = createFileInSystem(destination);
-    destFile.setContent(sourceFile.getContent());
+    destFile.setContent(sourceFile.getContent(), sourceFile.lastModified);
     deleteFile(source);
   }
 
@@ -186,16 +195,14 @@ public class InMemoryFileSystem implements FileSystem {
 
   private void moveSubDirectories(TPath source, TPath destination) throws TIoException {
     TPath[] directories = listDirs(source);
-    for (int i = 0; i < directories.length; i++) {
-      TPath directory = directories[i];
+    for (TPath directory : directories) {
       moveDirectory(directory, destination.join(directory.lastElementName()));
     }
   }
 
   private void moveFiles(TPath source, TPath destination) throws TIoException {
     TPath[] files = listFiles(source);
-    for (int i = 0; i < files.length; i++) {
-      TPath file = files[i];
+    for (TPath file : files) {
       moveFile(file, destination.join(file.lastElementName()));
     }
   }
@@ -206,6 +213,10 @@ public class InMemoryFileSystem implements FileSystem {
 
   public long fileLength(TPath path) {
     return fileContent(path).content.size();
+  }
+
+  public long fileLastModified(TPath path) {
+    return fileContent(path).lastModified();
   }
 
   public File toJavaFile(TPath path) {
@@ -221,10 +232,10 @@ public class InMemoryFileSystem implements FileSystem {
   }
 
   private static class DirectoryContent {
-    private Map dirs = new HashMap();
-    private Map files = new HashMap();
+    private Map<String, TPath> dirs = new HashMap<String, TPath>();
+    private Map<String, TPath> files = new HashMap<String, TPath>();
 
-    public Collection dirs() {
+    public Collection<TPath> dirs() {
       return dirs.values();
     }
 
@@ -236,7 +247,7 @@ public class InMemoryFileSystem implements FileSystem {
       files.put(file.lastElementName(), file);
     }
 
-    public Collection files() {
+    public Collection<TPath> files() {
       return files.values();
     }
 
@@ -256,14 +267,20 @@ public class InMemoryFileSystem implements FileSystem {
   private static class FileContent {
     private ByteArrayBuffer content;
     private int increament;
+    private long lastModified;
 
     public FileContent(int initialCapacity, int increament) {
       content = new ByteArrayBuffer(initialCapacity, increament);
       this.increament = increament;
     }
 
-    public void setContent(String content) {
+    private void setContent(String content) {
+      setContent(content, System.currentTimeMillis());
+    }
+
+    private void setContent(String content, long timestamp) {
       this.content = new ByteArrayBuffer(content.getBytes(), increament);
+      this.lastModified = timestamp;
     }
 
     public String getContent() {
@@ -271,6 +288,7 @@ public class InMemoryFileSystem implements FileSystem {
     }
 
     public OutputStream outputStream() {
+      lastModified = System.currentTimeMillis();
       return new OutputStream() {
 
         public void write(int b) {
@@ -301,6 +319,9 @@ public class InMemoryFileSystem implements FileSystem {
       return new InMemoryInputFileChannel(content);
     }
 
+    public long lastModified() {
+      return lastModified;
+    }
   }
 
 

@@ -1,6 +1,14 @@
 package net.sf.cotta.memory;
 
-import net.sf.cotta.*;
+import net.sf.cotta.CottaTestBase;
+import net.sf.cotta.PathSeparator;
+import net.sf.cotta.TDirectory;
+import net.sf.cotta.TDirectoryNotFoundException;
+import net.sf.cotta.TFile;
+import net.sf.cotta.TFileFactory;
+import net.sf.cotta.TFileNotFoundException;
+import net.sf.cotta.TIoException;
+import net.sf.cotta.TPath;
 import net.sf.cotta.io.OutputMode;
 import net.sf.cotta.test.assertion.CodeBlock;
 
@@ -8,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -279,10 +288,12 @@ public class InMemoryFileSystemTest extends CottaTestBase {
     TPath dest = TPath.parse("/dest.txt");
     String content = "in memory file";
     new TFile(new TFileFactory(fileSystem), source).save(content);
+    long lastModified = fileSystem.fileLastModified(source);
     fileSystem.moveFile(source, dest);
     ensure.that(fileSystem.fileExists(source)).eq(false);
     ensure.that(fileSystem.fileExists(dest)).eq(true);
     ensure.that(loadContent(fileSystem, dest)).eq(content);
+    ensure.that(fileSystem.fileLastModified(dest)).eq(lastModified);
   }
 
   private String loadContent(InMemoryFileSystem fileSystem, TPath path) throws TIoException {
@@ -301,6 +312,16 @@ public class InMemoryFileSystemTest extends CottaTestBase {
     String content = "im memory file system";
     new TFile(new TFileFactory(fileSystem), path).save(content);
     ensure.that(fileSystem.fileLength(path)).eq(content.getBytes().length);
+  }
+
+  public void testGetFileLastModified() throws TIoException {
+    InMemoryFileSystem fileSystem = new InMemoryFileSystem();
+    TPath path = TPath.parse("/content.txt");
+    String content = "im memory file system";
+    Date date = new Date();
+    new TFile(new TFileFactory(fileSystem), path).save(content);
+    ensure.that(fileSystem.fileLength(path)).eq(content.getBytes().length);
+    ensure.that(fileSystem.fileLastModified(path)).ge(date.getTime());
   }
 
   public void testThrowExceptionForParentNotFound() throws Exception {

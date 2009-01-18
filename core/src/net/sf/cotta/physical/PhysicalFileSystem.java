@@ -5,11 +5,18 @@ import net.sf.cotta.TIoException;
 import net.sf.cotta.TPath;
 import net.sf.cotta.io.OutputMode;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 
 /**
- * File system that represents the physical file. 
+ * File system that represents the physical file.
  */
 public class PhysicalFileSystem implements FileSystem {
   public boolean fileExists(TPath path) {
@@ -134,6 +141,10 @@ public class PhysicalFileSystem implements FileSystem {
     return file(path).length();
   }
 
+  public long fileLastModified(TPath path) {
+    return file(path).lastModified();
+  }
+
   public File toJavaFile(TPath path) {
     return new File(pathString(path));
   }
@@ -151,7 +162,9 @@ public class PhysicalFileSystem implements FileSystem {
   }
 
   public boolean equals(Object o) {
-    if (this == o) return true;
+    if (this == o) {
+      return true;
+    }
     return o != null && getClass() == o.getClass();
   }
 

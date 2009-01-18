@@ -1,11 +1,29 @@
 package net.sf.cotta.acceptance;
 
-import net.sf.cotta.*;
+import net.sf.cotta.CottaTestBase;
 import net.sf.cotta.FileSystem;
-import net.sf.cotta.io.*;
+import net.sf.cotta.TDirectory;
+import net.sf.cotta.TDirectoryNotFoundException;
+import net.sf.cotta.TFile;
+import net.sf.cotta.TFileFactory;
+import net.sf.cotta.TFileNotFoundException;
+import net.sf.cotta.TIoException;
+import net.sf.cotta.TPath;
+import net.sf.cotta.io.InputManager;
+import net.sf.cotta.io.InputProcessor;
+import net.sf.cotta.io.IoManager;
+import net.sf.cotta.io.IoProcessor;
+import net.sf.cotta.io.LineProcessor;
+import net.sf.cotta.io.OutputManager;
+import net.sf.cotta.io.OutputMode;
+import net.sf.cotta.io.OutputProcessor;
 import net.sf.cotta.test.assertion.CodeBlock;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
 
 public abstract class TfsTestBase extends CottaTestBase {
 
@@ -142,6 +160,7 @@ public abstract class TfsTestBase extends CottaTestBase {
     TFileFactory factory = new TFileFactory(fileSystem());
     TFile file = factory.file("tmp/test.txt");
     file.save("expected");
+    ensure.that(file.lastModified()).gt(0);
     ensureEquals(factory.file("tmp/test.txt").load(), "expected");
   }
 
@@ -237,11 +256,15 @@ public abstract class TfsTestBase extends CottaTestBase {
     TFile source = factory.file("tmp/source.txt");
     String content = "content for the source";
     source.save(content);
+    long length = source.length();
+    long modified = source.lastModified();
     TFile destination = factory.file("tmp/destination.txt");
     source.moveTo(destination);
     ensure.that(source.exists()).eq(false);
     ensure.that(destination.exists()).eq(true);
     ensure.that(destination.load()).eq(content);
+    ensure.that(destination.length()).eq(length);
+    ensure.that(destination.lastModified()).eq(modified);
   }
 
   public void testThrowExceptionIfSourceNotFoundInMove() throws Exception {

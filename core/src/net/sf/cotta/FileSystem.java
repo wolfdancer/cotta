@@ -46,4 +46,6 @@ public interface FileSystem {
   String toCanonicalPath(TPath path);
 
   FileChannel createInputChannel(TPath path) throws TIoException;
+
+  long fileLastModified(TPath path);
 }
