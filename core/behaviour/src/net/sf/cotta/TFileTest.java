@@ -9,7 +9,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 
-public class TFileTest extends CottaTestBase {
+public class TFileTest extends CottaTestCase {
 
   public void testBeCreatedWithCorrectNameAndNotExists() throws Exception {
     TFile file = file("name.txt");

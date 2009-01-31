@@ -1,6 +1,6 @@
 package net.sf.cotta.memory;
 
-import net.sf.cotta.CottaTestBase;
+import net.sf.cotta.CottaTestCase;
 import net.sf.cotta.PathSeparator;
 import net.sf.cotta.TDirectory;
 import net.sf.cotta.TDirectoryNotFoundException;
@@ -20,7 +20,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-public class InMemoryFileSystemTest extends CottaTestBase {
+public class InMemoryFileSystemTest extends CottaTestCase {
   public TFileFactory factory;
   public InMemoryFileSystem fileSystem;
 

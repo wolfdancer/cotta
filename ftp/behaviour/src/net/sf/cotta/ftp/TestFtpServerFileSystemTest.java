@@ -3,7 +3,6 @@ package net.sf.cotta.ftp;
 import net.sf.cotta.TDirectory;
 import net.sf.cotta.TFileFactory;
 import net.sf.cotta.TFileNotFoundException;
-import net.sf.cotta.ftp.client.commonsNet.CommonsNetFtpClient;
 import net.sf.cotta.test.assertion.CodeBlock;
 import net.sf.cotta.io.InputManager;
 import net.sf.cotta.io.InputProcessor;
@@ -14,7 +13,7 @@ import org.apache.commons.net.ftp.FTPClient;
 
 import java.io.*;
 
-public class TestFtpServerFileSystemTest extends FtpTestBase {
+public class TestFtpServerFileSystemTest extends FtpTestCase {
   public void testBeAtRootAndNoFileInitially() throws InterruptedException, IOException {
     String workingDirectory = ftpClient.printWorkingDirectory();
     ensure.string(workingDirectory).eq("/");

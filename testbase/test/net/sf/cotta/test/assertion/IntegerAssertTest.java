@@ -1,8 +1,8 @@
 package net.sf.cotta.test.assertion;
 
-import net.sf.cotta.test.TestBase;
+import net.sf.cotta.test.TestCase;
 
-public class IntegerAssertTest extends TestBase {
+public class IntegerAssertTest extends TestCase {
   public void testLessThan() {
     new IntegerAssert(5).lessThan(6);
   }

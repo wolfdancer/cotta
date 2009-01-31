@@ -1,9 +1,9 @@
 package net.sf.cotta.physical;
 
 import net.sf.cotta.*;
-import net.sf.cotta.acceptance.TfsTestBase;
+import net.sf.cotta.acceptance.TfsTestCase;
 
-public class PhysicalFileSystemTestBase extends TfsTestBase {
+public class PhysicalFileSystemTestCase extends TfsTestCase {
   protected FileSystem fileSystem;
 
   protected void makeSureTmpDirectoryDoesNotExist() throws TIoException {

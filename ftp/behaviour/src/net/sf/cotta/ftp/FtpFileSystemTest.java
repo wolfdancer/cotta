@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class FtpFileSystemTest extends FtpTestBase {
+public class FtpFileSystemTest extends FtpTestCase {
 
   private FileSystem fileSystem;
 

@@ -9,7 +9,7 @@ import org.jmock.Mockery;
 
 import java.io.*;
 
-public class IoManagerTest extends CottaTestBase {
+public class IoManagerTest extends CottaTestCase {
   private Mockery context;
 
   public void beforeMethod() throws Exception {

@@ -29,11 +29,11 @@ class FixtureWrapper {
     expectedCalls++;
   }
 
-  public void beforeMethod(TestBase testBase) throws Exception {
-    fixture.beforeMethod(testBase);
+  public void beforeMethod(TestCase testCase) throws Exception {
+    fixture.beforeMethod(testCase);
   }
 
-  public void afterMethod(TestBase testBase) throws Exception {
-    fixture.afterMethod(testBase);
+  public void afterMethod(TestCase testCase) throws Exception {
+    fixture.afterMethod(testCase);
   }
 }

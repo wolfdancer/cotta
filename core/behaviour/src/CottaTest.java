@@ -1,6 +1,6 @@
-import net.sf.cotta.test.TestBase;
+import net.sf.cotta.test.TestCase;
 
-public class CottaTest extends TestBase {
+public class CottaTest extends TestCase {
   public void testReportInfoOnMain() throws Exception {
     Cotta.main(new String[0]);
   }

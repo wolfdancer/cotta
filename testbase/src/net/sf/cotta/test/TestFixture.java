@@ -5,7 +5,7 @@ public interface TestFixture {
 
   void tearDown() throws Exception;
 
-  void beforeMethod(TestBase testBase) throws Exception;
+  void beforeMethod(TestCase testCase) throws Exception;
 
-  void afterMethod(TestBase testBase) throws Exception;
+  void afterMethod(TestCase testCase) throws Exception;
 }

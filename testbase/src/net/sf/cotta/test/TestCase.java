@@ -1,16 +1,14 @@
 package net.sf.cotta.test;
 
-import junit.framework.TestCase;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-public class TestBase extends TestCase {
-  public TestBase() {
+public class TestCase extends junit.framework.TestCase {
+  public TestCase() {
     loadFixtures();
   }
 
-  public TestBase(String name) {
+  public TestCase(String name) {
     super(name);
     loadFixtures();
   }
@@ -35,7 +33,7 @@ public class TestBase extends TestCase {
 
   private void resetsFieldsToSaveMemoryForLargeTestSuite() {
     Class<?> aClass = getClass();
-    for (Class<?> testClass = aClass; !testClass.equals(TestBase.class); testClass = testClass.getSuperclass()) {
+    for (Class<?> testClass = aClass; !testClass.equals(TestCase.class); testClass = testClass.getSuperclass()) {
       reset(testClass);
     }
   }

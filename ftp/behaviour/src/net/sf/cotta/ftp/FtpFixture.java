@@ -3,7 +3,7 @@ package net.sf.cotta.ftp;
 import net.sf.cotta.TDirectory;
 import net.sf.cotta.TFileFactory;
 import net.sf.cotta.memory.InMemoryFileSystem;
-import net.sf.cotta.test.TestBase;
+import net.sf.cotta.test.TestCase;
 import net.sf.cotta.test.TestFixture;
 import org.apache.commons.net.ftp.FTPClient;
 
@@ -22,17 +22,17 @@ public class FtpFixture implements TestFixture {
     ftpServer.stop();
   }
 
-  public void beforeMethod(TestBase testBase) throws IOException {
+  public void beforeMethod(TestCase testCase) throws IOException {
     TFileFactory fileFactory = new TFileFactory(new InMemoryFileSystem());
     ftpServer.cleanFileSystem(fileFactory);
     TDirectory rootDir = fileFactory.dir("/");
-    testBase.inject(rootDir);
+    testCase.inject(rootDir);
     FTPClient ftpClient = new FTPClient();
     ftpClient.connect("localhost", 8021);
     ftpClient.login("anonymous", "test@test.com");
-    testBase.inject(ftpClient);
+    testCase.inject(ftpClient);
   }
 
-  public void afterMethod(TestBase testBase) {
+  public void afterMethod(TestCase testCase) {
   }
 }

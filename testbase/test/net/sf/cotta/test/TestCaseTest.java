@@ -1,13 +1,11 @@
 package net.sf.cotta.test;
 
-import junit.framework.TestCase;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TestBaseTest extends TestCase {
+public class TestCaseTest extends junit.framework.TestCase {
   private static AssertionFactory ensure = new AssertionFactory();
 
   public void testCallsBeforeAndAfterSettingPublicFieldsToNullAndFixtures() throws Throwable {
@@ -52,11 +50,11 @@ public class TestBaseTest extends TestCase {
       log();
     }
 
-    public void beforeMethod(TestBase testBase) {
+    public void beforeMethod(TestCase testCase) {
       log();
     }
 
-    public void afterMethod(TestBase testBase) {
+    public void afterMethod(TestCase testCase) {
       log();
     }
 
@@ -67,7 +65,7 @@ public class TestBaseTest extends TestCase {
   }
 
   @Sample
-  public static class TestDummy extends TestBase {
+  public static class TestDummy extends TestCase {
     boolean beforeCalled, afterCalled;
     public Object publicField;
     private Object privateField;

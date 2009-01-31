@@ -3,7 +3,7 @@ package net.sf.cotta.acceptance;
 import net.sf.cotta.*;
 import net.sf.cotta.physical.PhysicalFileSystem;
 
-public class PhysicalTfsTest extends TfsTestBase {
+public class PhysicalTfsTest extends TfsTestCase {
 
   public void beforeMethod() throws Exception {
     super.beforeMethod();

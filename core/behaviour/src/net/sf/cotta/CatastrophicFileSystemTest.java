@@ -2,7 +2,7 @@ package net.sf.cotta;
 
 import net.sf.cotta.test.assertion.CodeBlock;
 
-public class CatastrophicFileSystemTest extends CottaTestBase {
+public class CatastrophicFileSystemTest extends CottaTestCase {
   public void testThrowExceptionsWhenDiskFull() throws Exception {
     final CatastrophicFileSystem fileSystem = new CatastrophicFileSystem();
     fileSystem.diskFull();

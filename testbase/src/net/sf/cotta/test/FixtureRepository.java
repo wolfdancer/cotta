@@ -17,8 +17,8 @@ public class FixtureRepository {
     return instance;
   }
 
-  void register(TestBase testBase) {
-    for (Annotation annotation : testBase.getClass().getAnnotations()) {
+  void register(TestCase testCase) {
+    for (Annotation annotation : testCase.getClass().getAnnotations()) {
       Fixture fixtureType = annotation.annotationType().getAnnotation(Fixture.class);
       if (fixtureType != null) {
         String fixtureAnnotationName = annotation.annotationType().getName();
@@ -27,7 +27,7 @@ public class FixtureRepository {
           fixtureWrapper = load(annotation.annotationType().getName() + "Fixture");
           envFixtureMap.put(fixtureAnnotationName, fixtureWrapper);
         }
-        add(testBase, fixtureWrapper);
+        add(testCase, fixtureWrapper);
       }
     }
   }
@@ -53,8 +53,8 @@ public class FixtureRepository {
     throw new IllegalArgumentException("fixture class does not implement " + TestFixture.class.getName() + ": " + fixtureClassName);
   }
 
-  private void add(TestBase testBase, FixtureWrapper fixtureWrapper) {
-    String key = testBase.getClass().getName();
+  private void add(TestCase testCase, FixtureWrapper fixtureWrapper) {
+    String key = testCase.getClass().getName();
     Set<FixtureWrapper> fixtureWrapperList = classFixtureMap.get(key);
     if (fixtureWrapperList == null) {
       fixtureWrapperList = new HashSet<FixtureWrapper>();
@@ -64,35 +64,35 @@ public class FixtureRepository {
     fixtureWrapper.increaseCount();
   }
 
-  public void fixtureSetUp(TestBase testBase) throws Exception {
-    for (FixtureWrapper info : loadFixture(testBase)) {
+  public void fixtureSetUp(TestCase testCase) throws Exception {
+    for (FixtureWrapper info : loadFixture(testCase)) {
       info.setUp();
     }
   }
 
-  private Set<FixtureWrapper> loadFixture(TestBase testBase) {
-    Set<FixtureWrapper> infos = classFixtureMap.get(testBase.getClass().getName());
+  private Set<FixtureWrapper> loadFixture(TestCase testCase) {
+    Set<FixtureWrapper> infos = classFixtureMap.get(testCase.getClass().getName());
     if (infos == null) {
       infos = Collections.emptySet();
     }
     return infos;
   }
 
-  public void fixtureTearDown(TestBase testBase) throws Exception {
-    for (FixtureWrapper fixture : loadFixture(testBase)) {
+  public void fixtureTearDown(TestCase testCase) throws Exception {
+    for (FixtureWrapper fixture : loadFixture(testCase)) {
       fixture.tearDown();
     }
   }
 
-  public void beforeMethod(TestBase testBase) throws Exception {
-    for (FixtureWrapper fixture : loadFixture(testBase)) {
-      fixture.beforeMethod(testBase);
+  public void beforeMethod(TestCase testCase) throws Exception {
+    for (FixtureWrapper fixture : loadFixture(testCase)) {
+      fixture.beforeMethod(testCase);
     }
   }
 
-  public void afterMethod(TestBase testBase) throws Exception {
-    for (FixtureWrapper fixture : loadFixture(testBase)) {
-      fixture.afterMethod(testBase);
+  public void afterMethod(TestCase testCase) throws Exception {
+    for (FixtureWrapper fixture : loadFixture(testCase)) {
+      fixture.afterMethod(testCase);
     }
   }
 }

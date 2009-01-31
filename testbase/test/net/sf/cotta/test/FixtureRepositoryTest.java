@@ -1,11 +1,9 @@
 package net.sf.cotta.test;
 
-import junit.framework.TestCase;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-public class FixtureRepositoryTest extends TestCase {
+public class FixtureRepositoryTest extends junit.framework.TestCase {
   private static AssertionFactory ensure = new AssertionFactory();
   private FixtureRepository repository;
 
@@ -45,7 +43,7 @@ public class FixtureRepositoryTest extends TestCase {
   }
 
   @Sample
-  public static class TestDummy extends TestBase {
+  public static class TestDummy extends TestCase {
 
   }
 
@@ -65,16 +63,16 @@ public class FixtureRepositoryTest extends TestCase {
       count--;
     }
 
-    public void beforeMethod(TestBase testBase) {
+    public void beforeMethod(TestCase testCase) {
     }
 
-    public void afterMethod(TestBase testBase) {
+    public void afterMethod(TestCase testCase) {
     }
 
   }
 
   @FixtureClassNotTestFixture
-  public static class TestWithAnnotationProblem extends TestBase {
+  public static class TestWithAnnotationProblem extends TestCase {
   }
 
   @Retention(RetentionPolicy.RUNTIME)

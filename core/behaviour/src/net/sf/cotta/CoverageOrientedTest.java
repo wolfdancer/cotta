@@ -1,11 +1,11 @@
 package net.sf.cotta;
 
 import net.sf.cotta.memory.InMemoryFileSystem;
-import net.sf.cotta.test.TestBase;
+import net.sf.cotta.test.TestCase;
 
 // testused to do nothing but boost coverage to deprecated classes
 @SuppressWarnings({"deprecation"})
-public class CoverageOrientedTest extends TestBase {
+public class CoverageOrientedTest extends TestCase {
   public void testHandleClassPath() throws Exception {
     TFileFactory factory = new TFileFactory(new InMemoryFileSystem());
     new net.sf.cotta.utils.ClassPath(factory.file("one/two.txt"));

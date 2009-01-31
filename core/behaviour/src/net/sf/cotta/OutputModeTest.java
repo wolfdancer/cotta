@@ -1,9 +1,9 @@
 package net.sf.cotta;
 
 import net.sf.cotta.io.OutputMode;
-import net.sf.cotta.test.TestBase;
+import net.sf.cotta.test.TestCase;
 
-public class OutputModeTest extends TestBase {
+public class OutputModeTest extends TestCase {
   public void testBeAppendingMode() throws Exception {
     ensure.that(OutputMode.APPEND.isAppend()).eq(true);
   }

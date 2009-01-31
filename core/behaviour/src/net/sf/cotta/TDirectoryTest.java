@@ -2,7 +2,7 @@ package net.sf.cotta;
 
 import net.sf.cotta.io.IoResource;
 import net.sf.cotta.memory.InMemoryFileSystem;
-import net.sf.cotta.physical.PhysicalFileSystemTestBase;
+import net.sf.cotta.physical.PhysicalFileSystemTestCase;
 import net.sf.cotta.test.assertion.CodeBlock;
 import net.sf.cotta.zip.ZipFileSystem;
 import org.jmock.Expectations;
@@ -11,7 +11,7 @@ import org.jmock.Mockery;
 import java.io.File;
 import java.io.IOException;
 
-public class TDirectoryTest extends PhysicalFileSystemTestBase {
+public class TDirectoryTest extends PhysicalFileSystemTestCase {
   public void testExistAfterCreate() throws Exception {
     //Given
     TFileFactory factory = factory();

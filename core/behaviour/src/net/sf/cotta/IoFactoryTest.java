@@ -3,13 +3,13 @@ package net.sf.cotta;
 import net.sf.cotta.io.IoFactory;
 import net.sf.cotta.io.OutputMode;
 import net.sf.cotta.io.StreamFactory;
-import net.sf.cotta.test.TestBase;
+import net.sf.cotta.test.TestCase;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 
 import java.io.*;
 
-public class IoFactoryTest extends TestBase {
+public class IoFactoryTest extends TestCase {
   private Mockery context;
 
   public void beforeMethod() throws Exception {

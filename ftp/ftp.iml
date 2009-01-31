@@ -6,6 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/behaviour/resources" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/behaviour/src" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/bin" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

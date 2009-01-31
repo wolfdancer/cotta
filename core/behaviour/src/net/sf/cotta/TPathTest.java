@@ -3,7 +3,7 @@ package net.sf.cotta;
 import net.sf.cotta.test.assertion.CodeBlock;
 import net.sf.cotta.test.assertion.ExceptionAssert;
 
-public class TPathTest extends CottaTestBase {
+public class TPathTest extends CottaTestCase {
   public void testNotAllowNullPathString() throws Exception {
     ExceptionAssert actualException = runAndCatch(IllegalArgumentException.class, new CodeBlock() {
       public void execute() throws Exception {

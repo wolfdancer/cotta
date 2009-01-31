@@ -1,6 +1,6 @@
 package net.sf.cotta.acceptance;
 
-import net.sf.cotta.CottaTestBase;
+import net.sf.cotta.CottaTestCase;
 import net.sf.cotta.FileSystem;
 import net.sf.cotta.TDirectory;
 import net.sf.cotta.TDirectoryNotFoundException;
@@ -25,7 +25,7 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 
-public abstract class TfsTestBase extends CottaTestBase {
+public abstract class TfsTestCase extends CottaTestCase {
 
   protected abstract FileSystem fileSystem();
 

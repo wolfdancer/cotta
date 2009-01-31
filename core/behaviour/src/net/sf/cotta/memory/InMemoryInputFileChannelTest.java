@@ -1,6 +1,6 @@
 package net.sf.cotta.memory;
 
-import net.sf.cotta.CottaTestBase;
+import net.sf.cotta.CottaTestCase;
 import net.sf.cotta.TFile;
 import net.sf.cotta.TFileFactory;
 import net.sf.cotta.TIoException;
@@ -8,7 +8,7 @@ import net.sf.cotta.TIoException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
-public class InMemoryInputFileChannelTest extends CottaTestBase {
+public class InMemoryInputFileChannelTest extends CottaTestCase {
   private InMemoryFileSystem fileSystem;
 
   public void beforeMethod() throws Exception {

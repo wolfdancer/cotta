@@ -1,7 +1,7 @@
 package net.sf.cotta;
 
 import net.sf.cotta.io.IoResource;
-import net.sf.cotta.test.TestBase;
+import net.sf.cotta.test.TestCase;
 import net.sf.cotta.test.assertion.CodeBlock;
 import net.sf.cotta.test.assertion.ExceptionAssert;
 
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class CottaTestBase extends TestBase {
+public class CottaTestCase extends TestCase {
   public List<IoResource> resourcesToClose;
 
   protected CottaAssertionFactory ensure() {

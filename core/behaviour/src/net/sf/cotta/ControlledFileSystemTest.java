@@ -7,7 +7,7 @@ import org.jmock.Mockery;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-public class ControlledFileSystemTest extends CottaTestBase {
+public class ControlledFileSystemTest extends CottaTestCase {
   public void testNotAllowUpdateOnNotPermittedDirectories() throws Exception {
     FileSystem fileSystem = fileSystemForTmp();
     fileSystem.createDir(TPath.parse("tmp/sub"));

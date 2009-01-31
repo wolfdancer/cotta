@@ -4,7 +4,7 @@ import net.sf.cotta.TDirectory;
 import net.sf.cotta.TFile;
 import net.sf.cotta.TFileFactory;
 import net.sf.cotta.memory.InMemoryFileSystem;
-import net.sf.cotta.test.TestBase;
+import net.sf.cotta.test.TestCase;
 import org.hamcrest.Matchers;
 
 import java.io.File;
@@ -12,7 +12,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-public class ClassPathEntryTest extends TestBase {
+public class ClassPathEntryTest extends TestCase {
   private TFileFactory factory = new TFileFactory(new InMemoryFileSystem());
 
   public void testTakeDirectoryOnlyAsDirectory() throws Exception {

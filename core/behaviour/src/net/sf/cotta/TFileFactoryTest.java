@@ -1,14 +1,14 @@
 package net.sf.cotta;
 
 import net.sf.cotta.memory.InMemoryFileSystem;
-import net.sf.cotta.physical.PhysicalFileSystemTestBase;
+import net.sf.cotta.physical.PhysicalFileSystemTestCase;
 import net.sf.cotta.test.assertion.CodeBlock;
 
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class TFileFactoryTest extends PhysicalFileSystemTestBase {
+public class TFileFactoryTest extends PhysicalFileSystemTestCase {
 
   public void testEncodingForConstructor() {
     TFileFactory factory = new TFileFactory(new InMemoryFileSystem());

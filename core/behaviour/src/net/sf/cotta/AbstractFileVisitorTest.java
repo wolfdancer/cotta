@@ -1,12 +1,12 @@
 package net.sf.cotta;
 
 import net.sf.cotta.memory.InMemoryFileSystem;
-import net.sf.cotta.test.TestBase;
+import net.sf.cotta.test.TestCase;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AbstractFileVisitorTest extends TestBase {
+public class AbstractFileVisitorTest extends TestCase {
   public void testVisitAllFiles() throws Exception {
     TFileFactory factory = new TFileFactory(new InMemoryFileSystem());
     TDirectory directory = factory.dir("/one/two");

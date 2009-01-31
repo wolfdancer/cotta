@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 
-public class PhysicalInputFileChannelTest extends InputFileChannelTestBase {
+public class PhysicalInputFileChannelTest extends InputFileChannelTestCase {
   protected FileSystem fileSystem() {
     return new PhysicalFileSystem();
   }

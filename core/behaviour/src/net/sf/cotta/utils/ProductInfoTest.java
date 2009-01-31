@@ -1,6 +1,6 @@
 package net.sf.cotta.utils;
 
-import net.sf.cotta.CottaTestBase;
+import net.sf.cotta.CottaTestCase;
 import net.sf.cotta.TDirectory;
 import net.sf.cotta.TIoException;
 import net.sf.cotta.test.assertion.CodeBlock;
@@ -8,7 +8,7 @@ import net.sf.cotta.test.assertion.CodeBlock;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-public class ProductInfoTest extends CottaTestBase {
+public class ProductInfoTest extends CottaTestCase {
   public void testLoadWithThePathPointingToClass() throws Exception {
     ProductInfo productInfo = ProductInfo.forClass(ProductInfo.class);
     TDirectory directory = productInfo.loadedPath().openAsDirectory();

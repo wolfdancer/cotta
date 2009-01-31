@@ -1,8 +1,8 @@
 package net.sf.cotta.test.assertion;
 
-import net.sf.cotta.test.TestBase;
+import net.sf.cotta.test.TestCase;
 
-public class ObjectAssertTest extends TestBase {
+public class ObjectAssertTest extends TestCase {
   public void testDescribeAs() {
     Object instance = new Object();
     final ObjectAssert<Object> assertion = new ObjectAssert<Object>(instance).describedAs("description");

@@ -11,7 +11,7 @@ import java.io.File;
 import java.io.OutputStream;
 import java.util.Date;
 
-public class PhysicalFileSystemTest extends PhysicalFileSystemTestBase {
+public class PhysicalFileSystemTest extends PhysicalFileSystemTestCase {
 
   public void testCreateAndDeleteDirectory() throws Exception {
     TPath tmp = TPath.parse("tmp");

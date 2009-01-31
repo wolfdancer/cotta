@@ -11,7 +11,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.NonWritableChannelException;
 
-abstract public class InputFileChannelTestBase extends CottaTestBase {
+abstract public class InputFileChannelTestCase extends CottaTestCase {
   public void beforeMethod() throws Exception {
     file().delete();
   }
@@ -26,7 +26,7 @@ abstract public class InputFileChannelTestBase extends CottaTestBase {
     file.save("test");
     file.read(new InputProcessor() {
       public void process(InputManager inputManager) throws IOException {
-        InputFileChannelTestBase.this.process(inputManager.channel());
+        InputFileChannelTestCase.this.process(inputManager.channel());
       }
     });
     FileChannel channel = file.io().inputChannel();

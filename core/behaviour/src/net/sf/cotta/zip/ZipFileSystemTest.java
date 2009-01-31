@@ -11,7 +11,7 @@ import net.sf.cotta.utils.ClassPathType;
 
 import java.io.*;
 
-public class ZipFileSystemTest extends CottaTestBase {
+public class ZipFileSystemTest extends CottaTestCase {
   private FileSystem zip;
   private File workingZipFile;
   private static final String TEST_TXT_CONTENT = "sub";
