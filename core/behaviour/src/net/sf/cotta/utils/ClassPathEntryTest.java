@@ -5,7 +5,6 @@ import net.sf.cotta.TFile;
 import net.sf.cotta.TFileFactory;
 import net.sf.cotta.memory.InMemoryFileSystem;
 import net.sf.cotta.test.TestCase;
-import org.hamcrest.Matchers;
 
 import java.io.File;
 import java.net.URI;
@@ -52,7 +51,7 @@ public class ClassPathEntryTest extends TestCase {
     TDirectory directory = pathEntry.openAsDirectory();
     ensure.that(directory).sameAs(pathEntry.openAsDirectory());
     pathEntry.closeResource();
-    ensure.that(directory).not(Matchers.sameInstance(pathEntry.openAsDirectory()));
+    ensure.that(directory).notSameAs(pathEntry.openAsDirectory());
   }
 
 }

@@ -1,6 +1,5 @@
 package net.sf.cotta.test;
 
-import net.sf.cotta.test.assertion.BaseAssert;
 import net.sf.cotta.test.assertion.BooleanAssert;
 import net.sf.cotta.test.assertion.ByteListAssert;
 import net.sf.cotta.test.assertion.CharAssert;
@@ -11,6 +10,7 @@ import net.sf.cotta.test.assertion.IntegerAssert;
 import net.sf.cotta.test.assertion.ListAssert;
 import net.sf.cotta.test.assertion.LongAssert;
 import net.sf.cotta.test.assertion.MapAssert;
+import net.sf.cotta.test.assertion.ObjectAssert;
 import net.sf.cotta.test.assertion.SetAssert;
 import net.sf.cotta.test.assertion.StringAssert;
 
@@ -26,16 +26,12 @@ public class AssertionFactory {
     return new IntegerAssert(value);
   }
 
-  public <T> BaseAssert<T> that(T value) {
+  public ObjectAssert that(Object value) {
     return object(value);
   }
 
-  public <T extends BaseAssert<?>> T that(T asserts) {
-    return asserts;
-  }
-
-  public <T> BaseAssert<T> object(T value) {
-    return new BaseAssert<T>(value);
+  public ObjectAssert object(Object value) {
+    return new ObjectAssert(value);
   }
 
   public CodeBlockAssertion that(CodeBlock block) {

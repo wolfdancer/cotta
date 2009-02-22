@@ -3,7 +3,7 @@ package net.sf.cotta.test;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-public class TestCase extends junit.framework.TestCase {
+abstract public class TestCase extends junit.framework.TestCase {
   public TestCase() {
     loadFixtures();
   }

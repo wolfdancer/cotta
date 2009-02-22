@@ -3,16 +3,17 @@ package net.sf.cotta.test.assertion;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
-public class LongAssert extends BaseAssert<Long> {
+public class LongAssert extends BaseAssert<Long, LongAssert> {
   public LongAssert(Long value) {
     super(value);
   }
 
-  public void eq(Integer expected) {
+  public LongAssert eq(Integer expected) {
     super.eq(expected == null ? null : (long) expected.intValue());
+    return this;
   }
 
-  public void ge(final long value) {
+  public LongAssert ge(final long value) {
     notNull();
     matches(new BaseMatcher<Long>() {
 
@@ -24,9 +25,10 @@ public class LongAssert extends BaseAssert<Long> {
         description.appendText("greater or equal to ").appendValue(value);
       }
     });
+    return this;
   }
 
-  public void lt(final long value) {
+  public LongAssert lt(final long value) {
     notNull();
     matches(new BaseMatcher<Long>() {
       public boolean matches(Object o) {
@@ -37,9 +39,10 @@ public class LongAssert extends BaseAssert<Long> {
         description.appendText("less than ").appendValue(value);
       }
     });
+    return this;
   }
 
-  public void gt(final long value) {
+  public LongAssert gt(final long value) {
     notNull();
     matches(new BaseMatcher<Long>() {
       public boolean matches(Object o) {
@@ -50,5 +53,6 @@ public class LongAssert extends BaseAssert<Long> {
         description.appendText("greater than ").appendValue(value);
       }
     });
+    return this;
   }
 }

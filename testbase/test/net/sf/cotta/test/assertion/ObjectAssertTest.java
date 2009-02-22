@@ -5,7 +5,7 @@ import net.sf.cotta.test.TestCase;
 public class ObjectAssertTest extends TestCase {
   public void testDescribeAs() {
     Object instance = new Object();
-    final BaseAssert assertion = new BaseAssert<Object, BaseAssert>(instance).describedAs("description");
+    final ObjectAssert assertion = new ObjectAssert(instance).describedAs("description");
     ensure.that(new CodeBlock() {
       public void execute() throws Exception {
         assertion.sameAs(new Object());
@@ -15,10 +15,11 @@ public class ObjectAssertTest extends TestCase {
 
   public void testOverrideEqualsToThrowException() {
     final Object instance = new Object();
-    final BaseAssert<Object, BaseAssert> assertion = ensure.object(instance);
+    final ObjectAssert assertion = ensure.object(instance);
     ensure.code(new CodeBlock() {
       public void execute() throws Exception {
-        assertion.equals(instance);
+        boolean result = assertion.equals(instance);
+        assertEquals("shoud not get here", !result, result);
       }
     }).throwsException(UnsupportedOperationException.class);
   }

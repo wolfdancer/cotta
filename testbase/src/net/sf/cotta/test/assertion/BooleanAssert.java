@@ -1,15 +1,17 @@
 package net.sf.cotta.test.assertion;
 
-public class BooleanAssert extends BaseAssert<Boolean> {
+public class BooleanAssert extends BaseAssert<Boolean, BooleanAssert> {
   public BooleanAssert(Boolean value) {
     super(value);
   }
 
-  public void isFalse() {
+  public BooleanAssert isFalse() {
     eq(false);
+    return this;
   }
 
-  public void isTrue() {
+  public BooleanAssert isTrue() {
     eq(true);
+    return this;
   }
 }

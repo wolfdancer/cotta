@@ -7,20 +7,21 @@ import org.junit.Assert;
 
 import java.util.Enumeration;
 
-public class TestSuiteAssert extends BaseAssert<TestSuite> {
+public class TestSuiteAssert extends BaseAssert<TestSuite, TestSuiteAssert> {
   public TestSuiteAssert(TestSuite suite) {
     super(suite);
   }
 
-  public void hasTest(Class testClass, String testName) {
+  public TestSuiteAssert hasTest(Class testClass, String testName) {
     if (match(testClass, testName, value())) {
-      return;
+      return this;
     }
     StringBuilder buffer = new StringBuilder("Test suite should have test of class ");
     buffer.append(" <").append(testClass).append("> with name <").append(testName).append("> but got ");
     buffer.append(value().testCount()).append(" <");
     describeActual(buffer, value());
     Assert.fail(buffer.toString());
+    return this;
   }
 
   private boolean match(Class testClass, String testName, TestSuite testSuite) {

@@ -17,7 +17,7 @@ import org.junit.matchers.JUnitMatchers;
  * @param <T> Type of the value under assertion
  * @param <A> Type of the current assertion class
  */
-public class BaseAssert<T, A> extends Assert {
+abstract public class BaseAssert<T, A> extends Assert {
   private String description = "";
   private T value;
 
@@ -54,8 +54,8 @@ public class BaseAssert<T, A> extends Assert {
     return self();
   }
 
-  public A sameAs(T actual) {
-    matches(Matchers.sameInstance(actual));
+  public A sameAs(T expected) {
+    matches(Matchers.sameInstance(expected));
     return self();
   }
 
@@ -107,5 +107,9 @@ public class BaseAssert<T, A> extends Assert {
         description.appendText("same hash code");
       }
     };
+  }
+
+  public A notSameAs(T expected) {
+    return not(Matchers.sameInstance(expected));
   }
 }

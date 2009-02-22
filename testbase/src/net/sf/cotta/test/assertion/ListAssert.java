@@ -9,7 +9,7 @@ import org.hamcrest.core.IsNot;
 import java.util.Arrays;
 import java.util.List;
 
-public class ListAssert<T> extends BaseAssert<List<T>> {
+public class ListAssert<T> extends BaseAssert<List<T>, ListAssert<T>> {
   public ListAssert(T[] value) {
     super(value == null ? null : Arrays.asList(value));
   }
@@ -18,20 +18,23 @@ public class ListAssert<T> extends BaseAssert<List<T>> {
     super(value);
   }
 
-  public void eq(T... expected) {
+  public ListAssert<T> eq(T... expected) {
     eq(Arrays.asList(expected));
+    return this;
   }
 
-  public void contains(T... expected) {
+  public ListAssert<T> contains(T... expected) {
     iterableMatches(Matchers.hasItems(expected));
+    return this;
   }
 
   private void iterableMatches(Matcher<Iterable<T>> matcher) {
     assertThat(value(), matcher);
   }
 
-  public void isEmpty() {
+  public ListAssert<T> isEmpty() {
     matches(matcherIsEmpty());
+    return this;
   }
 
   private BaseMatcher<List<T>> matcherIsEmpty() {
@@ -53,11 +56,12 @@ public class ListAssert<T> extends BaseAssert<List<T>> {
     return value().get(0);
   }
 
-  public void hasSize(int expected) {
+  public ListAssert<T> hasSize(int expected) {
     isOfSize(expected);
+    return this;
   }
 
-  public void isOfSize(final int expected) {
+  public ListAssert<T> isOfSize(final int expected) {
     matches(new BaseMatcher<List<T>>() {
       @SuppressWarnings({"unchecked"})
       public boolean matches(Object o) {
@@ -68,9 +72,11 @@ public class ListAssert<T> extends BaseAssert<List<T>> {
         description.appendText("list should have size of <").appendValue(expected).appendText(">");
       }
     });
+    return this;
   }
 
-  public void notEmpty() {
+  public ListAssert<T> notEmpty() {
     matches(IsNot.not(matcherIsEmpty()));
+    return this;
   }
 }

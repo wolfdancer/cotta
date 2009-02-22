@@ -4,12 +4,12 @@ import net.sf.cotta.TFile;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
-public class TFileAssert extends BaseAssert<TFile> {
+public class TFileAssert extends BaseAssert<TFile, TFileAssert> {
   public TFileAssert(TFile value) {
     super(value);
   }
 
-  public void fileExtists() {
+  public TFileAssert fileExtists() {
     matches(new BaseMatcher<TFile>() {
       public boolean matches(Object item) {
         return ((TFile) item).exists();
@@ -19,6 +19,7 @@ public class TFileAssert extends BaseAssert<TFile> {
         description.appendText("file should exist");
       }
     });
+    return this;
   }
 
 }

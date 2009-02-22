@@ -5,7 +5,7 @@ import net.sf.cotta.test.assertion.BaseAssert;
 
 import java.nio.channels.FileChannel;
 
-public class InMemoryOutputFileChannelAssert extends BaseAssert<InMemoryOutputFileChannel> {
+public class InMemoryOutputFileChannelAssert extends BaseAssert<InMemoryOutputFileChannel, InMemoryOutputFileChannelAssert> {
   private AssertionFactory ensure;
 
   public InMemoryOutputFileChannelAssert(FileChannel value) {
@@ -17,7 +17,8 @@ public class InMemoryOutputFileChannelAssert extends BaseAssert<InMemoryOutputFi
     this.ensure = assertionFactory;
   }
 
-  public void hasContent(String expected) {
+  public InMemoryOutputFileChannelAssert hasContent(String expected) {
     ensure.string(value().getContent().toString()).eq(expected);
+    return this;
   }
 }
