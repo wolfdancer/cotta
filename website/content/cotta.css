@@ -1,43 +1,54 @@
 body {
-    padding: 0px;
-    margin: 0px;
-    border: 0px;
+    padding: 0;
+    margin: 0;
+    border: 0;
     font-family: helvetica, arial, sans-serif;
     background-color: white;
     color: black;
 }
 
 h1, h2, h3, h4, h5, h6 {
-    margin: 0px;
-    border: 0px;
-    padding: 0px;
+    margin: 0;
+    border: 0;
+    padding: 0;
     font-weight: normal;
 }
 
-a:link { color: #00a; }
-a:active { color: red; }
-a:hover { color: darkred; }
-a:visited { color: black; }
+a:link {
+    color: #00a;
+}
+
+a:active {
+    color: red;
+}
+
+a:hover {
+    color: darkred;
+}
+
+a:visited {
+    color: black;
+}
 
 #logo {
     padding: 10px;
 }
 
 img {
-    border: 0px;
-    padding: 0px;
-    margin: 0px;
+    border: 0;
+    padding: 0;
+    margin: 0;
 }
 
 p {
-    border: 0px;
-    padding: 0px;
-    margin: 0px;
-    margin-bottom: 10px;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    margin-bottom: 10;
 }
 
 blockquote {
-    margin-bottom: 10px;
+    margin-bottom: 10;
 }
 
 td {
@@ -56,61 +67,89 @@ th.Row {
 }
 
 ul, ol {
-    border: 0px;
-    padding: 0px;
-    margin-top: 0px;
+    border: 0;
+    padding: 0;
+    margin-top: 0;
     margin-bottom: 12px;
-    margin-left: 20px;
+    margin-left: 20;
 }
 
 div.header {
-	top: 0px;
-	left: 0px;
-	right: 0px;
-	width: 100%;
-	height: 86px;
-	margin: 0px;
-	border: 0px;
-	background-color: #EDE3D0;
-	border-bottom: 1px solid #825C47;
-	padding-left,padding-right,padding-top: 0px;
-	padding-bottom: 4px;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 86px;
+    margin: 0;
+    border: 0;
+    background-color: #EDE3D0;
+    border-bottom: 1px solid #825C47;
+    padding-left, padding-right, padding-top: 0;
+    padding-bottom: 4px;
 }
 
 h1.header {
-  padding:0;
-  margin:0;
+    padding: 0;
+    margin: 0;
 }
 
-a.header { border: 0px; text-decoration: none;}
-a.header:visited { color: #00a; }
-a.header:hover { color: red; }
-a.header:active { color: red; }
+a.header {
+    border: 0;
+    text-decoration: none;
+}
+
+a.header:visited {
+    color: #00a;
+}
+
+a.header:hover {
+    color: red;
+}
+
+a.header:active {
+    color: red;
+}
 
 div.left {
-  float:left;
-  width:180px;
-	background-color: white;
-	padding: 8px;
-	font-size: small;
-	font-style: normal;
-	margin-top: 16px;
+    float: left;
+    width: 180;
+    background-color: white;
+    padding: 8px;
+    font-size: small;
+    font-style: normal;
+    margin-top: 16px;
 }
 
-div.left h1{
-    margin: 0px;
-    border: 0px;
+div.left h1 {
+    margin: 0;
+    border: 0;
     padding: 4px;
     color: #894926;
     font-size: small;
     font-weight: bold;
 }
 
-div.MenuGroup a { text-decoration: none; }
-div.MenuGroup a:link { color: #894926; }
-div.MenuGroup a:visited { color: #894926; }
-div.MenuGroup a:active { color: red; }
-div.MenuGroup a:hover { color: white; background-color:#894926;width:160px;}
+div.MenuGroup a {
+    text-decoration: none;
+}
+
+div.MenuGroup a:link {
+    color: #894926;
+}
+
+div.MenuGroup a:visited {
+    color: #894926;
+}
+
+div.MenuGroup a:active {
+    color: red;
+}
+
+div.MenuGroup a:hover {
+    color: white;
+    background-color: #894926;
+    width: 160;
+}
 
 /*---------------------------------------------------------------------------
  *  Menus
@@ -119,14 +158,14 @@ div.MenuGroup a:hover { color: white; background-color:#894926;width:160px;}
     border-left: 1px solid #825C47;
     border-top: 1px solid #825C47;
     border-bottom: 1px solid white; /* IE work-around */
-    
+
     margin-bottom: 8px;
     background-color: white;
     color: #894926;
 }
 
 .MenuGroup ul {
-    margin: 0px;
+    margin: 0;
     padding-left: 4px;
     list-style-type: none;
 }
@@ -136,81 +175,116 @@ div.MenuGroup a:hover { color: white; background-color:#894926;width:160px;}
 }
 
 .More {
-		width: 100%;
-		text-align: right;
+    width: 100%;
+    text-align: right;
 }
+
 /*------------------------------------------------------------------------------*/
 
 /*-------------------------------------------------
  * Right Panel
  */
 div.right {
-  float:right;
-  width:184px;
-  margin:0;
-	background-color: white;
-	padding: 8px;
-	font-size: small;
-	font-style: normal;
-	margin-top: 16px;
+    float: right;
+    width: 184px;
+    margin: 0;
+    background-color: white;
+    padding: 8px;
+    font-size: small;
+    font-style: normal;
+    margin-top: 16px;
 }
 
-div.right h1{
-    margin: 0px;
-    border: 0px;
+div.right h1 {
+    margin: 0;
+    border: 0;
     padding: 4px;
     color: #894926;
     font-size: small;
     font-weight: bold;
 }
 
-div.right a { text-decoration: none; }
-div.right a:link { color: #894926; }
-div.right a:visited { color: #894926; }
-div.right a:active { color: red; }
-div.right a:hover { color: red; }
+div.right a {
+    text-decoration: none;
+}
 
+div.right a:link {
+    color: #894926;
+}
+
+div.right a:visited {
+    color: #894926;
+}
+
+div.right a:active {
+    color: red;
+}
+
+div.right a:hover {
+    color: red;
+}
 
 /*---------------------------------------------------------------------------
- *  News panel
- */
+*  News panel
+*/
 .NewsGroup {
     border-left: 1px solid #825C47;
     border-top: 1px solid #825C47;
     border-bottom: 1px solid white; /* IE workaround */
     margin-bottom: 8px;
-    
+
     color: #894926;
 }
+
 .NewsItem {
     margin: 4px;
 }
+
 .NewsTitle {
     font-weight: bold;
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
 }
+
 .NewsDate {
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
     font-size: smaller;
 }
+
 .NewsText {
-    padding: 0px;
-    margin: 0px;
+    padding: 0;
+    margin: 0;
     margin-bottom: 8px;
 }
-.NewsText a { text-decoration: underline; }
-.NewsText a:link { color: #894926; }
-.NewsText a:visited { color: #894926; }
-.NewsText a:active { color: red; }
-.NewsText a:hover { color: red; }
-.NewsMore {
-		font-size: small;
-		margin: 4px;
-		margin-top: 12px;
-		text-align: left;
+
+.NewsText a {
+    text-decoration: underline;
 }
+
+.NewsText a:link {
+    color: #894926;
+}
+
+.NewsText a:visited {
+    color: #894926;
+}
+
+.NewsText a:active {
+    color: red;
+}
+
+.NewsText a:hover {
+    color: red;
+}
+
+.NewsMore {
+    font-size: small;
+    margin: 4px;
+    margin-top: 12px;
+    text-align: left;
+}
+
 .NewsGroup td {
     font-size: 12px;
 }
@@ -228,21 +302,36 @@ div.right a:hover { color: red; }
     text-align: right;
 }
 
-.Meta a { text-decoration: underline; }
-.Meta a:link { color: #C0C0C0; }
-.Meta a:visited { color: #C0C0C0; }
-.Meta a:active { color: red; }
-.Meta a:hover { color: red; }
+.Meta a {
+    text-decoration: underline;
+}
+
+.Meta a:link {
+    color: #C0C0C0;
+}
+
+.Meta a:visited {
+    color: #C0C0C0;
+}
+
+.Meta a:active {
+    color: red;
+}
+
+.Meta a:hover {
+    color: red;
+}
+
 /*--------------------------------------------------------------------------*/
 
 div.Content3Column {
-  margin-left:200px;
-  margin-right:216px;
+    margin-left: 200;
+    margin-right: 216px;
 }
 
 div.Content2Column {
-  margin-left:200px;
-  margin-right:16px;
+    margin-left: 200;
+    margin-right: 16px;
 }
 
 div.content h1 {
@@ -256,14 +345,29 @@ div.content h1 {
     margin-bottom: 12px;
 }
 
-div.content a { text-decoration: underline; }
-div.content a:link { color: #894926; }
-div.content a:visited { color: #894926; }
-div.content a:active { color: green; }
-div.content a:hover { color: red; }
+div.content a {
+    text-decoration: underline;
+}
+
+div.content a:link {
+    color: #894926;
+}
+
+div.content a:visited {
+    color: #894926;
+}
+
+div.content a:active {
+    color: green;
+}
+
+div.content a:hover {
+    color: red;
+}
+
 div.content h2 {
     margin-top: 24px;
-    margin-bottom: 16px;    
+    margin-bottom: 16px;
     font-weight: bold;
     font-size: Larger;
 }
@@ -271,9 +375,11 @@ div.content h2 {
 div.content li {
     margin-bottom: 6px;
 }
+
 div.content th {
     background-color: #825C47;
 }
+
 div.content td {
     background-color: #D7B19C;
 }
@@ -288,55 +394,72 @@ div.Shaded pre {
 }
 
 div.Shaded:before {
-    margin: 0px;
-    padding: 0px;
-    border: 0px;
+    margin: 0;
+    padding: 0;
+    border: 0;
     font-size: inherit;
     line-spacing: 100%;
 }
 
 div.Code {
-  white-space: pre;
-  padding: 4px;
-  font-family: courier new, monospace;
-  font-size: smaller;
-  border: 1px solid #008;
-  background-color: #E8A57F;
-  color: black;
+    white-space: pre;
+    padding: 4px;
+    font-family: courier new, monospace;
+    font-size: smaller;
+    border: 1px solid #008;
+    background-color: #E8A57F;
+    color: black;
 }
 
 div.Code:before {
-    margin: 0px;
-    padding: 0px;
-    border: 0px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: inherit;
+}
+
+pre.Code {
+    white-space: pre;
+    padding: 4px;
+    font-family: courier new, monospace;
+    font-size: smaller;
+    border: 1px solid #008;
+    background-color: #E8A57F;
+    color: black;
+}
+
+pre.Code:before {
+    margin: 0;
+    padding: 0;
+    border: 0;
     font-size: inherit;
 }
 
 div.footer {
-  color: #894926;
-  padding:0.5em;
-  clear:both;
-  text-align:center;
-  font-size:75%;
+    color: #894926;
+    padding: 0.5em;
+    clear: both;
+    text-align: center;
+    font-size: 75%;
 }
 
 div.footer a {
-  color:#894926;
-  font-size:inherit;
+    color: #894926;
+    font-size: inherit;
 }
 
 div.bottomshadow {
-  width=100%;
-  height: 12px;
-  background-image: url("/border_bottom.gif");
-  background-repeat: repeat-x;
-  padding: 12px;
+    width = 100%;
+    height: 12px;
+    background-image: url("/border_bottom.gif");
+    background-repeat: repeat-x;
+    padding: 12px;
 }
 
 div#content .Float {
     float: right;
     margin-left: 8px;
-    margin-right: 0px;
+    margin-right: 0;
     margin-top: 8px;
     margin-bottom: 8px;
 }

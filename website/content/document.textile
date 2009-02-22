@@ -16,6 +16,7 @@ h1. Table of Content
 ** "jBehave Support":utilities.html#jbehave
 
 <a name="convention"> </a>
+
 h1. Cotta Convention
 
 Based on the ""Thoughts behind Cotta":power.html", Cotta is designed to match the common expectations for
@@ -31,6 +32,7 @@ file operations:
 Please do provide any feedbacks on any cases where you find them useful than this document.
 
 <a name="operations"> </a>
+
 h1. File Operations
 
 Cotta offers three levels of flexibility for file operations to fit different development needs.
@@ -39,51 +41,25 @@ h2. Save and Load
 
 This is used simply for saving and loading text contents.
 
-<div class="Code">TFile fle = ...
-file.save("content to save");
-String loadedContent = file.load();
-</div>
+<template:code source="../../core/behaviour/src/net/sf/cotta/TFileTest.java" tag="TFILE-SAVE" syntax="java"/>
 
 Or:
 
-<div class="Code">TFile file = ...
-file.open(new LineProcessor() {
-  public void process(String line) {
-    System.out.println("Read line: " + line);
-  }
-});</div>
-
-
+<template:code source="document-sample.java" tag="TFILE-OPEN" syntax="java"/>
 
 h2. Managed Resource
 
 All input or output resources created will be tracked and closed automatically, even upon exception.  This is similar
 to the design of Spring template and Ruby file I/O.  All exceptions are wrapped in @TIoException@.
 
-<div class="Code">TFile file = ...
-file.open(new FileIoProcessor() {
-  public void process(FileIoResource io) throws IOException {
-    PrintWriter printer = io.printWriter();
-    printer.println("line one");
-    printer.println("line two");
-  }
-});</div>
+<template:code source="document-sample.java" tag="MANAGE-RESOURCE" syntax="java"/>
 
 h2. I/O Factory
 
 An I/O factory that does not more than allowing the creations of common I/O streams, reader/writer, printer with just one
 method call.
 
-<div class="Code">TFile file = ...
-PrintWriter printer = file.io().printWriter();
-try {
-  printer.println("line one");
-  printer.println("line two");
-} catch (IOException e) {
-  // ... exception handling code here
-} finally {
-  printer.close();
-}</div>
+<template:code source="document-sample.java" tag="IOFACTORY" syntax="java"/>
 
 <a name="filesystems"> </a>
 h1. File Systems

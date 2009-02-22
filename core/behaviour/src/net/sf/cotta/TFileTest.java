@@ -1,6 +1,11 @@
 package net.sf.cotta;
 
-import net.sf.cotta.io.*;
+import net.sf.cotta.io.InputManager;
+import net.sf.cotta.io.InputProcessor;
+import net.sf.cotta.io.IoManager;
+import net.sf.cotta.io.IoProcessor;
+import net.sf.cotta.io.OutputManager;
+import net.sf.cotta.io.OutputProcessor;
 import net.sf.cotta.memory.InMemoryFileSystem;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -45,8 +50,10 @@ public class TFileTest extends CottaTestCase {
 
   public void testWriteToAndReadFromFile() throws Exception {
     TFile file = file("/tmp/test.txt");
+    //START TFILE-SAVE
     file.save("content");
-    ensureEquals(file.load(), "content");
+    ensure.that(file.load()).eq("content");
+    //END TFILE-SAVE
   }
 
   public void testBeEqualIfPathAndFileSystemAreEqual() throws Exception {

@@ -1,6 +1,6 @@
 # SiteSpec for Cotta website to be built by BuildMaster
 # To start the local server against the content, type
-#     sitespec.rb -server
+#     sitespec.rb server
 # and point your browser to port 2000
 # See BuildMaster website (http://buildmaster.rubyforge.org) for details
 require 'buildmaster/site'
