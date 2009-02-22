@@ -3,7 +3,7 @@ package net.sf.cotta.test.assertion;
 import net.sf.cotta.test.matcher.GreaterThanMatecher;
 import net.sf.cotta.test.matcher.LessThanMatcher;
 
-public class IntegerAssert extends ObjectAssert<Integer> {
+public class IntegerAssert extends BaseAssert<Integer, IntegerAssert> {
   public IntegerAssert(int value) {
     super(value);
   }

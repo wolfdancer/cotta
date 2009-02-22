@@ -1,6 +1,18 @@
 package net.sf.cotta.test;
 
-import net.sf.cotta.test.assertion.*;
+import net.sf.cotta.test.assertion.BaseAssert;
+import net.sf.cotta.test.assertion.BooleanAssert;
+import net.sf.cotta.test.assertion.ByteListAssert;
+import net.sf.cotta.test.assertion.CharAssert;
+import net.sf.cotta.test.assertion.CodeBlock;
+import net.sf.cotta.test.assertion.CodeBlockAssertion;
+import net.sf.cotta.test.assertion.ExceptionAssert;
+import net.sf.cotta.test.assertion.IntegerAssert;
+import net.sf.cotta.test.assertion.ListAssert;
+import net.sf.cotta.test.assertion.LongAssert;
+import net.sf.cotta.test.assertion.MapAssert;
+import net.sf.cotta.test.assertion.SetAssert;
+import net.sf.cotta.test.assertion.StringAssert;
 
 import java.util.List;
 import java.util.Map;
@@ -14,16 +26,16 @@ public class AssertionFactory {
     return new IntegerAssert(value);
   }
 
-  public <T> ObjectAssert<T> that(T value) {
+  public <T> BaseAssert<T> that(T value) {
     return object(value);
   }
 
-  public <T extends ObjectAssert<?>> T that(T asserts) {
+  public <T extends BaseAssert<?>> T that(T asserts) {
     return asserts;
   }
 
-  public <T> ObjectAssert<T> object(T value) {
-    return new ObjectAssert<T>(value);
+  public <T> BaseAssert<T> object(T value) {
+    return new BaseAssert<T>(value);
   }
 
   public CodeBlockAssertion that(CodeBlock block) {

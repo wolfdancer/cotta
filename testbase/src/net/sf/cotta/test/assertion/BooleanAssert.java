@@ -1,6 +1,6 @@
 package net.sf.cotta.test.assertion;
 
-public class BooleanAssert extends ObjectAssert<Boolean> {
+public class BooleanAssert extends BaseAssert<Boolean> {
   public BooleanAssert(Boolean value) {
     super(value);
   }

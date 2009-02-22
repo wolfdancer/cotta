@@ -98,7 +98,7 @@ public abstract class TfsTestCase extends CottaTestCase {
     ensure.that(parent.exists()).eq(true);
     TDirectory sameChild = parent.dir("subdirectory");
     ensure.that(sameChild.exists()).eq(true);
-    ensure.that(sameChild).javaEquals(directory);
+    ensure.that(sameChild).eqWithHash(directory);
   }
 
   public void testMakeSureRootDirectoryAlwaysExists() throws Exception {

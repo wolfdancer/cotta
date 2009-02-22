@@ -1,6 +1,6 @@
 package net.sf.cotta.test.assertion;
 
-public class CharAssert extends ObjectAssert<Character> {
+public class CharAssert extends BaseAssert<Character> {
   public CharAssert(Character value) {
     super(value);
   }

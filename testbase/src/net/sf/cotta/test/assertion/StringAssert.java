@@ -9,7 +9,7 @@ import org.junit.matchers.JUnitMatchers;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StringAssert extends ObjectAssert<String> {
+public class StringAssert extends BaseAssert<String, StringAssert> {
   public StringAssert(String value) {
     super(value);
   }
@@ -41,8 +41,8 @@ public class StringAssert extends ObjectAssert<String> {
 
   public void contains(String... expectedValues) {
     Matcher<String> matcher = expectedValues.length == 1 ?
-        JUnitMatchers.containsString(expectedValues[0]) :
-        allof(expectedValues);
+            JUnitMatchers.containsString(expectedValues[0]) :
+            allof(expectedValues);
     matches(matcher);
   }
 

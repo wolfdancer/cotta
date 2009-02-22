@@ -3,7 +3,7 @@ package net.sf.cotta.test.assertion;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
-public class LongAssert extends ObjectAssert<Long> {
+public class LongAssert extends BaseAssert<Long> {
   public LongAssert(Long value) {
     super(value);
   }

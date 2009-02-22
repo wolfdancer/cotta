@@ -49,8 +49,8 @@ public class TPathTest extends CottaTestCase {
   }
 
   public void testBeEqualWithSamePathInformation() throws Exception {
-    ensure.that(TPath.parse("c:\\tmp\\cotta\\testDir")).javaEquals((TPath.parse("c:\\tmp\\cotta\\testDir")));
-    ensure.that(TPath.parse("c:\\tmp\\cotta\\testDir")).javaEquals((TPath.parse("c:/tmp/cotta/testDir")));
+    ensure.that(TPath.parse("c:\\tmp\\cotta\\testDir")).eqWithHash((TPath.parse("c:\\tmp\\cotta\\testDir")));
+    ensure.that(TPath.parse("c:\\tmp\\cotta\\testDir")).eqWithHash((TPath.parse("c:/tmp/cotta/testDir")));
   }
 
   public void testBeAbleToConstructParent() throws Exception {

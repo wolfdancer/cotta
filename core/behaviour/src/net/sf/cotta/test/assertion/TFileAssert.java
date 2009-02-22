@@ -4,7 +4,7 @@ import net.sf.cotta.TFile;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
-public class TFileAssert extends ObjectAssert<TFile> {
+public class TFileAssert extends BaseAssert<TFile> {
   public TFileAssert(TFile value) {
     super(value);
   }

@@ -4,7 +4,7 @@ import net.sf.cotta.TDirectory;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
-public class TDirectoryAssert extends ObjectAssert<TDirectory> {
+public class TDirectoryAssert extends BaseAssert<TDirectory> {
   public TDirectoryAssert(TDirectory value) {
     super(value);
   }

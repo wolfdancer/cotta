@@ -5,7 +5,7 @@ import net.sf.cotta.test.TestCase;
 public class ObjectAssertTest extends TestCase {
   public void testDescribeAs() {
     Object instance = new Object();
-    final ObjectAssert<Object> assertion = new ObjectAssert<Object>(instance).describedAs("description");
+    final BaseAssert assertion = new BaseAssert<Object, BaseAssert>(instance).describedAs("description");
     ensure.that(new CodeBlock() {
       public void execute() throws Exception {
         assertion.sameAs(new Object());
@@ -15,7 +15,7 @@ public class ObjectAssertTest extends TestCase {
 
   public void testOverrideEqualsToThrowException() {
     final Object instance = new Object();
-    final ObjectAssert<Object> assertion = ensure.object(instance);
+    final BaseAssert<Object, BaseAssert> assertion = ensure.object(instance);
     ensure.code(new CodeBlock() {
       public void execute() throws Exception {
         assertion.equals(instance);

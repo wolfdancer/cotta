@@ -10,17 +10,29 @@ import org.hamcrest.core.IsNull;
 import org.junit.Assert;
 import org.junit.matchers.JUnitMatchers;
 
-public class ObjectAssert<T> extends Assert {
+/**
+ * Basic assertion class to be extended by all.  Type T is the type of the value
+ * under assertion, and type A is the assertion class (to be used for returning self)
+ *
+ * @param <T> Type of the value under assertion
+ * @param <A> Type of the current assertion class
+ */
+public class BaseAssert<T, A> extends Assert {
   private String description = "";
   private T value;
 
-  public ObjectAssert(T value) {
+  public BaseAssert(T value) {
     this.value = value;
   }
 
-  public ObjectAssert<T> describedAs(String description) {
+  @SuppressWarnings({"unchecked"})
+  protected A self() {
+    return (A) this;
+  }
+
+  public A describedAs(String description) {
     this.description = description;
-    return this;
+    return self();
   }
 
   public T value() {
@@ -32,29 +44,34 @@ public class ObjectAssert<T> extends Assert {
     throw new UnsupportedOperationException("equals method is not supported by assertion, you probably wanted to use eq method");
   }
 
-  public ObjectAssert<T> eq(T expected) {
+  public A eq(T expected) {
     matches(IsEqual.equalTo(expected));
-    return this;
+    return self();
   }
 
-  public void matches(Matcher<T> matcher) {
+  public A matches(Matcher<T> matcher) {
     assertThat(description, value(), matcher);
+    return self();
   }
 
-  public void sameAs(T actual) {
+  public A sameAs(T actual) {
     matches(Matchers.sameInstance(actual));
+    return self();
   }
 
-  public void notNull() {
+  public A notNull() {
     matches(IsNot.not(new IsNull<T>()));
+    return self();
   }
 
-  public void not(Matcher<T> matcher) {
+  public A not(Matcher<T> matcher) {
     matches(Matchers.not(matcher));
+    return self();
   }
 
-  public void isNull() {
+  public A isNull() {
     matches(Matchers.<T>nullValue());
+    return self();
   }
 
   @SuppressWarnings({"unchecked"})
@@ -75,8 +92,9 @@ public class ObjectAssert<T> extends Assert {
     };
   }
 
-  public void javaEquals(T expected) {
+  public A eqWithHash(T expected) {
     matches(JUnitMatchers.both(IsEqual.equalTo(expected)).and(hashEq(expected)));
+    return self();
   }
 
   private Matcher<T> hashEq(final T expected) {

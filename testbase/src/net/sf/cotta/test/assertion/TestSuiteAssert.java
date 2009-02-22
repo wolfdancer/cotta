@@ -7,7 +7,7 @@ import org.junit.Assert;
 
 import java.util.Enumeration;
 
-public class TestSuiteAssert extends ObjectAssert<TestSuite> {
+public class TestSuiteAssert extends BaseAssert<TestSuite> {
   public TestSuiteAssert(TestSuite suite) {
     super(suite);
   }

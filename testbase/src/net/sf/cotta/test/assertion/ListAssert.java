@@ -9,7 +9,7 @@ import org.hamcrest.core.IsNot;
 import java.util.Arrays;
 import java.util.List;
 
-public class ListAssert<T> extends ObjectAssert<List<T>> {
+public class ListAssert<T> extends BaseAssert<List<T>> {
   public ListAssert(T[] value) {
     super(value == null ? null : Arrays.asList(value));
   }

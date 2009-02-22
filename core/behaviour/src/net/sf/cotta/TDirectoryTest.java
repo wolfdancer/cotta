@@ -99,7 +99,7 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
     TFileFactory factory = factory();
     TDirectory one = factory.dir("/tmp/one/two");
     TDirectory two = factory.dir("/tmp/one/two");
-    ensure.that(one).javaEquals(two);
+    ensure.that(one).eqWithHash(two);
   }
 
   public void testKnowItsParent() throws Exception {

@@ -1,11 +1,11 @@
 package net.sf.cotta.memory;
 
 import net.sf.cotta.test.AssertionFactory;
-import net.sf.cotta.test.assertion.ObjectAssert;
+import net.sf.cotta.test.assertion.BaseAssert;
 
 import java.nio.channels.FileChannel;
 
-public class InMemoryOutputFileChannelAssert extends ObjectAssert<InMemoryOutputFileChannel> {
+public class InMemoryOutputFileChannelAssert extends BaseAssert<InMemoryOutputFileChannel> {
   private AssertionFactory ensure;
 
   public InMemoryOutputFileChannelAssert(FileChannel value) {
