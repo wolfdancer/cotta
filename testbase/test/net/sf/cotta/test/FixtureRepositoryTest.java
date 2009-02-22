@@ -43,9 +43,7 @@ public class FixtureRepositoryTest extends junit.framework.TestCase {
   }
 
   @Sample
-  public static class TestDummy extends TestCase {
-
-  }
+  private static class TestDummy extends TestCase {}
 
   @Fixture(FixtureType.ENVIRONMENT)
   @Retention(RetentionPolicy.RUNTIME)
@@ -72,8 +70,7 @@ public class FixtureRepositoryTest extends junit.framework.TestCase {
   }
 
   @FixtureClassNotTestFixture
-  public static class TestWithAnnotationProblem extends TestCase {
-  }
+  private static class TestWithAnnotationProblem extends TestCase {}
 
   @Retention(RetentionPolicy.RUNTIME)
   @Fixture(FixtureType.ENVIRONMENT)

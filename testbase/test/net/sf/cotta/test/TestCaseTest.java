@@ -9,6 +9,7 @@ public class TestCaseTest extends junit.framework.TestCase {
   private static AssertionFactory ensure = new AssertionFactory();
 
   public void testCallsBeforeAndAfterSettingPublicFieldsToNullAndFixtures() throws Throwable {
+    SampleFixture.log.clear();
     TestDummy test = new TestDummy();
     TestDummy.staticField = new Object();
     FixtureRepository repository = new FixtureRepository();
