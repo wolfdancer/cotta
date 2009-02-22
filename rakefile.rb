@@ -11,12 +11,21 @@ dist = build.dir('dist')
 junit_file = root.file('lib/junit/junit-4.4.jar')
 jmock_dir = root.dir('lib/jmock')
 
+asserts = BuildMaster::JavaProject.new(root.dir('asserts')) do |project|
+  project.target_version = '1.5'
+  project.src = 'src'
+  project.test.src = 'test'
+  project.output = output.dir('asserts')
+  project.uses(junit_file)
+  project.uses_files_in jmock_dir
+end
+
 testbase = BuildMaster::JavaProject.new(root.dir('testbase')) do |project|
   project.target_version = '1.5'
   project.src = 'src'
   project.test.src = 'test'
   project.output = output.dir('testbase')
-  project.uses(junit_file)
+  project.uses(asserts, junit_file)
   project.uses_files_in jmock_dir
 end
 
@@ -41,9 +50,14 @@ ftp = BuildMaster::JavaProject.new(root.dir('ftp')) do |project|
 end
 
 task :default => [:test, :package]
+task :make_testbase => [:make_asserts]
 task :make_cotta => [:make_testbase]
 task :make_ftp => [:make_cotta]
-task :test => [:make_cotta, :make_ftp, :make_testbase]
+task :test => [:make_cotta, :make_ftp, :make_testbase, :make_asserts]
+
+task :make_asserts do
+  asserts.make
+end
 
 task :make_testbase do
   testbase.make
@@ -63,6 +77,7 @@ end
 
 task :test do
   cobertura = root.file('lib/cobertura/cobertura-1.9.jar')
+  asserts.junit(report.dir('asserts')).for_tests('*Test.java').with_coverage(cobertura).run
   testbase.junit(report.dir('testbase')).for_tests('*Test.java').with_coverage(cobertura).run
   core.junit(report.dir('core')).for_tests('*Test.java').with_coverage(cobertura).run
   junit = ftp.junit(report.dir('ftp'))
@@ -73,6 +88,7 @@ task :test do
 end
 
 task :package do
+  asserts.package(dist, 'cotta-asserts')
   testbase.package(dist, 'cotta-testbase')
   core.package(dist, 'cotta') do |package|
     package.manifest = core.src.file('META-INF/MANIFEST.MF')
