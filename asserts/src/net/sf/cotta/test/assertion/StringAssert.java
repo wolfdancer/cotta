@@ -18,12 +18,14 @@ public class StringAssert extends BaseAssert<String, StringAssert> {
     this(value == null ? null : new String(value));
   }
 
-  public void isNotEmpty() {
+  public StringAssert isNotEmpty() {
     not(empty());
+    return this;
   }
 
-  public void isEmpty() {
+  public StringAssert isEmpty() {
     matches(empty());
+    return this;
   }
 
   private BaseMatcher<String> empty() {
@@ -39,11 +41,12 @@ public class StringAssert extends BaseAssert<String, StringAssert> {
     };
   }
 
-  public void contains(String... expectedValues) {
+  public StringAssert contains(String... expectedValues) {
     Matcher<String> matcher = expectedValues.length == 1 ?
             JUnitMatchers.containsString(expectedValues[0]) :
             allof(expectedValues);
     matches(matcher);
+    return this;
   }
 
   private Matcher<String> allof(String[] expectedValues) {

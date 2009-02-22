@@ -1,10 +1,10 @@
 package net.sf.cotta.test;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.InvocationTargetException;
 
-public class AssertionFactoryTest extends TestCase {
+public class AssertionFactoryTest extends net.sf.cotta.test.assertion.TestCase {
   public void testAllMethodsHaveMatchingThatMethod() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
     AssertionFactory factory = new AssertionFactory();
     for (Method method : factory.getClass().getDeclaredMethods()) {

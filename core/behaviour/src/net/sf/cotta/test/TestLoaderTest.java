@@ -7,7 +7,7 @@ public class TestLoaderTest extends CottaTestCase {
   public void testLoadingTests() {
     TestLoader loader = new TestLoader(getClass());
     TestSuite suite = loader.loadTests();
-    ensure().suite(suite).hasTest(getClass(), getName());
+    ensure.suite(suite).hasTest(getClass(), getName());
   }
 
 }

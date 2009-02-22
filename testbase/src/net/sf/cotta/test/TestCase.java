@@ -46,7 +46,7 @@ abstract public class TestCase extends junit.framework.TestCase {
 
   private void reset(Field field) {
     if (Modifier.isPublic(field.getModifiers())
-        && !Modifier.isStatic(field.getModifiers())) {
+            && !Modifier.isStatic(field.getModifiers())) {
       try {
         field.set(this, null);
       } catch (IllegalAccessException e) {
@@ -68,11 +68,15 @@ abstract public class TestCase extends junit.framework.TestCase {
       try {
         afterMethod();
       } catch (Throwable tearingDown) {
-        if (exception == null) exception = tearingDown;
+        if (exception == null) {
+          exception = tearingDown;
+        }
       }
       repository.afterMethod(this);
     }
-    if (exception != null) throw exception;
+    if (exception != null) {
+      throw exception;
+    }
   }
 
   /**
@@ -97,10 +101,6 @@ abstract public class TestCase extends junit.framework.TestCase {
   }
 
   public void afterMethod() throws Exception {
-  }
-
-  protected AssertionFactory ensure() {
-    return new AssertionFactory();
   }
 
   public static AssertionFactory ensure = new AssertionFactory();

@@ -8,12 +8,12 @@ public class IntegerAssert extends BaseAssert<Integer, IntegerAssert> {
     super(value);
   }
 
-  public IntegerAssert lessThan(int expected) {
+  public IntegerAssert lt(int expected) {
     matches(new LessThanMatcher<Integer, Integer>(expected));
     return this;
   }
 
-  public IntegerAssert greaterThan(int expected) {
+  public IntegerAssert gt(int expected) {
     matches(new GreaterThanMatecher<Integer, Integer>(expected));
     return this;
   }

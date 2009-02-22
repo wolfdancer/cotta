@@ -5,17 +5,16 @@ import net.sf.cotta.test.TestCase;
 import net.sf.cotta.test.assertion.CodeBlock;
 import net.sf.cotta.test.assertion.ExceptionAssert;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class CottaTestCase extends TestCase {
   public List<IoResource> resourcesToClose;
-
-  protected CottaAssertionFactory ensure() {
-    return new CottaAssertionFactory();
-  }
 
   public static CottaAssertionFactory ensure = new CottaAssertionFactory();
 
@@ -80,9 +79,9 @@ public class CottaTestCase extends TestCase {
     if (resourcesToClose == null) {
       return;
     }
-    for (Iterator<IoResource> iterator = resourcesToClose.iterator(); iterator.hasNext();) {
+    for (IoResource aResourcesToClose : resourcesToClose) {
       try {
-        (iterator.next()).close();
+        (aResourcesToClose).close();
       } catch (Exception e) {
         // ignore exception
       }

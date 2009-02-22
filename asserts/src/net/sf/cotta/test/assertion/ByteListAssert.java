@@ -24,20 +24,22 @@ public class ByteListAssert extends ListAssert<Byte> {
     super(value);
   }
 
-  public void eq(int... expected) {
+  public ByteListAssert eq(int... expected) {
     List<Byte> bytes = new ArrayList<Byte>(expected.length);
     for (int value : expected) {
       bytes.add((byte) value);
     }
     eq(bytes);
+    return this;
   }
 
-  public void eq(byte... expected) {
+  public ByteListAssert eq(byte... expected) {
     List<Byte> list = new ArrayList<Byte>(expected.length);
     for (byte value : expected) {
       list.add(value);
     }
     eq(list);
+    return this;
   }
 
 }
