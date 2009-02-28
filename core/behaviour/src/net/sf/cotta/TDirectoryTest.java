@@ -68,6 +68,18 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
     ensure.that(directory.file("../three/txt.txt")).eq(factory.file("one/three/txt.txt"));
   }
 
+  public void testSupportAbsolutePathForFile() {
+    TFileFactory factory = factory();
+    TDirectory directory = factory.dir("one/two");
+    ensure.that(directory.file("/one/two/txt.txt")).eq(factory.file("/one/two/txt.txt"));
+  }
+
+  public void testSupportAbsolutePathForDir() {
+    TFileFactory factory = factory();
+    TDirectory directory = factory.dir("one/two");
+    ensure.that(directory.dir("/one/two")).eq(factory.dir("/one/two"));
+  }
+
   public void testInstantiateADirectoryGivenRelativePath() throws Exception {
     TFileFactory factory = factory();
     TDirectory directory = factory.dir("one/two");

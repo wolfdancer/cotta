@@ -50,24 +50,30 @@ public class TDirectory extends TEntry {
   }
 
   /**
-   * Constucts a file given the file name
+   * Constucts a file given the path.  If the path is relative path,
+   * it will be constructed based on the current directory
    *
-   * @param relativePath the relative path of the file
+   * @param path the path of the file
    * @return The file that is under the directory with the name
    * @see #file(TPath)
    */
-  public TFile file(String relativePath) {
-    return file(TPath.parse(relativePath));
+  public TFile file(String path) {
+    return file(TPath.parse(path));
   }
 
   /**
-   * Constructs a file given the relative path
+   * Constructs a file given the relative path.  If the path is relative,
+   * it will be constructed based on the current direcotry
    *
-   * @param relativePath The relative path to the current directory
+   * @param path path to the file
    * @return The file that is of the relative to the current directory
    */
-  public TFile file(TPath relativePath) {
-    return new TFile(factory(), path.join(relativePath));
+  public TFile file(TPath path) {
+    return new TFile(factory(), join(path));
+  }
+
+  private TPath join(TPath path) {
+    return path.isRelative() ? this.path.join(path) : path;
   }
 
   /**
@@ -83,11 +89,11 @@ public class TDirectory extends TEntry {
   /**
    * Constructs a directory given the relative path to the current directory
    *
-   * @param relativePath the relative path of the target directory to current directory
+   * @param path the relative path of the target directory to current directory
    * @return The target directory that is of the given the relative path
    */
-  public TDirectory dir(TPath relativePath) {
-    return new TDirectory(factory(), path.join(relativePath));
+  public TDirectory dir(TPath path) {
+    return new TDirectory(factory(), join(path));
   }
 
   public TDirectory[] listDirs() throws TIoException {

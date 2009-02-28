@@ -6,3 +6,4 @@ core/bin/*
 ftp/bin/*
 testbase/bin/*
 website/output/*
+.idea/*

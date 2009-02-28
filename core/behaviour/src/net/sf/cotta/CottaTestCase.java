@@ -13,7 +13,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CottaTestCase extends TestCase {
+abstract public class CottaTestCase extends TestCase {
   public List<IoResource> resourcesToClose;
 
   public static CottaAssertionFactory ensure = new CottaAssertionFactory();
