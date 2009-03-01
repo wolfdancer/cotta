@@ -1,6 +1,5 @@
 package net.sf.cotta;
 
-import net.sf.cotta.io.IoResource;
 import net.sf.cotta.memory.InMemoryFileSystem;
 import net.sf.cotta.physical.PhysicalFileSystemTestCase;
 import net.sf.cotta.test.assertion.CodeBlock;
@@ -10,6 +9,7 @@ import org.jmock.Mockery;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Closeable;
 
 public class TDirectoryTest extends PhysicalFileSystemTestCase {
   public void testExistAfterCreate() throws Exception {
@@ -329,8 +329,8 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
     context.assertIsSatisfied();
   }
 
-  private IoResource resource(final ZipFileSystem zipFileSystem) {
-    return new IoResource() {
+  private Closeable resource(final ZipFileSystem zipFileSystem) {
+    return new Closeable() {
       public void close() throws IOException {
         zipFileSystem.close();
       }

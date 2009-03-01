@@ -2,7 +2,6 @@ package net.sf.cotta.zip;
 
 import net.sf.cotta.*;
 import net.sf.cotta.FileSystem;
-import net.sf.cotta.io.IoResource;
 import net.sf.cotta.io.OutputMode;
 import net.sf.cotta.test.assertion.CodeBlock;
 import net.sf.cotta.utils.ClassPathEntry;
@@ -40,7 +39,7 @@ public class ZipFileSystemTest extends CottaTestCase {
     final ClassPathEntry pathEntry = classPathEntryLocator.locateEntry();
     // "This test only works if behaviour class is not in a jar"
     ensure.that(pathEntry.type()).eq(ClassPathType.DIRECTORY);
-    registerToClose(new IoResource() {
+    registerToClose(new Closeable() {
       public void close() throws TIoException {
         pathEntry.closeResource();
       }
@@ -162,7 +161,7 @@ public class ZipFileSystemTest extends CottaTestCase {
   }
 
   private void registerToClose(final ZipFileSystem zipFileSystem) {
-    registerToClose(new IoResource() {
+    registerToClose(new Closeable() {
       public void close() throws TIoException {
         zipFileSystem.close();
       }

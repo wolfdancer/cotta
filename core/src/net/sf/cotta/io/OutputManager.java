@@ -37,7 +37,7 @@ public class OutputManager {
     io.registerResource(writer);
   }
 
-  public void registerResource(IoResource resource) {
+  public void registerResource(Closeable resource) {
     io.registerResource(resource);
   }
 

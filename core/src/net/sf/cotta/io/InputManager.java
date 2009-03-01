@@ -44,8 +44,8 @@ public class InputManager {
     ioManager.registerResource(reader);
   }
 
-  public void registerResource(IoResource ioResource) {
-    ioManager.registerResource(ioResource);
+  public void registerResource(Closeable Closeable) {
+    ioManager.registerResource(Closeable);
   }
 
   public void open(final InputProcessor processor) throws TIoException {

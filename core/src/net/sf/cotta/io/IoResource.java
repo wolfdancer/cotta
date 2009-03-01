@@ -1,8 +1,11 @@
 package net.sf.cotta.io;
 
-import java.io.IOException;
+import java.io.Closeable;
 
-/** @noinspection JavaDoc*/
-public interface IoResource {
-  public void close() throws IOException;
+/**
+ * IOResource to close
+ * @deprecated use java.io.Closeable
+ * @see java.io.Closeable
+ */
+public interface IoResource extends Closeable {
 }

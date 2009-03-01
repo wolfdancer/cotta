@@ -12,7 +12,7 @@ public class IoManager {
   private static final int INITIAL_CAPACITY = 3;
 
   private IoFactory ioFactory;
-  private List<IoResource> resourceList = new ArrayList<IoResource>(INITIAL_CAPACITY);
+  private List<Closeable> resourceList = new ArrayList<Closeable>(INITIAL_CAPACITY);
 
   public IoManager(StreamFactory streamFactory) {
     this(streamFactory, null);
@@ -78,13 +78,13 @@ public class IoManager {
 
   private void close() throws IOException {
     Collections.reverse(resourceList);
-    for (IoResource ioResource : resourceList) {
-      ioResource.close();
+    for (Closeable Closeable : resourceList) {
+      Closeable.close();
     }
   }
 
   public void registerResource(final InputStream is) {
-    registerResource(new IoResource() {
+    registerResource(new Closeable() {
       public void close() throws IOException {
         is.close();
       }
@@ -92,7 +92,7 @@ public class IoManager {
   }
 
   public void registerResource(final OutputStream os) {
-    registerResource(new IoResource() {
+    registerResource(new Closeable() {
       public void close() throws IOException {
         os.close();
       }
@@ -100,16 +100,16 @@ public class IoManager {
   }
 
   public void registerResource(final Reader reader) {
-    IoResource ioResource = new IoResource() {
+    Closeable Closeable = new Closeable() {
       public void close() throws IOException {
         reader.close();
       }
     };
-    registerResource(ioResource);
+    registerResource(Closeable);
   }
 
   public void registerResource(final Writer writer) {
-    registerResource(new IoResource() {
+    registerResource(new Closeable() {
       public void close() throws IOException {
         writer.close();
       }
@@ -117,15 +117,15 @@ public class IoManager {
   }
 
   private void registerResource(final FileChannel channel) {
-    registerResource(new IoResource() {
+    registerResource(new Closeable() {
       public void close() throws IOException {
         channel.close();
       }
     });
   }
 
-  public void registerResource(IoResource ioResource) {
-    resourceList.add(ioResource);
+  public void registerResource(Closeable Closeable) {
+    resourceList.add(Closeable);
   }
 
   public void open(IoProcessor ioProcessor) throws TIoException {
