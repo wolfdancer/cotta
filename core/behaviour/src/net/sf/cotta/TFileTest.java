@@ -289,4 +289,14 @@ public class TFileTest extends CottaTestCase {
     ensure.that(file.pathFrom(directory)).eq(file.toPath().pathFrom(directory.toPath()));
   }
 
+  public void testParse() throws TIoException {
+    TFile file = TFileFactory.inMemory().file("/oen/two/text.txt").save("content");
+    String actual = file.parse(new Parser<String>() {
+      public String parse(InputManager input) throws IOException {
+        return input.bufferedReader().readLine();
+      }
+    });
+    ensure.that(actual).eq("content");
+  }
+
 }

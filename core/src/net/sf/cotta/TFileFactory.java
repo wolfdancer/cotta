@@ -1,6 +1,7 @@
 package net.sf.cotta;
 
 import net.sf.cotta.physical.PhysicalFileSystem;
+import net.sf.cotta.memory.InMemoryFileSystem;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -194,5 +195,21 @@ public class TFileFactory {
 
   public String defaultEncoding() {
     return defaultEncoding;
+  }
+
+  /**
+   * Creates a file factory with in-memory file system
+   * @return in-memory file factory
+   */
+  public static TFileFactory inMemory() {
+    return new TFileFactory(new InMemoryFileSystem());
+  }
+
+  /**
+   * Retruns the shared file factory for the physical file system
+   * @return phylical file factory
+   */
+  public static TFileFactory physical() {
+    return PHYSICAL_FILE_FACTORY;
   }
 }

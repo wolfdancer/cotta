@@ -18,6 +18,8 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.channels.FileChannel;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * The class that represents the file.  Even though the constructor is public, the usual
@@ -253,5 +255,15 @@ public class TFile extends TEntry {
 
   public String toString() {
     return "TFile:" + path();
+  }
+
+  public <T> T parse(final Parser<T> parser) throws TIoException {
+    final List<T> result = new ArrayList<T>(1);
+    read(new InputProcessor() {
+      public void process(InputManager inputManager) throws IOException {
+        result.add(parser.parse(inputManager));
+      }
+    });
+    return result.get(0);
   }
 }
