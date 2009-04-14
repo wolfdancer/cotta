@@ -1,8 +1,15 @@
 package net.sf.cotta.io;
 
 import net.sf.cotta.TIoException;
+import net.sf.cotta.TPath;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.LineNumberReader;
+import java.io.OutputStream;
+import java.io.Reader;
 import java.lang.reflect.Method;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
@@ -22,6 +29,10 @@ public class InputManager {
 
   public Reader reader() throws TIoException {
     return ioManager.reader();
+  }
+
+  public Reader reader(String encoding) throws TIoException {
+    return ioManager.reader(encoding);
   }
 
   public BufferedReader bufferedReader() throws TIoException {
@@ -68,12 +79,12 @@ public class InputManager {
       public Object run() {
         try {
           Method getCleanerMethod = buffer.getClass
-              ().getMethod("cleaner",
-              new Class[0]);
+                  ().getMethod("cleaner",
+                  new Class[0]);
           getCleanerMethod.setAccessible(true);
           sun.misc.Cleaner cleaner =
-              (sun.misc.Cleaner) getCleanerMethod.invoke(buffer, new Object
-                  [0]);
+                  (sun.misc.Cleaner) getCleanerMethod.invoke(buffer, new Object
+                          [0]);
           cleaner.clean();
         } catch (Exception e) {
           e.printStackTrace();
@@ -82,4 +93,30 @@ public class InputManager {
       }
     });
   }
+
+  public static Input with(final InputStream stream) {
+    final InputManager manager = new InputManager(new StreamFactory() {
+      public InputStream inputStream() throws TIoException {
+        return stream;
+      }
+
+      public FileChannel inputChannel() throws TIoException {
+        throw new UnsupportedOperationException();
+      }
+
+      public TPath path() {
+        return TPath.parse("/input stream");
+      }
+
+      public OutputStream outputStream(OutputMode mode) throws TIoException {
+        throw new UnsupportedOperationException();
+      }
+    });
+    return new Input() {
+      public void read(InputProcessor processor) throws TIoException {
+        manager.open(processor);
+      }
+    };
+  }
+
 }

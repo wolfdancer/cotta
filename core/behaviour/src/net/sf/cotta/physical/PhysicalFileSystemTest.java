@@ -49,7 +49,7 @@ public class PhysicalFileSystemTest extends PhysicalFileSystemTestCase {
   public void testCreateParentDirectoryWhenCreatingOutputStream() throws Exception {
     TPath fileToCreate = TPath.parse("tmp/ttt.txt");
     OutputStream os = fileSystem.createOutputStream(fileToCreate, OutputMode.APPEND);
-    registerToClose(resource(os));
+    registerToClose(os);
     os.write("test".getBytes());
     os.close();
     ensure.that(fileSystem.fileExists(fileToCreate));

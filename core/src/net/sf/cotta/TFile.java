@@ -117,8 +117,8 @@ public class TFile extends TEntry {
 
   public void copyTo(final TFile target) throws TIoException {
     target.write(new OutputProcessor() {
-      public void process(OutputManager outputManager) throws IOException {
-        copyTo(outputManager.outputStream());
+      public void process(OutputManager manager) throws IOException {
+        copyTo(manager.outputStream());
       }
     });
   }

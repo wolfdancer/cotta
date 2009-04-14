@@ -240,7 +240,7 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
     ensure.that(zipFile).fileExtists();
     File javaFile = zipFile.toJavaFile();
     ZipFileSystem zipFileSystem = new ZipFileSystem(javaFile);
-    registerToClose(resource(zipFileSystem));
+    registerToClose(zipFileSystem);
     TFileFactory zipFileFactory = new TFileFactory(zipFileSystem);
     TDirectory root = zipFileFactory.dir("/");
     ensure.that(root.exists()).eq(true);
@@ -257,7 +257,7 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
     directory.zipTo(zipFile);
     File javaFile = zipFile.toJavaFile();
     ZipFileSystem zipFileSystem = new ZipFileSystem(javaFile);
-    registerToClose(resource(zipFileSystem));
+    registerToClose(zipFileSystem);
     TFileFactory zipFileFactory = new TFileFactory(zipFileSystem);
     TDirectory root = zipFileFactory.dir("/");
     TFile[] actualList = root.listFiles();
@@ -273,7 +273,7 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
     TFile zipFile = directory.parent().file("zip.zip");
     directory.zipTo(zipFile);
     ZipFileSystem zipFileSystem = new ZipFileSystem(zipFile.toJavaFile());
-    registerToClose(resource(zipFileSystem));
+    registerToClose(zipFileSystem);
     TFileFactory zipFileFactory = new TFileFactory(zipFileSystem);
     TDirectory root = zipFileFactory.dir("/");
     ensure.that(root.listFiles().length).eq(0);
@@ -288,7 +288,7 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
     TFile zip = directory.parent().file("result.zip");
     directory.zipTo(zip);
     ZipFileSystem zipFileSystem = new ZipFileSystem(zip.toJavaFile());
-    registerToClose(resource(zipFileSystem));
+    registerToClose(zipFileSystem);
     TFileFactory zipTFileFactory = new TFileFactory(zipFileSystem);
     TDirectory root = zipTFileFactory.dir("/");
     ensure.that(root.dir("subdir").listDirs()).isEmpty();
@@ -342,14 +342,6 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
     });
     directory.visit(fileVisitor);
     context.assertIsSatisfied();
-  }
-
-  private Closeable resource(final ZipFileSystem zipFileSystem) {
-    return new Closeable() {
-      public void close() throws IOException {
-        zipFileSystem.close();
-      }
-    };
   }
 
 }

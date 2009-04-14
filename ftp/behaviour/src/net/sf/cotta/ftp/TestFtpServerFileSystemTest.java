@@ -78,8 +78,8 @@ public class TestFtpServerFileSystemTest extends FtpTestCase {
   public void testBeAbleToRetrieveFile() throws IOException {
     final byte[] fileContent = createTestFileContent();
     rootDir.file("testFile").write(new OutputProcessor() {
-      public void process(OutputManager outputManager) throws IOException {
-        IOUtils.write(fileContent, outputManager.outputStream());
+      public void process(OutputManager manager) throws IOException {
+        IOUtils.write(fileContent, manager.outputStream());
       }
     });
     ByteArrayOutputStream fileContentReadBuffer = new ByteArrayOutputStream();

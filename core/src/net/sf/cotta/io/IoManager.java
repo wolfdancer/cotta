@@ -34,14 +34,26 @@ public class IoManager {
     return outputStream;
   }
 
-  public Writer writer(OutputMode append) throws TIoException {
-    Writer writer = ioFactory.writer(append);
+  public Writer writer(OutputMode outputMode) throws TIoException {
+    Writer writer = ioFactory.writer(outputMode);
+    registerResource(writer);
+    return writer;
+  }
+
+  public Writer writer(OutputMode outputMode, String encoding) throws TIoException {
+    Writer writer = ioFactory.writer(outputMode, encoding);
     registerResource(writer);
     return writer;
   }
 
   public Reader reader() throws TIoException {
     Reader reader = ioFactory.reader();
+    registerResource(reader);
+    return reader;
+  }
+
+  public Reader reader(String encoding) throws TIoException {
+    Reader reader = ioFactory.reader(encoding);
     registerResource(reader);
     return reader;
   }
@@ -81,47 +93,6 @@ public class IoManager {
     for (Closeable Closeable : resourceList) {
       Closeable.close();
     }
-  }
-
-  public void registerResource(final InputStream is) {
-    registerResource(new Closeable() {
-      public void close() throws IOException {
-        is.close();
-      }
-    });
-  }
-
-  public void registerResource(final OutputStream os) {
-    registerResource(new Closeable() {
-      public void close() throws IOException {
-        os.close();
-      }
-    });
-  }
-
-  public void registerResource(final Reader reader) {
-    Closeable Closeable = new Closeable() {
-      public void close() throws IOException {
-        reader.close();
-      }
-    };
-    registerResource(Closeable);
-  }
-
-  public void registerResource(final Writer writer) {
-    registerResource(new Closeable() {
-      public void close() throws IOException {
-        writer.close();
-      }
-    });
-  }
-
-  private void registerResource(final FileChannel channel) {
-    registerResource(new Closeable() {
-      public void close() throws IOException {
-        channel.close();
-      }
-    });
   }
 
   public void registerResource(Closeable Closeable) {

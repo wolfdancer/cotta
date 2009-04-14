@@ -215,8 +215,8 @@ public class TFileTest extends CottaTestCase {
     file.save("one");
     //When
     file.append(new OutputProcessor() {
-      public void process(OutputManager outputManager) throws IOException {
-        outputManager.bufferedWriter().write("two");
+      public void process(OutputManager manager) throws IOException {
+        manager.bufferedWriter().write("two");
       }
     });
     //Ensure

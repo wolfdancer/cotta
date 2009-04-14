@@ -212,9 +212,9 @@ public class TDirectory extends TEntry {
 
   public void zipTo(TFile file) throws TIoException {
     file.write(new OutputProcessor() {
-      public void process(OutputManager outputManager) throws IOException {
-        ZipOutputStream zipStream = new ZipOutputStream(outputManager.outputStream());
-        outputManager.registerResource(zipStream);
+      public void process(OutputManager manager) throws IOException {
+        ZipOutputStream zipStream = new ZipOutputStream(manager.outputStream());
+        manager.registerResource(zipStream);
         addDirEntry(zipStream, "", TDirectory.this);
       }
 

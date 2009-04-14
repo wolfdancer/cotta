@@ -1,8 +1,10 @@
 package net.sf.cotta.io;
 
 import net.sf.cotta.TIoException;
+import net.sf.cotta.TPath;
 
 import java.io.*;
+import java.nio.channels.FileChannel;
 
 public class OutputManager {
   private IoManager io;
@@ -19,6 +21,10 @@ public class OutputManager {
 
   public Writer writer() throws TIoException {
     return io.writer(mode);
+  }
+
+  public Writer writer(String encoding) throws TIoException {
+    return io.writer(mode, encoding);
   }
 
   public BufferedWriter bufferedWriter() throws TIoException {
@@ -47,5 +53,30 @@ public class OutputManager {
         processor.process(OutputManager.this);
       }
     });
+  }
+
+  public static Output with(final OutputStream stream) {
+    final OutputManager manager = new OutputManager(new StreamFactory() {
+      public InputStream inputStream() throws TIoException {
+        throw new UnsupportedOperationException();
+      }
+
+      public FileChannel inputChannel() throws TIoException {
+        throw new UnsupportedOperationException();
+      }
+
+      public TPath path() {
+        return TPath.parse("/output stream");
+      }
+
+      public OutputStream outputStream(OutputMode mode) throws TIoException {
+        return stream;
+      }
+    }, OutputMode.APPEND);
+    return new Output() {
+      public void write(OutputProcessor processor) throws TIoException {
+        manager.open(processor);
+      }
+    };
   }
 }

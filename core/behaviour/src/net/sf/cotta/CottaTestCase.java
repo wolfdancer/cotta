@@ -4,11 +4,6 @@ import net.sf.cotta.test.TestCase;
 import net.sf.cotta.test.assertion.CodeBlock;
 import net.sf.cotta.test.assertion.ExceptionAssert;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.Writer;
 import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,39 +31,6 @@ abstract public class CottaTestCase extends TestCase {
 
   public void registerToClose(Closeable resource) {
     resourcesToClose.add(resource);
-  }
-
-  public Closeable resource(final OutputStream stream) {
-    return new Closeable() {
-      public void close() throws IOException {
-        stream.close();
-      }
-    };
-  }
-
-  public Closeable resource(final InputStream stream) {
-    return new Closeable() {
-
-      public void close() throws IOException {
-        stream.close();
-      }
-    };
-  }
-
-  public Closeable resource(final Writer writer) {
-    return new Closeable() {
-      public void close() throws IOException {
-        writer.close();
-      }
-    };
-  }
-
-  public Closeable resource(final Reader reader) {
-    return new Closeable() {
-      public void close() throws IOException {
-        reader.close();
-      }
-    };
   }
 
   public void beforeMethod() throws Exception {

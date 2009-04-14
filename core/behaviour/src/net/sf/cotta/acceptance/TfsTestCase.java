@@ -169,7 +169,7 @@ public abstract class TfsTestCase extends CottaTestCase {
     TFile file = factory.file("tmp/test.txt");
     file.save("");
     InputStream stream = file.io().inputStream();
-    registerToClose(resource(stream));
+    registerToClose(stream);
     ensureEquals(stream.read(), -1);
   }
 
@@ -177,7 +177,7 @@ public abstract class TfsTestCase extends CottaTestCase {
     TFileFactory factory = new TFileFactory(fileSystem());
     TFile file = factory.file("tmp/test.txt");
     OutputStream stream = file.io().outputStream(OutputMode.OVERWRITE);
-    registerToClose(resource(stream));
+    registerToClose(stream);
     stream.write("this is a line".getBytes());
     stream.close();
     ensure.that(file.parent().exists()).eq(true);
@@ -209,11 +209,11 @@ public abstract class TfsTestCase extends CottaTestCase {
     TFileFactory factory = new TFileFactory(fileSystem());
     TFile file = factory.file("tmp/test.txt");
     Writer writer = file.io().writer(OutputMode.APPEND);
-    registerToClose(resource(writer));
+    registerToClose(writer);
     writer.write("line\n");
     writer.close();
     Reader reader = file.io().reader();
-    registerToClose(resource(reader));
+    registerToClose(reader);
     ensure.character(reader.read()).eq('l');
   }
 
@@ -221,11 +221,11 @@ public abstract class TfsTestCase extends CottaTestCase {
     TFileFactory factory = new TFileFactory(fileSystem());
     TFile file = factory.file("tmp/test.txt");
     Writer writer = file.io().writer(OutputMode.APPEND);
-    registerToClose(resource(writer));
+    registerToClose(writer);
     writer.write("one");
     writer.close();
     Writer anotherWriter = file.io().writer(OutputMode.APPEND);
-    registerToClose(resource(anotherWriter));
+    registerToClose(anotherWriter);
     anotherWriter.write("two");
     anotherWriter.close();
     ensure.that(file.load()).eq("onetwo");
@@ -356,8 +356,8 @@ public abstract class TfsTestCase extends CottaTestCase {
     TFileFactory factory = new TFileFactory(fileSystem);
     TFile file = factory.file("tmp/content.txt");
     file.write(new OutputProcessor() {
-      public void process(OutputManager outputManager) throws IOException {
-        outputManager.outputStream().write(255);
+      public void process(OutputManager manager) throws IOException {
+        manager.outputStream().write(255);
       }
     });
     file.read(new InputProcessor() {

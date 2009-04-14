@@ -189,7 +189,7 @@ public class InMemoryFileSystemTest extends CottaTestCase {
     fileSystem.createDir(path.parent());
     fileSystem.createFile(path);
     InputStream is = fileSystem.createInputStream(path);
-    registerToClose(resource(is));
+    registerToClose(is);
     ensureEquals(is.read(), -1);
   }
 
@@ -197,7 +197,7 @@ public class InMemoryFileSystemTest extends CottaTestCase {
     TPath path = TPath.parse("/tmp/input.txt");
     try {
       InputStream is = fileSystem.createInputStream(path);
-      registerToClose(resource(is));
+      registerToClose(is);
       fail("FileNotFoundException should have been thrown");
     } catch (TFileNotFoundException e) {
       ensure.that(e).message().contains(path.toPathString());
@@ -218,7 +218,7 @@ public class InMemoryFileSystemTest extends CottaTestCase {
 
   private void writeContent(TPath path, OutputMode mode, String content) throws IOException {
     OutputStream os = fileSystem.createOutputStream(path, mode);
-    registerToClose(resource(os));
+    registerToClose(os);
     os.write(content.getBytes());
     os.close();
   }
@@ -243,11 +243,11 @@ public class InMemoryFileSystemTest extends CottaTestCase {
     TPath path = TPath.parse("/tmp/filetoappend.txt");
     fileSystem.createDir(path.parent());
     OutputStream os1 = fileSystem.createOutputStream(path, OutputMode.APPEND);
-    registerToClose(resource(os1));
+    registerToClose(os1);
     os1.write("one".getBytes());
     os1.close();
     OutputStream os2 = fileSystem.createOutputStream(path, OutputMode.APPEND);
-    registerToClose(resource(os2));
+    registerToClose(os2);
     os2.write("two".getBytes());
     os2.close();
     ensure.that(loadContent(fileSystem, path)).eq("onetwo");
