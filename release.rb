@@ -13,7 +13,7 @@ manifest = BuildMaster::JavaManifest.new(manifest_file)
 
 # git.pull(origin master
 version = manifest.increase_build
-git.add manifest_file
+git.add manifest_file.to_s.gsub(File::SEPARATOR, File::ALT_SEPARATOR || FILE::SEPARATOR)
 load 'rake'
 git.commit("releasing #{version.number}b#{version.build}")
 git.tag("version-#{version.number}b#{version.build}")

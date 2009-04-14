@@ -76,7 +76,7 @@ task :clean do
 end
 
 task :test do
-  cobertura = root.file('lib/cobertura/cobertura-1.9.jar')
+  cobertura = root.file('lib/cobertura/cobertura-1.9.1.jar')
   asserts.junit(report.dir('asserts')).for_tests('*Test.java').with_coverage(cobertura).run
   testbase.junit(report.dir('testbase')).for_tests('*Test.java').with_coverage(cobertura).run
   core.junit(report.dir('core')).for_tests('*Test.java').with_coverage(cobertura).run
