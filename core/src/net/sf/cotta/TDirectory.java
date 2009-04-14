@@ -225,7 +225,7 @@ public class TDirectory extends TEntry {
         }
         TDirectory[] directories = directory.listDirs();
         for (TDirectory subDirectory : directories) {
-          addDirEntry(zipStream, path + "/" + subDirectory.name(), subDirectory);
+          addDirEntry(zipStream, path + subDirectory.name() + "/", subDirectory);
         }
         zipStream.putNextEntry(new ZipEntry(path + "/"));
         zipStream.closeEntry();

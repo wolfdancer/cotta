@@ -281,6 +281,21 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
     ensure.that(root.listDirs()[0].name()).eq("subdir");
   }
 
+  public void testKeepFilesUnderTheDirectory() throws IOException {
+    TFileFactory factory = new TFileFactory(fileSystem);
+    TDirectory directory = factory.dir("tmp/source");
+    directory.file("subdir/file.txt").save("content");
+    TFile zip = directory.parent().file("result.zip");
+    directory.zipTo(zip);
+    ZipFileSystem zipFileSystem = new ZipFileSystem(zip.toJavaFile());
+    registerToClose(resource(zipFileSystem));
+    TFileFactory zipTFileFactory = new TFileFactory(zipFileSystem);
+    TDirectory root = zipTFileFactory.dir("/");
+    ensure.that(root.dir("subdir").listDirs()).isEmpty();
+    ensure.that(root.listFiles()).isEmpty();
+    ensure.that(root.dir("subdir").listFiles()).contains(root.file("subdir/file.txt"));
+  }
+
   public void testListFilesByFilter() throws Exception {
     TFileFactory factory = new TFileFactory(new InMemoryFileSystem());
     TFile expected = factory.file("/directory/one.txt").create();
