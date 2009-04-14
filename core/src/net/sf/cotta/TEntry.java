@@ -45,7 +45,7 @@ public class TEntry {
     return filesystem().toCanonicalPath(path);
   }
 
-  protected TFileFactory factory() {
+  public TFileFactory factory() {
     return factory;
   }
 
