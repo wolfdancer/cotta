@@ -39,7 +39,7 @@ public class ZipFileSystemTest extends CottaTestCase {
     final ClassPathEntry pathEntry = classPathEntryLocator.locateEntry();
     // "This test only works if behaviour class is not in a jar"
     ensure.that(pathEntry.type()).eq(ClassPathType.DIRECTORY);
-    registerToClose(new Closeable() {
+    registerResource(new Closeable() {
       public void close() throws TIoException {
         pathEntry.closeResource();
       }
@@ -161,7 +161,7 @@ public class ZipFileSystemTest extends CottaTestCase {
   }
 
   private void registerToClose(final ZipFileSystem zipFileSystem) {
-    registerToClose(new Closeable() {
+    registerResource(new Closeable() {
       public void close() throws TIoException {
         zipFileSystem.close();
       }

@@ -38,7 +38,7 @@ public class TDirectory extends TEntry {
     super(factory, path);
   }
 
-  public boolean exists() {
+  public boolean exists() throws TIoException {
     return filesystem().dirExists(path);
   }
 
@@ -113,7 +113,7 @@ public class TDirectory extends TEntry {
     return directories.toArray(new TDirectory[directories.size()]);
   }
 
-  private void checkDirectoryExists() throws TDirectoryNotFoundException {
+  private void checkDirectoryExists() throws TIoException {
     if (!filesystem().dirExists(path)) {
       throw new TDirectoryNotFoundException(path);
     }

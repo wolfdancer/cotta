@@ -1,4 +1,5 @@
 *.iws
+asserts/bin/*
 build/*
 tmp/*
 classes

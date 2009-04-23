@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 abstract public class CottaTestCase extends TestCase {
-  public List<Closeable> resourcesToClose;
 
   public static CottaAssertionFactory ensure = new CottaAssertionFactory();
 
@@ -29,24 +28,4 @@ abstract public class CottaTestCase extends TestCase {
     return ensure.code(block).throwsException(exceptionClass);
   }
 
-  public void registerToClose(Closeable resource) {
-    resourcesToClose.add(resource);
-  }
-
-  public void beforeMethod() throws Exception {
-    resourcesToClose = new ArrayList<Closeable>();
-  }
-
-  public void afterMethod() throws TIoException {
-    if (resourcesToClose == null) {
-      return;
-    }
-    for (Closeable aResourcesToClose : resourcesToClose) {
-      try {
-        (aResourcesToClose).close();
-      } catch (Exception e) {
-        // ignore exception
-      }
-    }
-  }
 }

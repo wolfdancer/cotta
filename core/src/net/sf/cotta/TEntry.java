@@ -5,7 +5,7 @@ import java.io.File;
 /**
  * Entry instance that represents either a file or a directory.
  */
-public class TEntry {
+abstract public class TEntry {
   protected TPath path;
   private TFileFactory factory;
 
@@ -78,4 +78,6 @@ public class TEntry {
   public String path() {
     return filesystem().pathString(path);
   }
+
+  public abstract boolean exists() throws TIoException;
 }

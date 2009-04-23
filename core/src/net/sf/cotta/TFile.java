@@ -55,7 +55,7 @@ public class TFile extends TEntry {
     super(factory, path);
   }
 
-  public boolean exists() {
+  public boolean exists() throws TIoException {
     return filesystem().fileExists(path);
   }
 
@@ -155,11 +155,11 @@ public class TFile extends TEntry {
     }
   }
 
-  public long length() {
+  public long length() throws TIoException {
     return filesystem().fileLength(path);
   }
 
-  public long lastModified() {
+  public long lastModified() throws TIoException {
     return filesystem().fileLastModified(path);
   }
 

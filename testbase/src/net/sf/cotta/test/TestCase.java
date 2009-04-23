@@ -2,8 +2,13 @@ package net.sf.cotta.test;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.io.Closeable;
+import java.util.ArrayList;
+import java.util.List;
 
 abstract public class TestCase extends junit.framework.TestCase {
+  private List<Closeable> resourcesToClose;
+
   public TestCase() {
     loadFixtures();
   }
@@ -26,8 +31,22 @@ abstract public class TestCase extends junit.framework.TestCase {
     try {
       reallyRunBare(repository);
     } finally {
+      closeResources();
       repository.fixtureTearDown(this);
       resetsFieldsToSaveMemoryForLargeTestSuite();
+    }
+  }
+
+  private void closeResources() {
+    if (resourcesToClose == null) {
+      return;
+    }
+    for (Closeable aResourcesToClose : resourcesToClose) {
+      try {
+        (aResourcesToClose).close();
+      } catch (Exception e) {
+        // ignore exception
+      }
     }
   }
 
@@ -80,6 +99,17 @@ abstract public class TestCase extends junit.framework.TestCase {
   }
 
   /**
+   * Register resources to be closed when test is finished, all exceptions will be ignored
+   * @param resource resource to close
+   */
+  protected void registerResource(Closeable resource) {
+    if (resourcesToClose == null) {
+      resourcesToClose = new ArrayList<Closeable>(3);
+    }
+    resourcesToClose.add(resource);
+  }
+
+  /**
    * @throws Exception
    * @deprecated call beforeMethod instead
    */
@@ -97,9 +127,17 @@ abstract public class TestCase extends junit.framework.TestCase {
     throw new UnsupportedOperationException("you should call super.afterMethod() instead.  Otherwise super.afterMethod() might be skipped");
   }
 
+  /**
+   * Method to be called before the test method.  You don't need to call this empty implementation
+   * @throws Exception exception
+   */
   public void beforeMethod() throws Exception {
   }
 
+  /**
+   * Method to be called after the test method.  You don't need to call this empty implemenation from subclass
+   * @throws Exception exception
+   */
   public void afterMethod() throws Exception {
   }
 

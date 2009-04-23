@@ -1,13 +1,14 @@
 package net.sf.cotta;
 
 import net.sf.cotta.memory.InMemoryFileSystem;
+import net.sf.cotta.test.TestCase;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-public class ControlledFileSystemTest extends CottaTestCase {
+public class ControlledFileSystemTest extends TestCase {
   public void testNotAllowUpdateOnNotPermittedDirectories() throws Exception {
     FileSystem fileSystem = fileSystemForTmp();
     fileSystem.createDir(TPath.parse("tmp/sub"));
@@ -63,7 +64,7 @@ public class ControlledFileSystemTest extends CottaTestCase {
     }
   }
 
-  public void testControlReadOnFileExists() throws Exception {
+  public void testControlReadOnCreateInputStream() throws Exception {
     final TPath path = TPath.parse("/tmp/text.txt");
     final InputStream expected = new ByteArrayInputStream("".getBytes());
     Mockery context = new Mockery();
@@ -80,6 +81,82 @@ public class ControlledFileSystemTest extends CottaTestCase {
 
     FileSystem fileSystem = new ControlledFileSystem(fileSystemMock, controller);
     ensure.that(fileSystem.createInputStream(path)).sameAs(expected);
+    context.assertIsSatisfied();
+  }
+  
+  public void testControlReadOnFileExists() throws TIoException {
+    final boolean expected = true;
+    final TPath path = TPath.parse("/tmp/text.txt");
+    Mockery context = new Mockery();
+    final ControlledFileSystem.Controller controller = context.mock(ControlledFileSystem.Controller.class);
+    final FileSystem fileSystemMock = context.mock(FileSystem.class);
+    context.checking(new Expectations() {
+      {
+        one(controller).readOperationControl(path);
+        one(fileSystemMock).fileExists(path);
+        will(returnValue(expected));
+      }
+    });
+
+    FileSystem fileSystem = new ControlledFileSystem(fileSystemMock, controller);
+    ensure.that(fileSystem.fileExists(path)).eq(expected);
+    context.assertIsSatisfied();
+  }
+
+  public void testControlReadOnDirExists() throws TIoException {
+    final boolean expected = true;
+    final TPath path = TPath.parse("/tmp");
+    Mockery context = new Mockery();
+    final ControlledFileSystem.Controller controller = context.mock(ControlledFileSystem.Controller.class);
+    final FileSystem fileSystemMock = context.mock(FileSystem.class);
+    context.checking(new Expectations() {
+      {
+        one(controller).readOperationControl(path);
+        one(fileSystemMock).dirExists(path);
+        will(returnValue(expected));
+      }
+    });
+
+    FileSystem fileSystem = new ControlledFileSystem(fileSystemMock, controller);
+    ensure.that(fileSystem.dirExists(path)).eq(expected);
+    context.assertIsSatisfied();
+  }
+
+  public void testControlReadOnDirFileLength() throws TIoException {
+    final long expected = 111;
+    final TPath path = TPath.parse("/tmp");
+    Mockery context = new Mockery();
+    final ControlledFileSystem.Controller controller = context.mock(ControlledFileSystem.Controller.class);
+    final FileSystem fileSystemMock = context.mock(FileSystem.class);
+    context.checking(new Expectations() {
+      {
+        one(controller).readOperationControl(path);
+        one(fileSystemMock).fileLength(path);
+        will(returnValue(expected));
+      }
+    });
+
+    FileSystem fileSystem = new ControlledFileSystem(fileSystemMock, controller);
+    ensure.that(fileSystem.fileLength(path)).eq(expected);
+    context.assertIsSatisfied();
+  }
+
+  public void testControlReadOnDirFileLastModified() throws TIoException {
+    final long expected = 1341234;
+    final TPath path = TPath.parse("/tmp");
+    Mockery context = new Mockery();
+    final ControlledFileSystem.Controller controller = context.mock(ControlledFileSystem.Controller.class);
+    final FileSystem fileSystemMock = context.mock(FileSystem.class);
+    context.checking(new Expectations() {
+      {
+        one(controller).readOperationControl(path);
+        one(fileSystemMock).fileLastModified(path);
+        will(returnValue(expected));
+      }
+    });
+
+    FileSystem fileSystem = new ControlledFileSystem(fileSystemMock, controller);
+    ensure.that(fileSystem.fileLastModified(path)).eq(expected);
     context.assertIsSatisfied();
   }
 

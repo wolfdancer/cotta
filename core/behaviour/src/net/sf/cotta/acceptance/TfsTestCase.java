@@ -169,7 +169,7 @@ public abstract class TfsTestCase extends CottaTestCase {
     TFile file = factory.file("tmp/test.txt");
     file.save("");
     InputStream stream = file.io().inputStream();
-    registerToClose(stream);
+    registerResource(stream);
     ensureEquals(stream.read(), -1);
   }
 
@@ -177,7 +177,7 @@ public abstract class TfsTestCase extends CottaTestCase {
     TFileFactory factory = new TFileFactory(fileSystem());
     TFile file = factory.file("tmp/test.txt");
     OutputStream stream = file.io().outputStream(OutputMode.OVERWRITE);
-    registerToClose(stream);
+    registerResource(stream);
     stream.write("this is a line".getBytes());
     stream.close();
     ensure.that(file.parent().exists()).eq(true);
@@ -209,11 +209,11 @@ public abstract class TfsTestCase extends CottaTestCase {
     TFileFactory factory = new TFileFactory(fileSystem());
     TFile file = factory.file("tmp/test.txt");
     Writer writer = file.io().writer(OutputMode.APPEND);
-    registerToClose(writer);
+    registerResource(writer);
     writer.write("line\n");
     writer.close();
     Reader reader = file.io().reader();
-    registerToClose(reader);
+    registerResource(reader);
     ensure.character(reader.read()).eq('l');
   }
 
@@ -221,11 +221,11 @@ public abstract class TfsTestCase extends CottaTestCase {
     TFileFactory factory = new TFileFactory(fileSystem());
     TFile file = factory.file("tmp/test.txt");
     Writer writer = file.io().writer(OutputMode.APPEND);
-    registerToClose(writer);
+    registerResource(writer);
     writer.write("one");
     writer.close();
     Writer anotherWriter = file.io().writer(OutputMode.APPEND);
-    registerToClose(anotherWriter);
+    registerResource(anotherWriter);
     anotherWriter.write("two");
     anotherWriter.close();
     ensure.that(file.load()).eq("onetwo");

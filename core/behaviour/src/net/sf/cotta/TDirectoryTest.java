@@ -9,7 +9,6 @@ import org.jmock.Mockery;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Closeable;
 
 public class TDirectoryTest extends PhysicalFileSystemTestCase {
   public void testExistAfterCreate() throws Exception {
@@ -56,7 +55,7 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
     ensure.that(file.exists()).eq(false);
   }
 
-  public void testBeAbleToInstantiateASubDirectory() {
+  public void testBeAbleToInstantiateASubDirectory() throws TIoException {
     TDirectory directory = factory().dir("parent").dir("test").dir("sub");
     ensure.that(directory.exists()).eq(false);
   }
@@ -240,7 +239,7 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
     ensure.that(zipFile).fileExtists();
     File javaFile = zipFile.toJavaFile();
     ZipFileSystem zipFileSystem = new ZipFileSystem(javaFile);
-    registerToClose(zipFileSystem);
+    registerResource(zipFileSystem);
     TFileFactory zipFileFactory = new TFileFactory(zipFileSystem);
     TDirectory root = zipFileFactory.dir("/");
     ensure.that(root.exists()).eq(true);
@@ -257,7 +256,7 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
     directory.zipTo(zipFile);
     File javaFile = zipFile.toJavaFile();
     ZipFileSystem zipFileSystem = new ZipFileSystem(javaFile);
-    registerToClose(zipFileSystem);
+    registerResource(zipFileSystem);
     TFileFactory zipFileFactory = new TFileFactory(zipFileSystem);
     TDirectory root = zipFileFactory.dir("/");
     TFile[] actualList = root.listFiles();
@@ -273,7 +272,7 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
     TFile zipFile = directory.parent().file("zip.zip");
     directory.zipTo(zipFile);
     ZipFileSystem zipFileSystem = new ZipFileSystem(zipFile.toJavaFile());
-    registerToClose(zipFileSystem);
+    registerResource(zipFileSystem);
     TFileFactory zipFileFactory = new TFileFactory(zipFileSystem);
     TDirectory root = zipFileFactory.dir("/");
     ensure.that(root.listFiles().length).eq(0);
@@ -288,7 +287,7 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
     TFile zip = directory.parent().file("result.zip");
     directory.zipTo(zip);
     ZipFileSystem zipFileSystem = new ZipFileSystem(zip.toJavaFile());
-    registerToClose(zipFileSystem);
+    registerResource(zipFileSystem);
     TFileFactory zipTFileFactory = new TFileFactory(zipFileSystem);
     TDirectory root = zipTFileFactory.dir("/");
     ensure.that(root.dir("subdir").listDirs()).isEmpty();

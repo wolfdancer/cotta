@@ -4,21 +4,20 @@ import net.sf.cotta.CottaTestCase;
 import net.sf.cotta.TFile;
 import net.sf.cotta.TFileFactory;
 import net.sf.cotta.TIoException;
+import net.sf.cotta.test.TestCase;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
-public class InMemoryInputFileChannelTest extends CottaTestCase {
+public class InMemoryInputFileChannelTest extends TestCase {
   private InMemoryFileSystem fileSystem;
 
   public void beforeMethod() throws Exception {
-    super.beforeMethod();
     fileSystem = new InMemoryFileSystem();
   }
 
   public void afterMethod() throws TIoException {
     fileSystem = null;
-    super.afterMethod();
   }
 
   public void testReadByte() throws Exception {

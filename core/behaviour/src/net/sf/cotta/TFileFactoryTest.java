@@ -50,7 +50,7 @@ public class TFileFactoryTest extends PhysicalFileSystemTestCase {
     ensure.that(TFileFactory.canConvertUrl(url)).eq(true);
   }
 
-  public void testLoadTFileFromResourceUrl() {
+  public void testLoadTFileFromResourceUrl() throws TIoException {
     //Given
     URL url = getClass().getResource("/" + String.class.getName().replace('.', '/') + ".class");
     //When
