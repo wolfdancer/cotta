@@ -4,12 +4,13 @@ import net.sf.cotta.io.IoManager;
 import net.sf.cotta.io.IoProcessor;
 import net.sf.cotta.io.OutputMode;
 import net.sf.cotta.io.StreamFactory;
+import net.sf.cotta.test.TestCase;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 
 import java.io.*;
 
-public class IoManagerTest extends CottaTestCase {
+public class IoManagerTest extends TestCase {
   private Mockery context;
 
   public void beforeMethod() throws Exception {

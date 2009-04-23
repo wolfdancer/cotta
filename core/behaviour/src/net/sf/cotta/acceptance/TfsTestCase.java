@@ -1,6 +1,6 @@
 package net.sf.cotta.acceptance;
 
-import net.sf.cotta.CottaTestCase;
+import net.sf.cotta.TestCase;
 import net.sf.cotta.FileSystem;
 import net.sf.cotta.TDirectory;
 import net.sf.cotta.TDirectoryNotFoundException;
@@ -25,7 +25,7 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 
-public abstract class TfsTestCase extends CottaTestCase {
+public abstract class TfsTestCase extends TestCase {
 
   protected abstract FileSystem fileSystem();
 
@@ -103,20 +103,20 @@ public abstract class TfsTestCase extends CottaTestCase {
 
   public void testMakeSureRootDirectoryAlwaysExists() throws Exception {
     TFileFactory factory = new TFileFactory(fileSystem());
-    ensureEquals(factory.dir("/").exists(), true);
-    ensureEquals(factory.dir("C:/").exists(), true);
-    ensureEquals(factory.dir("/tmp").parent().exists(), true);
-    ensureEquals(factory.file("/tmp").parent().exists(), true);
+    ensure.that(factory.dir("/").exists()).eq(true);
+    ensure.that(factory.dir("C:/").exists()).eq(true);
+    ensure.that(factory.dir("/tmp").parent().exists()).eq(true);
+    ensure.that(factory.file("/tmp").parent().exists()).eq(true);
   }
 
   public void testHaveAConceptOfCurrentWorkingDirectory() throws Exception {
     TFileFactory factory = new TFileFactory(fileSystem());
     TDirectory directory = factory.dir("dir");
-    ensureEquals(directory.parent().name(), ".");
-    ensureEquals(directory.parent().exists(), true);
+    ensure.that(directory.parent().name()).eq(".");
+    ensure.that(directory.parent().exists()).eq(true);
     TFile file = factory.file("test.txt");
-    ensureEquals(file.parent().name(), ".");
-    ensureEquals(file.parent().exists(), true);
+    ensure.that(file.parent().name()).eq(".");
+    ensure.that(file.parent().exists()).eq(true);
   }
 
   public void testProvideCreationDeletionAndStatusCheckingOperationOnFiles() throws TIoException {
@@ -161,7 +161,7 @@ public abstract class TfsTestCase extends CottaTestCase {
     TFile file = factory.file("tmp/test.txt");
     file.save("expected");
     ensure.that(file.lastModified()).gt(0);
-    ensureEquals(factory.file("tmp/test.txt").load(), "expected");
+    ensure.that(factory.file("tmp/test.txt").load()).eq("expected");
   }
 
   public void testProvideInputStream() throws Exception {
@@ -170,7 +170,8 @@ public abstract class TfsTestCase extends CottaTestCase {
     file.save("");
     InputStream stream = file.io().inputStream();
     registerResource(stream);
-    ensureEquals(stream.read(), -1);
+    int expected = -1;
+    ensure.integer(stream.read()).eq(expected);
   }
 
   public void testProvideOutputStreamBasedOnMode() throws Exception {
@@ -184,7 +185,7 @@ public abstract class TfsTestCase extends CottaTestCase {
     TFile[] actual = file.parent().listFiles();
     ensure.that(actual.length).eq(1);
     ensure.that(actual[0]).eq(file);
-    ensureEquals(file.load(), "this is a line");
+    ensure.that(file.load()).eq("this is a line");
     file.open(new IoProcessor() {
       public void process(IoManager io) throws IOException {
         io.printWriter(OutputMode.APPEND).print("-appended");
@@ -234,21 +235,21 @@ public abstract class TfsTestCase extends CottaTestCase {
   public void testThrowExceptionIfDirectoryToListDirIsNotFound() throws Exception {
     TFileFactory factory = new TFileFactory(fileSystem());
     final TDirectory directory = factory.dir("tmp/directory");
-    runAndCatch(TDirectoryNotFoundException.class, new CodeBlock() {
+    ensure.code(new CodeBlock() {
       public void execute() throws Exception {
         directory.listDirs();
       }
-    });
+    }).throwsException(TDirectoryNotFoundException.class);
   }
 
   public void testThrowExceptionIfDirectoryToListFileIsNotFound() throws Exception {
     TFileFactory factory = new TFileFactory(fileSystem());
     final TDirectory directory = factory.dir("tmp/directory");
-    runAndCatch(TDirectoryNotFoundException.class, new CodeBlock() {
+    ensure.code(new CodeBlock() {
       public void execute() throws Exception {
         directory.listFiles();
       }
-    });
+    }).throwsException(TDirectoryNotFoundException.class);
   }
 
   public void testSupportMoveOperation() throws Exception {
@@ -310,16 +311,16 @@ public abstract class TfsTestCase extends CottaTestCase {
     final TDirectory directory = factory.dir(pathString);
     ensure.that(directory.exists()).eq(false);
     ensure.that(directory.path()).eq(fileSystem.pathString(TPath.parse(pathString)));
-    runAndCatch(TDirectoryNotFoundException.class, new CodeBlock() {
+    ensure.code(new CodeBlock() {
       public void execute() throws Exception {
         directory.listDirs();
       }
-    });
-    runAndCatch(TDirectoryNotFoundException.class, new CodeBlock() {
+    }).throwsException(TDirectoryNotFoundException.class);
+    ensure.code(new CodeBlock() {
       public void execute() throws Exception {
         directory.listFiles();
       }
-    });
+    }).throwsException(TDirectoryNotFoundException.class);
 
     directory.ensureExists();
     ensure.that(directory.listDirs().length).eq(0);

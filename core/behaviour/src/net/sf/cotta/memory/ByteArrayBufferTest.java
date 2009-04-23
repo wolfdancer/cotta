@@ -1,15 +1,15 @@
 package net.sf.cotta.memory;
 
 import net.sf.cotta.ByteArrayIndexOutOfBoundsException;
-import net.sf.cotta.CottaTestCase;
+import net.sf.cotta.TestCase;
 
 import java.nio.ByteBuffer;
 
-public class ByteArrayBufferTest extends CottaTestCase {
+public class ByteArrayBufferTest extends TestCase {
 
   public void testProvideToByteArray() throws Exception {
     ByteArrayBuffer buffer = new ByteArrayBuffer("test".getBytes());
-    ensureEquals(new String(buffer.toByteArray()), "test");
+    ensure.that(new String(buffer.toByteArray())).eq("test");
     ensure.that(buffer.size()).eq(4);
   }
 

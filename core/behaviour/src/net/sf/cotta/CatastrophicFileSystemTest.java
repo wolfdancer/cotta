@@ -1,16 +1,17 @@
 package net.sf.cotta;
 
 import net.sf.cotta.test.assertion.CodeBlock;
+import net.sf.cotta.test.TestCase;
 
-public class CatastrophicFileSystemTest extends CottaTestCase {
+public class CatastrophicFileSystemTest extends TestCase {
   public void testThrowExceptionsWhenDiskFull() throws Exception {
     final CatastrophicFileSystem fileSystem = new CatastrophicFileSystem();
     fileSystem.diskFull();
-    runAndCatch(TIoException.class, new CodeBlock() {
+    ensure.code(new CodeBlock() {
       public void execute() throws Exception {
         fileSystem.createFile(TPath.parse("/tmp/txt.txt"));
       }
-    });
+    }).throwsException(TIoException.class);
 
   }
 
@@ -18,11 +19,11 @@ public class CatastrophicFileSystemTest extends CottaTestCase {
     final CatastrophicFileSystem fileSystem = new CatastrophicFileSystem();
     final TPath path = TPath.parse("/text.txt");
     fileSystem.lockFile(path);
-    runAndCatch(TIoException.class, new CodeBlock() {
+    ensure.code(new CodeBlock() {
       public void execute() throws Exception {
         fileSystem.createFile(path);
       }
-    });
+    }).throwsException(TIoException.class);
     fileSystem.unLockFile(path);
     fileSystem.createFile(path);
   }
@@ -31,16 +32,16 @@ public class CatastrophicFileSystemTest extends CottaTestCase {
     final CatastrophicFileSystem fileSystem = new CatastrophicFileSystem();
     final TPath path = TPath.parse("/text.txt");
     fileSystem.lockFile(path, 2);
-    runAndCatch(TIoException.class, new CodeBlock() {
+    ensure.code(new CodeBlock() {
       public void execute() throws Exception {
         fileSystem.createFile(path);
       }
-    });
-    runAndCatch(TIoException.class, new CodeBlock() {
+    }).throwsException(TIoException.class);
+    ensure.code(new CodeBlock() {
       public void execute() throws Exception {
         fileSystem.createFile(path);
       }
-    });
+    }).throwsException(TIoException.class);
     fileSystem.createFile(path);
   }
 
@@ -50,11 +51,11 @@ public class CatastrophicFileSystemTest extends CottaTestCase {
     final CatastrophicFileSystem fileSystem = new CatastrophicFileSystem();
     fileSystem.lockFile(pathOne);
     fileSystem.createFile(pathTwo);
-    runAndCatch(TIoException.class, new CodeBlock() {
+    ensure.code(new CodeBlock() {
       public void execute() throws Exception {
         fileSystem.createFile(pathOne);
       }
-    });
+    }).throwsException(TIoException.class);
   }
 
   public void testThrowExceptionOnDiskError() throws Exception {
@@ -64,11 +65,11 @@ public class CatastrophicFileSystemTest extends CottaTestCase {
     fileSystem.createFile(one);
     fileSystem.createFile(two);
     fileSystem.diskErrorFor(one);
-    runAndCatch(TIoException.class, new CodeBlock() {
+    ensure.code(new CodeBlock() {
       public void execute() throws Exception {
         fileSystem.createInputStream(one);
       }
-    });
+    }).throwsException(TIoException.class);
     ensure.that(new TFile(new TFileFactory(fileSystem), two).load()).eq("");
   }
 

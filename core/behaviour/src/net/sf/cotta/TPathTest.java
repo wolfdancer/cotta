@@ -1,25 +1,25 @@
 package net.sf.cotta;
 
 import net.sf.cotta.test.assertion.CodeBlock;
-import net.sf.cotta.test.assertion.ExceptionAssert;
+import net.sf.cotta.test.assertion.TestCase;
 
-public class TPathTest extends CottaTestCase {
+public class TPathTest extends TestCase {
   public void testNotAllowNullPathString() throws Exception {
-    ExceptionAssert actualException = runAndCatch(IllegalArgumentException.class, new CodeBlock() {
+    ensure.that(new CodeBlock() {
       public void execute() throws Exception {
         TPath.parse(null);
       }
-    });
-    actualException.message().contains("null", "allowed");
+    }).throwsException(IllegalArgumentException.class)
+            .message().contains("null", "allowed");
   }
 
   public void testNotAllowEmptyString() throws Exception {
-    ExceptionAssert actualException = runAndCatch(IllegalArgumentException.class, new CodeBlock() {
+    ensure.that(new CodeBlock() {
       public void execute() throws Exception {
         TPath.parse("");
       }
-    });
-    actualException.message().contains("empty", "allowed");
+    }).throwsException(IllegalArgumentException.class)
+            .message().contains("empty", "allowed");
   }
 
   public void testHaveCurrentWorkingDirectoryIfNotAbsolute() throws Exception {
@@ -72,7 +72,7 @@ public class TPathTest extends CottaTestCase {
   }
 
   public void testKnowWhenCurrentWorkingDirectoryIsUsed() throws Exception {
-    ensureEquals(TPath.parse("test").parent().lastElementName(), ".");
+    ensure.that(TPath.parse("test").parent().lastElementName()).eq(".");
   }
 
   public void testKnowItsHierarchy() throws Exception {
@@ -104,13 +104,12 @@ public class TPathTest extends CottaTestCase {
   public void testNotAllowGoingToParentIfCurrentPathIsAbsolute() throws Exception {
     final TPath path = TPath.parse("/one/two");
     final TPath relative = TPath.parse("../../../");
-    ExceptionAssert actualException = runAndCatch(IllegalArgumentException.class, new CodeBlock() {
+    ensure.that(new CodeBlock() {
       public void execute() throws Exception {
         path.join(relative);
       }
-    });
-    actualException.notNull();
-    actualException.message().contains(path.toPathString(), relative.toPathString());
+    }).throwsException(IllegalArgumentException.class)
+            .message().contains(path.toPathString(), relative.toPathString());
   }
 
   public void testResultToParentReferenceIfCurrentPathIsRelative() throws Exception {
@@ -142,18 +141,16 @@ public class TPathTest extends CottaTestCase {
   public void testNotMixRelativePathAndAbsolutePathForCalculatingRelativePath() throws Exception {
     final TPath absolutePath = TPath.parse("/absolute/path");
     final TPath relativePath = TPath.parse("./relative/path");
-    ExceptionAssert exception = runAndCatch(IllegalArgumentException.class, new CodeBlock() {
+    ensure.that(new CodeBlock() {
       public void execute() throws Exception {
         absolutePath.pathFrom(relativePath);
       }
-    });
-    ensure.that(exception).notNull();
-    exception = runAndCatch(IllegalArgumentException.class, new CodeBlock() {
+    }).throwsException(IllegalArgumentException.class);
+    ensure.that(new CodeBlock() {
       public void execute() throws Exception {
         relativePath.pathFrom(absolutePath);
       }
-    });
-    ensure.that(exception).notNull();
+    }).throwsException(IllegalArgumentException.class);
   }
 
 }

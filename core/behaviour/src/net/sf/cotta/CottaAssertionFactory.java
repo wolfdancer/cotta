@@ -32,4 +32,9 @@ public class CottaAssertionFactory extends net.sf.cotta.test.AssertionFactory {
   public TFileAssert that(TFile value) {
     return new TFileAssert(value);
   }
+
+  public InMemoryOutputFileChannelAssert inMemoryOutputFileChannel(FileChannel fileChannel) {
+    return new InMemoryOutputFileChannelAssert(fileChannel);
+  }
+
 }

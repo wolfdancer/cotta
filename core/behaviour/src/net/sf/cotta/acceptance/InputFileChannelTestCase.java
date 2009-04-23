@@ -5,13 +5,14 @@ import net.sf.cotta.io.InputManager;
 import net.sf.cotta.io.InputProcessor;
 import net.sf.cotta.memory.AccesssUtil;
 import net.sf.cotta.test.assertion.CodeBlock;
+import net.sf.cotta.TestCase;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.NonWritableChannelException;
 
-abstract public class InputFileChannelTestCase extends CottaTestCase {
+abstract public class InputFileChannelTestCase extends TestCase {
   public void beforeMethod() throws Exception {
     file().delete();
   }

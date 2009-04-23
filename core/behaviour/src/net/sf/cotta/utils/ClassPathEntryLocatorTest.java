@@ -1,11 +1,11 @@
 package net.sf.cotta.utils;
 
-import net.sf.cotta.CottaTestCase;
+import net.sf.cotta.TestCase;
 import net.sf.cotta.TDirectory;
 import net.sf.cotta.TFile;
 import net.sf.cotta.test.assertion.CodeBlock;
 
-public class ClassPathEntryLocatorTest extends CottaTestCase {
+public class ClassPathEntryLocatorTest extends TestCase {
   public void testLocateClassInDirectory() throws Exception {
     TDirectory directory = new ClassPathEntryLocator(ClassPathEntryLocator.class).locateEntry().openAsDirectory();
     TFile file = directory.file("net/sf/cotta/utils/ClassPathEntryLocator.class");
@@ -23,10 +23,10 @@ public class ClassPathEntryLocatorTest extends CottaTestCase {
   }
 
   public void testRequireAbsolutePath() throws Exception {
-    runAndCatch(IllegalArgumentException.class, new CodeBlock() {
+    ensure.code(new CodeBlock() {
       public void execute() throws Exception {
         new ClassPathEntryLocator("relative/path/file.zip");
       }
-    });
+    }).throwsException(IllegalArgumentException.class);
   }
 }

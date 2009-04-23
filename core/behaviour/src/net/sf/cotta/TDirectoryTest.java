@@ -115,7 +115,7 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
 
   public void testKnowItsParent() throws Exception {
     TDirectory directory = factory().dir("/tmp/one");
-    ensureEquals(directory.parent().name(), "tmp");
+    ensure.that(directory.parent().name()).eq("tmp");
   }
 
   public void testThrowExceptionIfDirectionNotEmpty() throws Exception {
@@ -149,21 +149,21 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
   public void testThrowExceptionIfDirectoryNotFoundInListingDirectories() throws Exception {
     FileSystem fileSystem = new InMemoryFileSystem();
     final TDirectory directory = new TDirectory(new TFileFactory(fileSystem), TPath.parse("/tmp/test"));
-    runAndCatch(TDirectoryNotFoundException.class, new CodeBlock() {
+    ensure.code(new CodeBlock() {
       public void execute() throws Exception {
         directory.listDirs();
       }
-    });
+    }).throwsException(TDirectoryNotFoundException.class);
   }
 
   public void testThrowExceptionIfDirectoryNotFoundInListingFiles() throws Exception {
     FileSystem fileSystem = new InMemoryFileSystem();
     final TDirectory directory = new TDirectory(new TFileFactory(fileSystem), TPath.parse("/tmp/test"));
-    runAndCatch(TDirectoryNotFoundException.class, new CodeBlock() {
+    ensure.code(new CodeBlock() {
       public void execute() throws Exception {
         directory.listFiles();
       }
-    });
+    }).throwsException(TDirectoryNotFoundException.class);
   }
 
   public void testGetPath() throws Exception {

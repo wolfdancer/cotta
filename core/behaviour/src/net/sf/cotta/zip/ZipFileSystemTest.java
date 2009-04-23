@@ -10,7 +10,7 @@ import net.sf.cotta.utils.ClassPathType;
 
 import java.io.*;
 
-public class ZipFileSystemTest extends CottaTestCase {
+public class ZipFileSystemTest extends TestCase {
   private FileSystem zip;
   private File workingZipFile;
   private static final String TEST_TXT_CONTENT = "sub";
@@ -169,7 +169,7 @@ public class ZipFileSystemTest extends CottaTestCase {
   }
 
   private void ensureOperationNotSupported(CodeBlock CodeBlock) throws Exception {
-    runAndCatch(UnsupportedOperationException.class, CodeBlock);
+    ensure.code(CodeBlock).throwsException(UnsupportedOperationException.class);
   }
 
 }

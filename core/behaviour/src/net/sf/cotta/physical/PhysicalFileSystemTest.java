@@ -92,16 +92,16 @@ public class PhysicalFileSystemTest extends PhysicalFileSystemTestCase {
 
   public void testThrowExceptionInCaseListReturnsNull() throws Exception {
     final TPath path = TPath.parse("tmp/directory");
-    runAndCatch(TIoException.class, new CodeBlock() {
+    ensure.code(new CodeBlock() {
       public void execute() throws Exception {
         fileSystem.listDirs(path);
       }
-    });
-    runAndCatch(TIoException.class, new CodeBlock() {
+    }).throwsException(TIoException.class);
+    ensure.code(new CodeBlock() {
       public void execute() throws Exception {
         fileSystem.listFiles(path);
       }
-    });
+    }).throwsException(TIoException.class);
   }
 
   public void testReturnAnEmptyArrayForEmptyDirectory() throws Exception {

@@ -1,9 +1,9 @@
 package net.sf.cotta.test;
 
 import junit.framework.TestSuite;
-import net.sf.cotta.CottaTestCase;
+import net.sf.cotta.TestCase;
 
-public class TestLoaderTest extends CottaTestCase {
+public class TestLoaderTest extends TestCase {
   public void testLoadingTests() {
     TestLoader loader = new TestLoader(getClass());
     TestSuite suite = loader.loadTests();

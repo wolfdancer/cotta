@@ -25,11 +25,11 @@ public class TFileFactoryTest extends PhysicalFileSystemTestCase {
 
   public void testFailConvertingFromHttpUrl() throws Exception {
     final URL url = new URL("http://cotta.sourceforge.net");
-    runAndCatch(IllegalArgumentException.class, new CodeBlock() {
+    ensure.code(new CodeBlock() {
       public void execute() throws Exception {
         TFileFactory.fileFromUrl(url);
       }
-    });
+    }).throwsException(IllegalArgumentException.class);
   }
 
   public void testSupportFileUrl() throws Exception {

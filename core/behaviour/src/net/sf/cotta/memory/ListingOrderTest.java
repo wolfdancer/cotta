@@ -1,13 +1,13 @@
 package net.sf.cotta.memory;
 
-import net.sf.cotta.CottaTestCase;
+import net.sf.cotta.TestCase;
 import net.sf.cotta.TPath;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ListingOrderTest extends CottaTestCase {
+public class ListingOrderTest extends TestCase {
   public void testHaveNullDoingNothing() throws Exception {
     TPath a = TPath.parse("/z/a");
     TPath b = TPath.parse("/m/b");

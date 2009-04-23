@@ -7,6 +7,7 @@ import net.sf.cotta.io.IoProcessor;
 import net.sf.cotta.io.OutputManager;
 import net.sf.cotta.io.OutputProcessor;
 import net.sf.cotta.memory.InMemoryFileSystem;
+import net.sf.cotta.test.TestCase;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 
@@ -14,7 +15,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 
-public class TFileTest extends CottaTestCase {
+public class TFileTest extends TestCase {
 
   public void testBeCreatedWithCorrectNameAndNotExists() throws Exception {
     TFile file = file("name.txt");
@@ -26,8 +27,8 @@ public class TFileTest extends CottaTestCase {
     TFile file = file("test.txt");
     ensure.that(file.exists()).eq(false);
     file.create();
-    ensureEquals(file.exists(), true);
-    ensureEquals(file.load(), "");
+    ensure.that(file.exists()).eq(true);
+    ensure.that(file.load()).eq("");
   }
 
   public void testCreateParentAsWellDuringCreation() throws Exception {
@@ -44,8 +45,8 @@ public class TFileTest extends CottaTestCase {
   public void testBeAbleToProvideParent() throws Exception {
     TFile file = file("/tmp/test.txt");
     TDirectory directory = file.parent();
-    ensureEquals(directory.name(), "tmp");
-    ensureEquals(directory.exists(), false);
+    ensure.that(directory.name()).eq("tmp");
+    ensure.that(directory.exists()).eq(false);
   }
 
   public void testWriteToAndReadFromFile() throws Exception {

@@ -1,6 +1,6 @@
 package net.sf.cotta.io;
 
-import net.sf.cotta.CottaTestCase;
+import net.sf.cotta.TestCase;
 import net.sf.cotta.TIoException;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -9,7 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class OutputManagerTest extends CottaTestCase {
+public class OutputManagerTest extends TestCase {
   public Mockery context = new Mockery();
 
   public void testDelegateToStreamFactory() throws Exception {

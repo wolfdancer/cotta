@@ -1,10 +1,9 @@
 package net.sf.cotta.memory;
 
-import net.sf.cotta.CottaTestCase;
+import net.sf.cotta.TestCase;
 import net.sf.cotta.TFile;
 import net.sf.cotta.TFileFactory;
 import net.sf.cotta.TIoException;
-import net.sf.cotta.test.TestCase;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;

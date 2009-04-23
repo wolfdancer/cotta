@@ -1,6 +1,6 @@
 package net.sf.cotta.memory;
 
-import net.sf.cotta.CottaTestCase;
+import net.sf.cotta.TestCase;
 import net.sf.cotta.PathSeparator;
 import net.sf.cotta.TDirectory;
 import net.sf.cotta.TDirectoryNotFoundException;
@@ -20,7 +20,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-public class InMemoryFileSystemTest extends CottaTestCase {
+public class InMemoryFileSystemTest extends TestCase {
   public TFileFactory factory;
   public InMemoryFileSystem fileSystem;
 
@@ -77,7 +77,7 @@ public class InMemoryFileSystemTest extends CottaTestCase {
     ensure.that(fileSystem.dirExists(path)).eq(true);
     fileSystem.createFile(path.join("file"));
     TPath[] actual = fileSystem.listDirs(path);
-    ensureEquals(actual.length, 1);
+    ensure.integer(actual.length).eq(1);
   }
 
   public void testNotCreateTheSamePathTwice() throws Exception {
@@ -95,28 +95,28 @@ public class InMemoryFileSystemTest extends CottaTestCase {
     TPath path = TPath.parse("/tmp/one.txt");
     fileSystem.createDir(path.parent());
     fileSystem.createFile(path);
-    ensureEquals(fileSystem.fileExists(path), true);
-    ensureEquals(fileSystem.dirExists(path), false);
-    ensureEquals(fileSystem.dirExists(path.parent()), true);
+    ensure.that(fileSystem.fileExists(path)).eq(true);
+    ensure.that(fileSystem.dirExists(path)).eq(false);
+    ensure.that(fileSystem.dirExists(path.parent())).eq(true);
   }
 
   public void testFailIfFileParentDoesNotExists() throws Exception {
     final TPath path = TPath.parse("/tmp/test.txt");
-    runAndCatch(TIoException.class, new CodeBlock() {
+    ensure.code(new CodeBlock() {
       public void execute() throws Exception {
         fileSystem.createFile(path);
       }
-    });
+    }).throwsException(TIoException.class);
   }
 
   public void testDeleteExistingFile() throws Exception {
     TPath path = TPath.parse("/tmp/file.txt");
     fileSystem.createDir(path.parent());
     fileSystem.createFile(path);
-    ensureEquals(fileSystem.fileExists(path), true);
+    ensure.that(fileSystem.fileExists(path)).eq(true);
     fileSystem.deleteFile(path);
-    ensureEquals(fileSystem.fileExists(path), false);
-    ensureEquals(fileSystem.listFiles(path.parent()).length, 0);
+    ensure.that(fileSystem.fileExists(path)).eq(false);
+    ensure.integer(fileSystem.listFiles(path.parent()).length).eq(0);
   }
 
   public void testThrowFileNotFoundExceptionIfFileToDeleteIsNotFound() throws Exception {
@@ -145,7 +145,7 @@ public class InMemoryFileSystemTest extends CottaTestCase {
   }
 
   public void testHaveRookDirectoriesExisting() throws Exception {
-    ensureEquals(fileSystem.dirExists(TPath.parse("/tmp").parent()), true);
+    ensure.that(fileSystem.dirExists(TPath.parse("/tmp").parent())).eq(true);
   }
 
   public void testCreateFileUnderRootDirectly() throws Exception {
@@ -190,7 +190,8 @@ public class InMemoryFileSystemTest extends CottaTestCase {
     fileSystem.createFile(path);
     InputStream is = fileSystem.createInputStream(path);
     registerResource(is);
-    ensureEquals(is.read(), -1);
+    int expected = -1;
+    ensure.integer(is.read()).eq(expected);
   }
 
   public void testThrowExceptionIfFileNotFoundWhenCreatingInputStream() throws Exception {
@@ -213,7 +214,7 @@ public class InMemoryFileSystemTest extends CottaTestCase {
     TPath[] list = fileSystem.listFiles(path.parent());
     ensure.that(list.length).eq(1);
     ensure.that(list[0]).eq(path);
-    ensureEquals(factory.file("/tmp/output.txt").load(), "oops");
+    ensure.that(factory.file("/tmp/output.txt").load()).eq("oops");
   }
 
   private void writeContent(TPath path, OutputMode mode, String content) throws IOException {

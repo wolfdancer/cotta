@@ -59,7 +59,11 @@ public class TestFtpServerFileSystem implements FileSystem {
     }
 
     public ListingFile getPath(String pathString, Session userSession) throws FailedActionException {
+      try {
         return pathToEntry(pathString);
+      } catch (TIoException e) {
+        throw reportError(e);
+      }
     }
 
     public String changeDirectory(String pathSstring, Session userSession) throws FailedActionException {
@@ -71,7 +75,7 @@ public class TestFtpServerFileSystem implements FileSystem {
         try {
             pathToEntry(pathString).delete();
         } catch (TIoException e) {
-            reportError(e);
+            throw reportError(e);
         }
     }
 
@@ -140,7 +144,7 @@ public class TestFtpServerFileSystem implements FileSystem {
         return fileFactory.file(path.toPathString());
     }
 
-    private FtpEntry pathToEntry(String pathString) {
+    private FtpEntry pathToEntry(String pathString) throws TIoException {
         TPath path = TPath.parse(pathString);
         TFile file = pathToFile(path);
         if (file.exists()) {
@@ -247,7 +251,11 @@ public class TestFtpServerFileSystem implements FileSystem {
         }
 
         public long getSize() {
+          try {
             return file.length();
+          } catch (TIoException e) {
+            throw new TIoRuntimeException(e);
+          }
         }
 
         public void delete() throws TIoException {
