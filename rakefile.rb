@@ -53,6 +53,7 @@ task :default => [:test, :package]
 task :make_testbase => [:make_asserts]
 task :make_cotta => [:make_testbase]
 task :make_ftp => [:make_cotta]
+task :compile => [:make_ftp]
 task :test => [:make_cotta, :make_ftp, :make_testbase, :make_asserts]
 
 task :make_asserts do

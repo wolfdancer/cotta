@@ -9,7 +9,23 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="junit" level="project" />
-    <orderEntry type="library" exported="" name="jmock" level="project" />
+    <orderEntry type="module-library" exported="">
+      <library name="jmock">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../lib/jmock/jmock-legacy-2.4.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/jmock/hamcrest-library-1.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/jmock/hamcrest-core-1.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/jmock/cglib-nodep-2.1_3.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/jmock/jmock-junit3-2.4.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/jmock/jmock-2.4.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/jmock/jmock-junit4-2.4.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/jmock/cglib-2.1_3-src.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/jmock/objenesis-1.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
 
