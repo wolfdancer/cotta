@@ -192,16 +192,6 @@ public class TDirectory extends TEntry {
     delete();
   }
 
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-
-    final TDirectory directory = (TDirectory) o;
-
-    return filesystem().equals(directory.filesystem()) && path.equals(directory.path);
-
-  }
-
   public void mergeTo(TDirectory target) throws TIoException {
     target.ensureExists();
     copySubDirectories(target);

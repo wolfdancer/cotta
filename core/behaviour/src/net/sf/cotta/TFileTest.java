@@ -295,20 +295,4 @@ public class TFileTest extends TestCase {
     ensure.that(actual).eq("content");
   }
 
-  public void testCompareByPath() {
-    Mockery context = new Mockery();
-    final FileSystem fileSystem = context.mock(FileSystem.class);
-    context.checking(new Expectations() {
-      {
-        one(fileSystem).compare(TPath.parse("one/two/a.txt"), TPath.parse("one/two/b.txt"));
-        will(returnValue(-1));
-      }
-    });
-    TFileFactory factory = new TFileFactory(fileSystem);
-    TFile fileA = factory.file("one/two/a.txt");
-    TFile fileB = factory.file("one/two/b.txt");
-    ensure.that(fileA.compareTo(fileB)).eq(-1);
-    context.assertIsSatisfied();
-  }
-
 }

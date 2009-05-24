@@ -5,7 +5,7 @@ import java.io.File;
 /**
  * Entry instance that represents either a file or a directory.
  */
-abstract public class TEntry {
+abstract public class TEntry implements Comparable<TEntry> {
   protected TPath path;
   private TFileFactory factory;
 
@@ -69,10 +69,6 @@ abstract public class TEntry {
     return filesystem().toJavaFile(path);
   }
 
-  public int hashCode() {
-    return filesystem().hashCode(path);
-  }
-
   public String path() {
     return filesystem().pathString(path);
   }
@@ -85,4 +81,39 @@ abstract public class TEntry {
   }
 
   public abstract boolean exists() throws TIoException;
+
+  public int hashCode() {
+    return filesystem().hashCode(path);
+  }
+
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    final TEntry entry = (TEntry) o;
+
+    return filesystem().equals(entry.filesystem()) && filesystem().equals(path, entry.toPath());
+  }
+
+  public int compareTo(TEntry that) {
+    if (that == null) {
+      throw new IllegalArgumentException("Cannot compare to a null object");
+    }
+    int compareTypeCode = getTypeCode(getClass()) - getTypeCode(that.getClass());
+    if (compareTypeCode != 0) {
+      return compareTypeCode;
+    }
+    return filesystem().compare(toPath(), that.toPath());
+  }
+
+  private int getTypeCode(Class<? extends TEntry> type) {
+    if (type.equals(TDirectory.class)) {
+      return 0;
+    }
+    return 1;
+  }
 }

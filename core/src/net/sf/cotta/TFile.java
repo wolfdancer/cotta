@@ -16,7 +16,7 @@ import java.util.List;
  * @see TDirectory#file(String)
  * @see TDirectory#file(TPath)
  */
-public class TFile extends TEntry implements Comparable<TFile> {
+public class TFile extends TEntry {
   private static final int READ_BUFFER_SIZE = 64;
 
   /**
@@ -226,19 +226,6 @@ public class TFile extends TEntry implements Comparable<TFile> {
     return this;
   }
 
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-
-    final TFile file = (TFile) o;
-
-    return filesystem().equals(file.filesystem()) && filesystem().equals(path, file.toPath());
-  }
-
   public <T> T parse(final Parser<T> parser) throws TIoException {
     final List<T> result = new ArrayList<T>(1);
     read(new InputProcessor() {
@@ -247,13 +234,6 @@ public class TFile extends TEntry implements Comparable<TFile> {
       }
     });
     return result.get(0);
-  }
-
-  public int compareTo(TFile o) {
-    if (o == null) {
-      throw new IllegalArgumentException("Cannot compare to a null object");
-    }
-    return filesystem().compare(toPath(), o.toPath());
   }
 
 }
