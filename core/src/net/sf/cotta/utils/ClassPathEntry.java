@@ -31,9 +31,10 @@ public class ClassPathEntry {
    * Use the class path entry as a TDirectory.
    * If the entry is a jar file, it will be opened and would require a close to be called.  If you don't want to handle the
    * resource management, you should use read method
-   * @see #read(ClassPathEntryProcessor) 
+   *
    * @return If the class path entry is a directory, the directory ponting to it, or if it is a zip file, to the root entry of it.
    * @throws TIoException If the class path entry is pointing to a file that is not a zip format
+   * @see #read(ClassPathEntryProcessor)
    */
   public TDirectory openAsDirectory() throws TIoException {
     if (ClassPathType.DIRECTORY.equals(type)) {
@@ -64,6 +65,7 @@ public class ClassPathEntry {
 
   /**
    * Close the resource.  This is used to close the file if this class path entry is a zip file.
+   *
    * @throws TIoException If close threw exception.
    */
   public void closeResource() throws TIoException {
@@ -81,6 +83,7 @@ public class ClassPathEntry {
 
   /**
    * Opens the class path entry, process its content, and close the resource
+   *
    * @param processor The processor to call after openning the class path entry
    * @throws TIoException for any read error
    */
@@ -92,7 +95,7 @@ public class ClassPathEntry {
     } else {
       ZipFileSystem fileSystem = convertToFileSystem();
       resource = fileSystem;
-      directory = new TDirectory(new TFileFactory(fileSystem), TPath.parse("/"));
+      directory = new TFileFactory(fileSystem).dir("/");
     }
     callBack(processor, resource, directory);
   }

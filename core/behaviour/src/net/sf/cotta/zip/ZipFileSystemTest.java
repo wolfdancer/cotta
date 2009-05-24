@@ -1,7 +1,7 @@
 package net.sf.cotta.zip;
 
-import net.sf.cotta.*;
 import net.sf.cotta.FileSystem;
+import net.sf.cotta.*;
 import net.sf.cotta.io.OutputMode;
 import net.sf.cotta.test.assertion.CodeBlock;
 import net.sf.cotta.utils.ClassPathEntry;
@@ -158,6 +158,14 @@ public class ZipFileSystemTest extends TestCase {
         zipFileSystem.moveFile(TPath.parse("/test"), TPath.parse("/target"));
       }
     });
+  }
+
+  public void testComparePath() throws IOException {
+    ZipFileSystem zipFileSystem = new ZipFileSystem(workingZipFile);
+    registerToClose(zipFileSystem);
+    TPath one = TPath.parse("one");
+    TPath two = TPath.parse("two");
+    ensure.that(zipFileSystem.compare(one, two)).eq("one".compareTo("two"));
   }
 
   private void registerToClose(final ZipFileSystem zipFileSystem) {

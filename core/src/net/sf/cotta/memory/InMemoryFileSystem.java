@@ -1,11 +1,6 @@
 package net.sf.cotta.memory;
 
-import net.sf.cotta.FileSystem;
-import net.sf.cotta.PathSeparator;
-import net.sf.cotta.TDirectoryNotFoundException;
-import net.sf.cotta.TFileNotFoundException;
-import net.sf.cotta.TIoException;
-import net.sf.cotta.TPath;
+import net.sf.cotta.*;
 import net.sf.cotta.io.OutputMode;
 
 import java.io.File;
@@ -13,11 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class InMemoryFileSystem implements FileSystem {
   private Map<TPath, DirectoryContent> createDirs = new HashMap<TPath, DirectoryContent>();
@@ -217,6 +208,18 @@ public class InMemoryFileSystem implements FileSystem {
 
   public long fileLastModified(TPath path) {
     return fileContent(path).lastModified();
+  }
+
+  public int compare(TPath path1, TPath path2) {
+    return path1.compareTo(path2);
+  }
+
+  public boolean equals(TPath path1, TPath path2) {
+    return path1.equals(path2);
+  }
+
+  public int hashCode(TPath path) {
+    return path.hashCode();
   }
 
   public File toJavaFile(TPath path) {

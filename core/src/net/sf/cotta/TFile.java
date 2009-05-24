@@ -1,25 +1,11 @@
 package net.sf.cotta;
 
-import net.sf.cotta.io.InputManager;
-import net.sf.cotta.io.InputProcessor;
-import net.sf.cotta.io.IoFactory;
-import net.sf.cotta.io.IoManager;
-import net.sf.cotta.io.IoProcessor;
-import net.sf.cotta.io.LineProcessor;
-import net.sf.cotta.io.OutputManager;
-import net.sf.cotta.io.OutputMode;
-import net.sf.cotta.io.OutputProcessor;
-import net.sf.cotta.io.StreamFactory;
+import net.sf.cotta.io.*;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.Writer;
+import java.io.*;
 import java.nio.channels.FileChannel;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The class that represents the file.  Even though the constructor is public, the usual
@@ -30,7 +16,7 @@ import java.util.ArrayList;
  * @see TDirectory#file(String)
  * @see TDirectory#file(TPath)
  */
-public class TFile extends TEntry {
+public class TFile extends TEntry implements Comparable<TFile> {
   private static final int READ_BUFFER_SIZE = 64;
 
   /**
@@ -250,11 +236,7 @@ public class TFile extends TEntry {
 
     final TFile file = (TFile) o;
 
-    return filesystem().equals(file.filesystem()) && path.equals(file.path);
-  }
-
-  public String toString() {
-    return "TFile:" + path();
+    return filesystem().equals(file.filesystem()) && filesystem().equals(path, file.toPath());
   }
 
   public <T> T parse(final Parser<T> parser) throws TIoException {
@@ -266,4 +248,12 @@ public class TFile extends TEntry {
     });
     return result.get(0);
   }
+
+  public int compareTo(TFile o) {
+    if (o == null) {
+      throw new IllegalArgumentException("Cannot compare to a null object");
+    }
+    return filesystem().compare(toPath(), o.toPath());
+  }
+
 }

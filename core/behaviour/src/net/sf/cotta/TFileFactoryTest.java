@@ -96,7 +96,7 @@ public class TFileFactoryTest extends PhysicalFileSystemTestCase {
 
   public void testStaticPhysicalFactoryMethod() {
     TFileFactory physical = TFileFactory.physical();
-    ensure.that(physical).sameAs(TFileFactory.PHYSICAL_FILE_FACTORY);
+    ensure.that(physical).sameAs(TFileFactory.physical());
   }
 
   public void testInMemoryFactoryMethod() {

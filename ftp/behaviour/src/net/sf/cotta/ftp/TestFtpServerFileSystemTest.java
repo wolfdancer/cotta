@@ -3,15 +3,18 @@ package net.sf.cotta.ftp;
 import net.sf.cotta.TDirectory;
 import net.sf.cotta.TFileFactory;
 import net.sf.cotta.TFileNotFoundException;
-import net.sf.cotta.test.assertion.CodeBlock;
 import net.sf.cotta.io.InputManager;
 import net.sf.cotta.io.InputProcessor;
 import net.sf.cotta.io.OutputManager;
 import net.sf.cotta.io.OutputProcessor;
+import net.sf.cotta.test.assertion.CodeBlock;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.net.ftp.FTPClient;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.List;
 
 public class TestFtpServerFileSystemTest extends FtpTestCase {
   public void testBeAtRootAndNoFileInitially() throws InterruptedException, IOException {
@@ -36,14 +39,14 @@ public class TestFtpServerFileSystemTest extends FtpTestCase {
   public void testBeAbleToMakeDirectory() throws IOException {
     boolean success = ftpClient.makeDirectory("testDir");
     ensure.booleanValue(success).isTrue();
-    TDirectory[] listedDirs = rootDir.listDirs();
-    ensure.array(listedDirs).eq(rootDir.dir("testDir"));
+    List<TDirectory> listedDirs = rootDir.listDirs();
+    ensure.list(listedDirs).eq(rootDir.dir("testDir"));
   }
 
   public void testBeAbleToRemoveDirectory() throws IOException {
     ftpClient.makeDirectory("testDir");
     ftpClient.removeDirectory("testDir");
-    ensure.array(rootDir.listDirs()).eq();
+    ensure.list(rootDir.listDirs()).eq();
   }
 
   public void testBeAbleToChangeWorkingDirectory() throws IOException {
@@ -91,13 +94,13 @@ public class TestFtpServerFileSystemTest extends FtpTestCase {
   public void testBeAbleToRenameFile() throws IOException {
     rootDir.file("testFile").save("");
     ftpClient.rename("testFile", "renamedTestFile");
-    ensure.array(rootDir.listFiles()).eq(rootDir.file("renamedTestFile"));
+    ensure.list(rootDir.listFiles()).eq(rootDir.file("renamedTestFile"));
   }
 
   public void testBeAbleToRenameDirectory() throws IOException {
     rootDir.dir("testDir").ensureExists();
     ftpClient.rename("testDir", "renamedTestDir");
-    ensure.array(rootDir.listDirs()).eq(rootDir.dir("renamedTestDir"));
+    ensure.that(rootDir.listDirs()).eq(rootDir.dir("renamedTestDir"));
   }
 
   public void testBeAbleToChangeToParentDirectory() throws IOException {

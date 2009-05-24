@@ -1,12 +1,6 @@
 package net.sf.cotta.zip;
 
-import net.sf.cotta.ControlledFileSystem;
-import net.sf.cotta.FileSystem;
-import net.sf.cotta.TFileFactory;
-import net.sf.cotta.TFileNotFoundException;
-import net.sf.cotta.TIoException;
-import net.sf.cotta.TPath;
-import net.sf.cotta.TResource;
+import net.sf.cotta.*;
 import net.sf.cotta.io.OutputMode;
 import net.sf.cotta.memory.InMemoryFileSystem;
 
@@ -129,6 +123,18 @@ public class ZipFileSystem implements FileSystem, TResource {
 
   public long fileLastModified(TPath path) {
     return entry(path).getTime();
+  }
+
+  public int compare(TPath path1, TPath path2) {
+    return path1.compareTo(path2);
+  }
+
+  public boolean equals(TPath path1, TPath path2) {
+    return path1.equals(path2);
+  }
+
+  public int hashCode(TPath path) {
+    return path.hashCode();
   }
 
   public File toJavaFile(TPath path) {

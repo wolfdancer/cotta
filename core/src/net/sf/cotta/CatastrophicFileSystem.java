@@ -38,8 +38,8 @@ public class CatastrophicFileSystem extends ControlledFileSystem {
 
   private static class CatastrophicController implements Controller {
     private boolean diskFull;
-    private Map fileLock = new HashMap();
-    private Set readError = new HashSet();
+    private Map<TPath, Integer> fileLock = new HashMap<TPath, Integer>();
+    private Set<TPath> readError = new HashSet<TPath>();
 
     public void writeOperationControl(TPath path) throws TIoException {
       checkError(path);
@@ -47,10 +47,10 @@ public class CatastrophicFileSystem extends ControlledFileSystem {
     }
 
     private void checkLock(TPath path) throws TIoException {
-      Integer counter = (Integer) fileLock.get(path);
+      Integer counter = fileLock.get(path);
       if (counter != null) {
-        counter = new Integer(counter.intValue() - 1);
-        if (counter.intValue() == 0) {
+        counter = counter - 1;
+        if (counter == 0) {
           fileLock.remove(path);
         } else {
           fileLock.put(path, counter);
@@ -76,7 +76,7 @@ public class CatastrophicFileSystem extends ControlledFileSystem {
     }
 
     public void lockFile(TPath path, int i) {
-      fileLock.put(path, new Integer(i));
+      fileLock.put(path, i);
     }
 
     public void unLockFile(TPath path) {

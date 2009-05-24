@@ -1,11 +1,6 @@
 package net.sf.cotta;
 
-import net.sf.cotta.io.InputManager;
-import net.sf.cotta.io.InputProcessor;
-import net.sf.cotta.io.IoManager;
-import net.sf.cotta.io.IoProcessor;
-import net.sf.cotta.io.OutputManager;
-import net.sf.cotta.io.OutputProcessor;
+import net.sf.cotta.io.*;
 import net.sf.cotta.memory.InMemoryFileSystem;
 import net.sf.cotta.test.TestCase;
 import org.jmock.Expectations;
@@ -284,7 +279,7 @@ public class TFileTest extends TestCase {
   }
 
   public void testExposePathBehaviours() throws Exception {
-    TDirectory directory = new TDirectory(new TFileFactory(new InMemoryFileSystem()), TPath.parse("/one/two"));
+    TDirectory directory = TFileFactory.inMemory().dir("/one/two");
     TFile file = directory.file(TPath.parse("three/four.txt"));
     ensure.that(file.isChildOf(directory)).eq(true);
     ensure.that(file.pathFrom(directory)).eq(file.toPath().pathFrom(directory.toPath()));
@@ -298,6 +293,22 @@ public class TFileTest extends TestCase {
       }
     });
     ensure.that(actual).eq("content");
+  }
+
+  public void testCompareByPath() {
+    Mockery context = new Mockery();
+    final FileSystem fileSystem = context.mock(FileSystem.class);
+    context.checking(new Expectations() {
+      {
+        one(fileSystem).compare(TPath.parse("one/two/a.txt"), TPath.parse("one/two/b.txt"));
+        will(returnValue(-1));
+      }
+    });
+    TFileFactory factory = new TFileFactory(fileSystem);
+    TFile fileA = factory.file("one/two/a.txt");
+    TFile fileB = factory.file("one/two/b.txt");
+    ensure.that(fileA.compareTo(fileB)).eq(-1);
+    context.assertIsSatisfied();
   }
 
 }

@@ -1,8 +1,8 @@
 package net.sf.cotta.utils;
 
-import net.sf.cotta.TestCase;
 import net.sf.cotta.TDirectory;
 import net.sf.cotta.TIoException;
+import net.sf.cotta.TestCase;
 import net.sf.cotta.test.assertion.CodeBlock;
 
 import java.io.ByteArrayOutputStream;
@@ -36,7 +36,7 @@ public class ProductInfoTest extends TestCase {
     ensure.that(productInfo.title()).eq("Cotta");
     ensure.that(productInfo.vendor()).eq("SourceForge Cotta");
     ensure.that(productInfo.url()).eq("http://cotta.sourceforge.net");
-    ensure.that(productInfo.version().value()).eq("1.3.3");
+    ensure.that(productInfo.version().value()).eq("2.0.0");
     ensure.that(productInfo.version().build()).notNull();
   }
 

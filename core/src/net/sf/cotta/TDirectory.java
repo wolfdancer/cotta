@@ -11,8 +11,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 /**
- * The class that represent the directory.  Even though the constructor is public, the usual
- * way to create TDirectory should be through TFile, TDirectory, and TFileFactory
+ * The class that represent the directory.  To create TDirectory, use TFile, TDirectory, and TFileFactory
  *
  * @see TFileFactory#directoryFromJavaFile(java.io.File)
  * @see TFileFactory#dir(String)
@@ -27,8 +26,8 @@ public class TDirectory extends TEntry {
    *
    * @param fileSystem The file system that backs the file
    * @param path       The path to the file
-   * @deprecated Use the other constructor for default encoding support in TFileFactory
    * @see #TDirectory(TFileFactory, TPath)
+   * @deprecated Use the other constructor for default encoding support in TFileFactory
    */
   public TDirectory(FileSystem fileSystem, TPath path) {
     super(new TFileFactory(fileSystem), path);
@@ -96,11 +95,24 @@ public class TDirectory extends TEntry {
     return new TDirectory(factory(), join(path));
   }
 
-  public TDirectory[] listDirs() throws TIoException {
+  /**
+   * List the sub-directories of the current directory
+   *
+   * @return mutable list of TDirectory that can be sorted
+   * @throws TIoException for error in reading the directory
+   */
+  public List<TDirectory> listDirs() throws TIoException {
     return listDirs(TDirectoryFilter.ALL);
   }
 
-  public TDirectory[] listDirs(TDirectoryFilter directoryFilter) throws TIoException {
+  /**
+   * List the sub-directories of the current directory that can be accepted by the filter
+   *
+   * @param directoryFilter filter for the directory
+   * @return list of sub-directories
+   * @throws TIoException for error in reading the directory
+   */
+  public List<TDirectory> listDirs(TDirectoryFilter directoryFilter) throws TIoException {
     checkDirectoryExists();
     TPath[] paths = filesystem().listDirs(this.path);
     List<TDirectory> directories = new ArrayList<TDirectory>(paths.length);
@@ -110,7 +122,7 @@ public class TDirectory extends TEntry {
         directories.add(candidate);
       }
     }
-    return directories.toArray(new TDirectory[directories.size()]);
+    return directories;
   }
 
   private void checkDirectoryExists() throws TIoException {
@@ -119,11 +131,24 @@ public class TDirectory extends TEntry {
     }
   }
 
-  public TFile[] listFiles() throws TIoException {
+  /**
+   * List files under current directory
+   *
+   * @return a mutable list of files under current directory
+   * @throws TIoException error in reading from current directory
+   */
+  public List<TFile> listFiles() throws TIoException {
     return listFiles(TFileFilter.ALL);
   }
 
-  public TFile[] listFiles(TFileFilter fileFilter) throws TIoException {
+  /**
+   * List files under current directory that accepted by the file filter
+   *
+   * @param fileFilter file filter for the list
+   * @return a mutable list of files
+   * @throws TIoException error in reading form current directory
+   */
+  public List<TFile> listFiles(TFileFilter fileFilter) throws TIoException {
     checkDirectoryExists();
     TPath[] paths = filesystem().listFiles(path);
     List<TFile> files = new ArrayList<TFile>(paths.length);
@@ -133,24 +158,34 @@ public class TDirectory extends TEntry {
         files.add(candidate);
       }
     }
-    return files.toArray(new TFile[files.size()]);
+    return files;
   }
 
   public String toString() {
     return "TDirectory " + path();
   }
 
+  /**
+   * Delete the current directory.  Most file system will fail
+   * if the current directory is not empty
+   *
+   * @throws TIoException error in deleting the directory (most file system will fail when directory is not empty)
+   */
   public void delete() throws TIoException {
     filesystem().deleteDirectory(path);
   }
 
+  /**
+   * Delete the whole directory tree
+   *
+   * @throws TIoException error in the operation
+   */
   public void deleteAll() throws TIoException {
-    TDirectory[] subDirectory = listDirs();
-    for (TDirectory aSubDirectory : subDirectory) {
+    for (TDirectory aSubDirectory : listDirs()) {
       aSubDirectory.deleteAll();
     }
 
-    TFile[] files = listFiles();
+    List<TFile> files = listFiles();
     for (TFile file : files) {
       file.delete();
     }
@@ -174,14 +209,13 @@ public class TDirectory extends TEntry {
   }
 
   private void copySubDirectories(TDirectory target) throws TIoException {
-    TDirectory[] subdirs = listDirs();
-    for (TDirectory subdir : subdirs) {
+    for (TDirectory subdir : listDirs()) {
       subdir.mergeTo(target.dir(subdir.name()));
     }
   }
 
   private void copyFiles(TDirectory target) throws TIoException {
-    TFile[] files = listFiles();
+    List<TFile> files = listFiles();
     for (TFile file : files) {
       file.copyTo(target.file(file.name()));
     }
@@ -210,6 +244,12 @@ public class TDirectory extends TEntry {
     return toJavaFile();
   }
 
+  /**
+   * Zip the current directory to a file, with the files and directories of current directory at the root level
+   *
+   * @param file the target file
+   * @throws TIoException error in reading from the directory or writing to the file
+   */
   public void zipTo(TFile file) throws TIoException {
     file.write(new OutputProcessor() {
       public void process(OutputManager manager) throws IOException {
@@ -219,12 +259,11 @@ public class TDirectory extends TEntry {
       }
 
       private void addDirEntry(ZipOutputStream zipStream, String path, TDirectory directory) throws IOException {
-        TFile[] files = directory.listFiles();
+        List<TFile> files = directory.listFiles();
         for (TFile file : files) {
           addFileEntry(zipStream, path, file);
         }
-        TDirectory[] directories = directory.listDirs();
-        for (TDirectory subDirectory : directories) {
+        for (TDirectory subDirectory : directory.listDirs()) {
           addDirEntry(zipStream, path + subDirectory.name() + "/", subDirectory);
         }
         zipStream.putNextEntry(new ZipEntry(path + "/"));

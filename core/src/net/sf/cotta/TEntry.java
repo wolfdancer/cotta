@@ -11,10 +11,11 @@ abstract public class TEntry {
 
   /**
    * Create an instance of TEntry
+   *
    * @param fileSystem file system backing the entry
-   * @param path path for the entry
-   * @deprecated use the other constructor for default encoding support through TFactory
+   * @param path       path for the entry
    * @see #TEntry(TFileFactory, TPath)
+   * @deprecated use the other constructor for default encoding support through TFactory
    */
   public TEntry(FileSystem fileSystem, TPath path) {
     this(new TFileFactory(fileSystem), path);
@@ -69,14 +70,18 @@ abstract public class TEntry {
   }
 
   public int hashCode() {
-    int result;
-    result = path.hashCode();
-    result = 29 * result + filesystem().hashCode();
-    return result;
+    return filesystem().hashCode(path);
   }
 
   public String path() {
     return filesystem().pathString(path);
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder buffer = new StringBuilder(getClass().getSimpleName());
+    buffer.append("<").append(path()).append(">");
+    return buffer.toString();
   }
 
   public abstract boolean exists() throws TIoException;

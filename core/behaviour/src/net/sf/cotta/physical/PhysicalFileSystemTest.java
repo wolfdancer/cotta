@@ -115,4 +115,14 @@ public class PhysicalFileSystemTest extends PhysicalFileSystemTestCase {
     ensure.that(fileSystem.toJavaFile(TPath.parse("test/test"))).eq(file);
   }
 
+  public void testComparingPath() {
+    TPath one = TPath.parse("/one/two/test1.txt");
+    TPath two = TPath.parse("/one/two/test2.txt");
+    ensure.that(fileSystem.compare(one, two)).eq(one.toPathString().compareTo(two.toPathString()));
+  }
+
+  public void testHashCode() {
+    TPath path = TPath.parse("one/two/path.txt");
+    ensure.that(fileSystem.hashCode(path)).eq(new File(path.toPathString()).hashCode());
+  }
 }

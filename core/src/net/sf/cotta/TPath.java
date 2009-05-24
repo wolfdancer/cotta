@@ -8,7 +8,7 @@ import java.util.*;
  * An object presentation of path to mainly used by the implemenation of Cotta classes.
  * The methods on TPath has been exposed through TFile and TDirectory
  */
-public class TPath {
+public class TPath implements Comparable<TPath> {
   private TPath parent;
   private String[] elements;
   private static final String WINDOWS_SEPERATOR_PATTERN = "\\\\";
@@ -269,5 +269,43 @@ public class TPath {
       i++;
     }
     return i;
+  }
+
+  /**
+   * Compare two path by comparing each elements.
+   *
+   * @param that the other path
+   * @return comparing result
+   */
+  public int compareTo(TPath that) {
+    int len1 = this.elements.length;
+    int len2 = that.elements.length;
+    int n = Math.min(len1, len2);
+    String v1[] = elements;
+    String v2[] = that.elements;
+    int i = 0;
+    int j = 0;
+
+    if (i == j) {
+      int k = i;
+      int lim = n + i;
+      while (k < lim) {
+        String s1 = v1[k];
+        String s2 = v2[k];
+        if (!s1.equals(s2)) {
+          return s1.compareTo(s2);
+        }
+        k++;
+      }
+    } else {
+      while (n-- != 0) {
+        String s1 = v1[i++];
+        String s2 = v2[j++];
+        if (!s1.equals(s2)) {
+          return s1.compareTo(s2);
+        }
+      }
+    }
+    return len1 - len2;
   }
 }

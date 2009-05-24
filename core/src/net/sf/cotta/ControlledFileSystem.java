@@ -105,6 +105,31 @@ public class ControlledFileSystem implements FileSystem {
     return fileSystem.fileLastModified(path);
   }
 
+  public int compare(TPath path1, TPath path2) {
+    readControl(path1);
+    readControl(path2);
+    return fileSystem.compare(path1, path2);
+  }
+
+  public boolean equals(TPath path1, TPath path2) {
+    readControl(path1);
+    readControl(path2);
+    return fileSystem.equals(path1, path2);
+  }
+
+  public int hashCode(TPath path) {
+    readControl(path);
+    return fileSystem.hashCode(path);
+  }
+
+  private void readControl(TPath path) {
+    try {
+      controller.readOperationControl(path);
+    } catch (TIoException e) {
+      throw new TIoRuntimeException(e);
+    }
+  }
+
   public File toJavaFile(TPath path) {
     return fileSystem.toJavaFile(path);
   }

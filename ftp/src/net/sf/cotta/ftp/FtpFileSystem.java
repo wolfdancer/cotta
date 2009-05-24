@@ -155,6 +155,18 @@ public class FtpFileSystem implements FileSystem {
     throw new UnsupportedOperationException("FtpFileSystem");
   }
 
+  public int compare(TPath path1, TPath path2) {
+    return path1.compareTo(path2);
+  }
+
+  public boolean equals(TPath path1, TPath path2) {
+    return path1.equals(path2);
+  }
+
+  public int hashCode(TPath path) {
+    return path.hashCode();
+  }
+
   private boolean isConstantPath(TPath path) {
     return path.equals(ROOT_DIR) || path.equals(CURRENT_DIR);
   }

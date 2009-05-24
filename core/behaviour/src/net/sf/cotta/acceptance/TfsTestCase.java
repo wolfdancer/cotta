@@ -1,29 +1,12 @@
 package net.sf.cotta.acceptance;
 
-import net.sf.cotta.TestCase;
 import net.sf.cotta.FileSystem;
-import net.sf.cotta.TDirectory;
-import net.sf.cotta.TDirectoryNotFoundException;
-import net.sf.cotta.TFile;
-import net.sf.cotta.TFileFactory;
-import net.sf.cotta.TFileNotFoundException;
-import net.sf.cotta.TIoException;
-import net.sf.cotta.TPath;
-import net.sf.cotta.io.InputManager;
-import net.sf.cotta.io.InputProcessor;
-import net.sf.cotta.io.IoManager;
-import net.sf.cotta.io.IoProcessor;
-import net.sf.cotta.io.LineProcessor;
-import net.sf.cotta.io.OutputManager;
-import net.sf.cotta.io.OutputMode;
-import net.sf.cotta.io.OutputProcessor;
+import net.sf.cotta.*;
+import net.sf.cotta.io.*;
 import net.sf.cotta.test.assertion.CodeBlock;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.Writer;
+import java.io.*;
+import java.util.List;
 
 public abstract class TfsTestCase extends TestCase {
 
@@ -72,17 +55,17 @@ public abstract class TfsTestCase extends TestCase {
   }
 
   private void ensureThatContainsSubDirectory(TDirectory directory, String subDirectoryName) throws TIoException {
-    TDirectory[] subDirectories = directory.listDirs();
-    ensure.that(subDirectories.length).eq(1);
-    ensure.that(subDirectories[0].exists()).eq(true);
-    ensure.that(subDirectories[0].name()).eq(subDirectoryName);
+    List<TDirectory> subDirectories = directory.listDirs();
+    ensure.that(subDirectories.size()).eq(1);
+    ensure.that(subDirectories.get(0).exists()).eq(true);
+    ensure.that(subDirectories.get(0).name()).eq(subDirectoryName);
   }
 
   private void ensureThatListFilesReturnsAListOfExistingFiles(TDirectory directory) throws TIoException {
-    TFile[] files = directory.listFiles();
-    ensure.that(files.length).eq(1);
-    ensure.that(files[0].exists()).eq(true);
-    ensure.that(files[0].name()).eq("test.txt");
+    List<TFile> files = directory.listFiles();
+    ensure.that(files.size()).eq(1);
+    ensure.that(files.get(0).exists()).eq(true);
+    ensure.that(files.get(0).name()).eq("test.txt");
   }
 
   public void testAllowUserToStartWithAPathString() throws Exception {
@@ -182,9 +165,9 @@ public abstract class TfsTestCase extends TestCase {
     stream.write("this is a line".getBytes());
     stream.close();
     ensure.that(file.parent().exists()).eq(true);
-    TFile[] actual = file.parent().listFiles();
-    ensure.that(actual.length).eq(1);
-    ensure.that(actual[0]).eq(file);
+    List<TFile> actual = file.parent().listFiles();
+    ensure.that(actual.size()).eq(1);
+    ensure.that(actual.get(0)).eq(file);
     ensure.that(file.load()).eq("this is a line");
     file.open(new IoProcessor() {
       public void process(IoManager io) throws IOException {
@@ -323,8 +306,8 @@ public abstract class TfsTestCase extends TestCase {
     }).throwsException(TDirectoryNotFoundException.class);
 
     directory.ensureExists();
-    ensure.that(directory.listDirs().length).eq(0);
-    ensure.that(directory.listFiles().length).eq(0);
+    ensure.that(directory.listDirs()).isEmpty();
+    ensure.that(directory.listFiles()).isEmpty();
   }
 
   public void testCopyDirectoryAndFile() throws TIoException {

@@ -8,7 +8,7 @@ import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 
 /**
- * @noinspection JavaDoc
+ * The file system that handles the implementation of the file operations
  */
 public interface FileSystem {
   boolean fileExists(TPath path) throws TIoException;
@@ -48,4 +48,31 @@ public interface FileSystem {
   FileChannel createInputChannel(TPath path) throws TIoException;
 
   long fileLastModified(TPath path) throws TIoException;
+
+  /**
+   * Compares the two path
+   *
+   * @param path1 path one
+   * @param path2 path two
+   * @return the comparing result used for sort
+   */
+  int compare(TPath path1, TPath path2);
+
+  /**
+   * Check if two paths are equal.  This is needed for cases like on Windows system "c:\a\b\c.txt" is the same as "C:\A\B\C.TXT" even
+   * though the case is different
+   *
+   * @param path1 path one
+   * @param path2 path two
+   * @return true if the two paths are equal according to the file system
+   */
+  boolean equals(TPath path1, TPath path2);
+
+  /**
+   * Returns the hash code for the path
+   *
+   * @param path path
+   * @return hash code
+   */
+  int hashCode(TPath path);
 }

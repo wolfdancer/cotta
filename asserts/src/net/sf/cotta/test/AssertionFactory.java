@@ -1,18 +1,6 @@
 package net.sf.cotta.test;
 
-import net.sf.cotta.test.assertion.BooleanAssert;
-import net.sf.cotta.test.assertion.ByteListAssert;
-import net.sf.cotta.test.assertion.CharAssert;
-import net.sf.cotta.test.assertion.CodeBlock;
-import net.sf.cotta.test.assertion.CodeBlockAssertion;
-import net.sf.cotta.test.assertion.ExceptionAssert;
-import net.sf.cotta.test.assertion.IntegerAssert;
-import net.sf.cotta.test.assertion.ListAssert;
-import net.sf.cotta.test.assertion.LongAssert;
-import net.sf.cotta.test.assertion.MapAssert;
-import net.sf.cotta.test.assertion.ObjectAssert;
-import net.sf.cotta.test.assertion.SetAssert;
-import net.sf.cotta.test.assertion.StringAssert;
+import net.sf.cotta.test.assertion.*;
 
 import java.util.List;
 import java.util.Map;
@@ -27,10 +15,10 @@ public class AssertionFactory {
   }
 
   public ObjectAssert that(Object value) {
-    return object(value);
+    return value(value);
   }
 
-  public ObjectAssert object(Object value) {
+  public ObjectAssert value(Object value) {
     return new ObjectAssert(value);
   }
 

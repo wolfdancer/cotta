@@ -83,7 +83,7 @@ public class ControlledFileSystemTest extends TestCase {
     ensure.that(fileSystem.createInputStream(path)).sameAs(expected);
     context.assertIsSatisfied();
   }
-  
+
   public void testControlReadOnFileExists() throws TIoException {
     final boolean expected = true;
     final TPath path = TPath.parse("/tmp/text.txt");
@@ -157,6 +157,44 @@ public class ControlledFileSystemTest extends TestCase {
 
     FileSystem fileSystem = new ControlledFileSystem(fileSystemMock, controller);
     ensure.that(fileSystem.fileLastModified(path)).eq(expected);
+    context.assertIsSatisfied();
+  }
+
+  public void testControlReadOnCompare() throws TIoException {
+    final TPath path1 = TPath.parse("/tmp1");
+    final TPath path2 = TPath.parse("/tmp2");
+    final int expected = 1234;
+    Mockery context = new Mockery();
+    final ControlledFileSystem.Controller controller = context.mock(ControlledFileSystem.Controller.class);
+    final FileSystem fileSystem = context.mock(FileSystem.class);
+    context.checking(new Expectations() {
+      {
+        one(controller).readOperationControl(path1);
+        one(controller).readOperationControl(path2);
+        one(fileSystem).compare(path1, path2);
+        will(returnValue(expected));
+      }
+    });
+    FileSystem controlled = new ControlledFileSystem(fileSystem, controller);
+    ensure.that(controlled.compare(path1, path2)).eq(expected);
+    context.assertIsSatisfied();
+  }
+
+  public void testControlReadOnHashCode() throws TIoException {
+    final TPath path = TPath.parse("/tmp");
+    Mockery context = new Mockery();
+    final ControlledFileSystem.Controller controller = context.mock(ControlledFileSystem.Controller.class);
+    final FileSystem fileSystem = context.mock(FileSystem.class);
+    final int value = 1234546;
+    context.checking(new Expectations() {
+      {
+        one(controller).readOperationControl(path);
+        System.out.println(one(fileSystem).hashCode(path));
+        will(returnValue(value));
+      }
+    });
+    FileSystem controlled = new ControlledFileSystem(fileSystem, controller);
+    ensure.that(controlled.hashCode(path)).eq(value);
     context.assertIsSatisfied();
   }
 

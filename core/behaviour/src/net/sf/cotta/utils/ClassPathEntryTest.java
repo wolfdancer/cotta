@@ -10,6 +10,7 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.List;
 
 public class ClassPathEntryTest extends TestCase {
   private TFileFactory factory = new TFileFactory(new InMemoryFileSystem());
@@ -33,9 +34,9 @@ public class ClassPathEntryTest extends TestCase {
     ClassPathEntry pathEntry = loadTestZipFileInResource();
     ensure.that(pathEntry.type()).eq(ClassPathType.FILE);
     TDirectory directory = pathEntry.openAsDirectory();
-    TFile[] filesInZip = directory.listFiles();
-    ensure.that(1).eq(filesInZip.length);
-    ensure.that("test.txt").eq(filesInZip[0].name());
+    List<TFile> filesInZip = directory.listFiles();
+    ensure.that(1).eq(filesInZip.size());
+    ensure.that("test.txt").eq(filesInZip.get(0).name());
     pathEntry.closeResource();
   }
 

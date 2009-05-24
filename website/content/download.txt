@@ -1,9 +1,27 @@
 -------------------------------------------------
 Download
 -------------------------------------------------
-h1. Release
+h1. Release Notes
 
-<template:text property="release"/> "is now available":http://sourceforge.net/project/showfiles.php?group_id=171037.
+h2. Release 2.0.0 (In development)
+* Fixed the gap on file system controlled, the read operation should throw
+TIoException
+* Broke the backward compatibility for throwing io exception on read. bump
+the version number
+
+h2. "Release 1.3.3":https://sourceforge.net/project/showfiles.php?group_id=171037&package_id=195405&release_id=683025
+
+* Make dir.file and dir.dir support absolute path
+* Added parse method on TFile
+* Deprecated IoResource in favor of java.io.Closeable
+* New static factory factory method, for convenience
+* Make factory() public for TEntry, it really sucks when you really needed
+* Fixed the bug of zipping files under subdirectory, never tested this case
+* Hooked up method to create reader and writer with encoding, added with()
+method on InputManager and OutputManager for resource management given an
+I/O Stream
+
+h2. "Release 1.3.1":http://sourceforge.net/project/showfiles.php?group_id=171037&package_id=195405&release_id=645441
 
 h1. Snapshot
 
@@ -13,7 +31,5 @@ h1. Developer Build
 
 You can also check it out of the repository and build it using ANT.
 
-<div class="Shaded">
-<pre>svn checkout https://svn.sourceforge.net/svnroot/cotta/trunk/core</pre>
-</div>
+http://github.com/wolfdancer/cotta/tree/master
 

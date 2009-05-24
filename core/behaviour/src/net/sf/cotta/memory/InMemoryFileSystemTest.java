@@ -1,14 +1,6 @@
 package net.sf.cotta.memory;
 
-import net.sf.cotta.TestCase;
-import net.sf.cotta.PathSeparator;
-import net.sf.cotta.TDirectory;
-import net.sf.cotta.TDirectoryNotFoundException;
-import net.sf.cotta.TFile;
-import net.sf.cotta.TFileFactory;
-import net.sf.cotta.TFileNotFoundException;
-import net.sf.cotta.TIoException;
-import net.sf.cotta.TPath;
+import net.sf.cotta.*;
 import net.sf.cotta.io.OutputMode;
 import net.sf.cotta.test.assertion.CodeBlock;
 
@@ -377,6 +369,14 @@ public class InMemoryFileSystemTest extends TestCase {
     outputStream.close();
     InputStream inputStream = fileSystem.createInputStream(a);
     ensure.that(inputStream.read()).eq(255);
+  }
+
+  public void testCompareToComparesPath() {
+    fileSystem = new InMemoryFileSystem();
+    TPath a = TPath.parse("a");
+    TPath b = TPath.parse("b");
+    ensure.that(fileSystem.compare(a, b)).eq(a.compareTo(b));
+
   }
 
 }

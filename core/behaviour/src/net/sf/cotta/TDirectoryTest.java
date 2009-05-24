@@ -9,6 +9,7 @@ import org.jmock.Mockery;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public class TDirectoryTest extends PhysicalFileSystemTestCase {
   public void testExistAfterCreate() throws Exception {
@@ -92,9 +93,9 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
     root.dir("one").ensureExists();
     root.dir("two").ensureExists();
     //When
-    TDirectory[] subDirectories = root.listDirs();
+    List<TDirectory> subDirectories = root.listDirs();
     //Ensure
-    ensure.that(subDirectories.length).eq(2);
+    ensure.that(subDirectories).isOfSize(2);
   }
 
   public void testBeAbleToLisInMemoryFilesInDirectory() throws Exception {
@@ -102,8 +103,8 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
     root.ensureExists();
     root.file("one.txt").create();
     root.file("two.txt").create();
-    TFile[] files = root.listFiles();
-    ensure.that(files.length).eq(2);
+    List<TFile> files = root.listFiles();
+    ensure.that(files.size()).eq(2);
   }
 
   public void testBeEqualToAnotherDirectoryWithTheSamePathAndFactory() throws Exception {
@@ -259,9 +260,9 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
     registerResource(zipFileSystem);
     TFileFactory zipFileFactory = new TFileFactory(zipFileSystem);
     TDirectory root = zipFileFactory.dir("/");
-    TFile[] actualList = root.listFiles();
-    ensure.that(actualList.length).eq(1);
-    ensure.that(actualList[0].name()).eq("Cotta.txt");
+    List<TFile> actualList = root.listFiles();
+    ensure.that(actualList.size()).eq(1);
+    ensure.that(actualList.get(0).name()).eq("Cotta.txt");
   }
 
   public void testCreateDirectory() throws IOException {
@@ -275,9 +276,9 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
     registerResource(zipFileSystem);
     TFileFactory zipFileFactory = new TFileFactory(zipFileSystem);
     TDirectory root = zipFileFactory.dir("/");
-    ensure.that(root.listFiles().length).eq(0);
-    ensure.that(root.listDirs().length).eq(1);
-    ensure.that(root.listDirs()[0].name()).eq("subdir");
+    ensure.that(root.listFiles()).isEmpty();
+    TDirectory actual = ensure.that(root.listDirs()).hasOneItem();
+    ensure.that(actual.name()).eq("subdir");
   }
 
   public void testKeepFilesUnderTheDirectory() throws IOException {
@@ -300,13 +301,13 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
     TFile expected = factory.file("/directory/one.txt").create();
     factory.file("/directory/two.txt").create();
     TDirectory directory = factory.dir("/directory");
-    TFile[] files = directory.listFiles(new TFileFilter() {
+    List<TFile> files = directory.listFiles(new TFileFilter() {
       public boolean accept(TFile file) {
         return file.name().equals("one.txt");
       }
     });
-    ensure.that(files.length).eq(1);
-    ensure.that(files[0]).eq(expected);
+    ensure.that(files.size()).eq(1);
+    ensure.that(files.get(0)).eq(expected);
   }
 
   public void testLisDirstByFilter() throws Exception {
@@ -314,13 +315,13 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
     TDirectory expected = factory.dir("/directory/one").ensureExists();
     factory.dir("/directory/two").ensureExists();
     TDirectory directory = factory.dir("/directory");
-    TDirectory[] dirs = directory.listDirs(new TDirectoryFilter() {
+    List<TDirectory> dirs = directory.listDirs(new TDirectoryFilter() {
       public boolean accept(TDirectory directory) {
         return directory.name().equals("one");
       }
     });
-    ensure.that(dirs.length).eq(1);
-    ensure.that(dirs[0]).eq(expected);
+    ensure.that(dirs.size()).eq(1);
+    ensure.that(dirs.get(0)).eq(expected);
   }
 
   public void testExposePathBehaviours() throws Exception {

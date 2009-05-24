@@ -1,7 +1,7 @@
 package net.sf.cotta;
 
-import net.sf.cotta.physical.PhysicalFileSystem;
 import net.sf.cotta.memory.InMemoryFileSystem;
+import net.sf.cotta.physical.PhysicalFileSystem;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -9,7 +9,20 @@ import java.net.URL;
 
 /**
  * The factory class for creating TFile and TDirectory.
- * The static methods are used for a quick way to create TFile and TDirectory with PhysicalFileSystem.
+ * The static methods are used for a quick way to create TFile and TDirectory with PhysicalFileSystem.  There are two
+ * sets of static factories, one for factory creation and one for file/directory ceration
+ * <p/>
+ * <p/>
+ * File factory creation:
+ * <ul>
+ * <li>physical() will create the physical file factory</li>
+ * <li>inMemory() will cerate the in-memory file factory</li>
+ * </ul>
+ * <p/>
+ * File/Directory creation:
+ * <ul>
+ * <li>physicalFile() and physicalDir() will create the physical file and directory</li>
+ * </ul>
  *
  * @see net.sf.cotta.TFile
  * @see net.sf.cotta.TDirectory
@@ -40,7 +53,7 @@ public class TFileFactory {
     return fileSystem;
   }
 
-    /**
+  /**
    * Create the TFile that is represented by the path and backed by the file system
    *
    * @param pathString The path string that represents the file
@@ -164,13 +177,18 @@ public class TFileFactory {
     return "jar".equalsIgnoreCase(url.getProtocol());
   }
 
+  private static final TFileFactory PHYSICAL = new TFileFactory(new PhysicalFileSystem());
   /**
    * File factory backed by a physical file system
+   *
+   * @deprecated use TFileFactory#phylical instead.  This will become private
    */
-  public static final TFileFactory PHYSICAL_FILE_FACTORY = new TFileFactory(new PhysicalFileSystem());
-  
+  @Deprecated
+  public static final TFileFactory PHYSICAL_FILE_FACTORY = PHYSICAL;
+
+
   public static TFile physicalFile(String path) {
-    return PHYSICAL_FILE_FACTORY.file(path);
+    return physical().file(path);
   }
 
   public static TFile physicalFile(File file) {
@@ -182,7 +200,7 @@ public class TFileFactory {
   }
 
   public static TDirectory physicalDir(String path) {
-    return PHYSICAL_FILE_FACTORY.dir(path);
+    return physical().dir(path);
   }
 
   public static TDirectory physicalDir(File file) {
@@ -198,7 +216,9 @@ public class TFileFactory {
   }
 
   /**
-   * Creates a file factory with in-memory file system
+   * Creates a file factory with in-memory file system.  Please note that this method returns a new in-memory
+   * file factory each time
+   *
    * @return in-memory file factory
    */
   public static TFileFactory inMemory() {
@@ -207,9 +227,10 @@ public class TFileFactory {
 
   /**
    * Retruns the shared file factory for the physical file system
+   *
    * @return phylical file factory
    */
   public static TFileFactory physical() {
-    return PHYSICAL_FILE_FACTORY;
+    return PHYSICAL;
   }
 }

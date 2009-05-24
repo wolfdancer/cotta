@@ -5,7 +5,6 @@ import net.sf.cotta.io.InputManager;
 import net.sf.cotta.io.InputProcessor;
 import net.sf.cotta.memory.AccesssUtil;
 import net.sf.cotta.test.assertion.CodeBlock;
-import net.sf.cotta.TestCase;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -44,7 +43,7 @@ abstract public class InputFileChannelTestCase extends TestCase {
         ByteBuffer buffer = ByteBuffer.allocate(3);
         FileChannel channel = inputManager.channel();
         ensure.integer(channel.read(buffer)).eq(3);
-        ensure.object(channel.position(channel.size())).sameAs(channel);
+        ensure.value(channel.position(channel.size())).sameAs(channel);
         ensure.integer(channel.read(buffer)).eq(0);
         buffer.clear();
         ensure.integer(channel.read(buffer)).eq(-1);
@@ -158,7 +157,7 @@ abstract public class InputFileChannelTestCase extends TestCase {
       public void process(InputManager inputManager) throws IOException {
         ByteBuffer buffer = ByteBuffer.allocate(3);
         FileChannel channel = inputManager.channel();
-        ensure.object(channel.position(channel.size() + 3)).sameAs(channel);
+        ensure.value(channel.position(channel.size() + 3)).sameAs(channel);
         ensure.longValue(channel.position()).eq(channel.size() + 3);
         ensure.integer(channel.read(buffer)).eq(-1);
       }
