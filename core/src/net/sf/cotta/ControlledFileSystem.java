@@ -46,12 +46,9 @@ public class ControlledFileSystem implements FileSystem {
     fileSystem.createDir(path);
   }
 
-  public TPath[] listDirs(TPath path) throws TIoException {
-    return fileSystem.listDirs(path);
-  }
-
-  public TPath[] listFiles(TPath path) throws TIoException {
-    return fileSystem.listFiles(path);
+  public PathContent list(TPath path) throws TIoException {
+    readControl(path);
+    return fileSystem.list(path);
   }
 
   public InputStream createInputStream(TPath path) throws TIoException {

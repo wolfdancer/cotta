@@ -7,10 +7,8 @@ import net.sf.cotta.test.assertion.CodeBlock;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 public class InMemoryFileSystemTest extends TestCase {
   public TFileFactory factory;
@@ -55,11 +53,8 @@ public class InMemoryFileSystemTest extends TestCase {
   public void testListAllSubDirectoriesCreated() throws Exception {
     fileSystem.createDir(TPath.parse("/tmp/one"));
     fileSystem.createDir(TPath.parse("/tmp/two"));
-    TPath[] actual = fileSystem.listDirs(TPath.parse("/tmp"));
-    ensure.that(actual.length).eq(2);
-    Set<TPath> set = new HashSet<TPath>(Arrays.asList(actual));
-    ensure.that(set.contains(TPath.parse("/tmp/one"))).eq(true);
-    ensure.that(set.contains(TPath.parse("/tmp/two"))).eq(true);
+    List<TPath> actual = fileSystem.list(TPath.parse("/tmp")).dirs();
+    ensure.set(actual).eq(TPath.parse("/tmp/one"), TPath.parse("/tmp/two"));
   }
 
   public void testListDirectoriesOnlyEvenWhenFileExists() throws Exception {
@@ -68,8 +63,8 @@ public class InMemoryFileSystemTest extends TestCase {
     fileSystem.createDir(path.join("sub"));
     ensure.that(fileSystem.dirExists(path)).eq(true);
     fileSystem.createFile(path.join("file"));
-    TPath[] actual = fileSystem.listDirs(path);
-    ensure.integer(actual.length).eq(1);
+    List<TPath> actual = fileSystem.list(path).dirs();
+    ensure.that(actual).hasOneItem();
   }
 
   public void testNotCreateTheSamePathTwice() throws Exception {
@@ -108,7 +103,8 @@ public class InMemoryFileSystemTest extends TestCase {
     ensure.that(fileSystem.fileExists(path)).eq(true);
     fileSystem.deleteFile(path);
     ensure.that(fileSystem.fileExists(path)).eq(false);
-    ensure.integer(fileSystem.listFiles(path.parent()).length).eq(0);
+    PathContent content = fileSystem.list(path.parent());
+    ensure.that(content.files()).isEmpty();
   }
 
   public void testThrowFileNotFoundExceptionIfFileToDeleteIsNotFound() throws Exception {
@@ -126,14 +122,8 @@ public class InMemoryFileSystemTest extends TestCase {
     directory.dir("subtmp").ensureExists();
     directory.file("file1").create();
     directory.file("file2").create();
-    TPath[] files = fileSystem.listFiles(TPath.parse("tmp"));
-    //TODO ensure enhancement
-    ensure.that(files.length).eq(2);
-    Set<String> set = new HashSet<String>();
-    set.add(files[0].lastElementName());
-    set.add(files[1].lastElementName());
-    ensure.that(set.contains("file1")).eq(true);
-    ensure.that(set.contains("file2")).eq(true);
+    PathContent content = fileSystem.list(TPath.parse("tmp"));
+    ensure.set(content.files()).eq(TPath.parse("tmp/file1"), TPath.parse("tmp/file2"));
   }
 
   public void testHaveRookDirectoriesExisting() throws Exception {
@@ -141,16 +131,17 @@ public class InMemoryFileSystemTest extends TestCase {
   }
 
   public void testCreateFileUnderRootDirectly() throws Exception {
-    fileSystem.createFile(TPath.parse("/test.txt"));
-    TPath[] files = fileSystem.listFiles(TPath.parse("/"));
-    ensure.that(files.length).eq(1);
+    TPath path = TPath.parse("/test.txt");
+    fileSystem.createFile(path);
+    PathContent content = fileSystem.list(TPath.parse("/"));
+    ensure.that(content.files()).eq(path);
   }
 
   public void testCreateDirUnderRoot() throws Exception {
-    fileSystem.createDir(TPath.parse("/directory"));
-    TPath[] dirPaths = fileSystem.listDirs(TPath.parse("/"));
-    ensure.that(dirPaths.length).eq(1);
-    ensure.that(dirPaths[0].toPathString()).eq("/directory");
+    TPath path = TPath.parse("/directory");
+    fileSystem.createDir(path);
+    List<TPath> dirPaths = fileSystem.list(TPath.parse("/")).dirs();
+    ensure.that(dirPaths).eq(path);
   }
 
   public void testNotAllowAFileCreationIfDirectoryOfTheSameNameExists() throws Exception {
@@ -203,9 +194,8 @@ public class InMemoryFileSystemTest extends TestCase {
     fileSystem.createDir(path.parent());
     writeContent(path, OutputMode.OVERWRITE, "oops");
     ensure.that(fileSystem.dirExists(path.parent())).eq(true);
-    TPath[] list = fileSystem.listFiles(path.parent());
-    ensure.that(list.length).eq(1);
-    ensure.that(list[0]).eq(path);
+    PathContent content = fileSystem.list(path.parent());
+    ensure.that(content.files()).eq(path);
     ensure.that(factory.file("/tmp/output.txt").load()).eq("oops");
   }
 
@@ -262,7 +252,7 @@ public class InMemoryFileSystemTest extends TestCase {
     fileSystem.createDir(path);
     fileSystem.deleteDirectory(path);
     ensure.that(fileSystem.dirExists(path)).eq(false);
-    ensure.that(fileSystem.listDirs(path.parent()).length).eq(0);
+    ensure.that(fileSystem.list(path.parent()).dirs()).isEmpty();
   }
 
   public void testThrowExceptionIfDirectoryToDeleteIsNotThere() throws Exception {
@@ -350,13 +340,13 @@ public class InMemoryFileSystemTest extends TestCase {
     fileSystem.createDir(a.parent());
     fileSystem.createFile(a);
     fileSystem.createFile(z);
-    TPath[] actual = fileSystem.listFiles(TPath.parse("/dir"));
+    List<TPath> actual = fileSystem.list(TPath.parse("/dir")).files();
     ensure.that(actual).eq(a, z);
     fileSystem = new InMemoryFileSystem(ListingOrder.ZToA);
     fileSystem.createDir(a.parent());
     fileSystem.createFile(a);
     fileSystem.createFile(z);
-    actual = fileSystem.listFiles(TPath.parse("/dir"));
+    actual = fileSystem.list(TPath.parse("/dir")).files();
     ensure.that(actual).eq(z, a);
   }
 

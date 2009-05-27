@@ -9,6 +9,7 @@ import net.sf.cotta.utils.ClassPathEntryLocator;
 import net.sf.cotta.utils.ClassPathType;
 
 import java.io.*;
+import java.util.List;
 
 public class ZipFileSystemTest extends TestCase {
   private FileSystem zip;
@@ -22,16 +23,14 @@ public class ZipFileSystemTest extends TestCase {
   }
 
   public void testListRootDirectory() throws Exception {
-    TPath[] tPaths = zip.listDirs(TPath.parse("/"));
-    ensure.that(tPaths.length).eq(1);
-    ensure.that(tPaths[0]).eq(TPath.parse("/test"));
+    List<TPath> paths = zip.list(TPath.parse("/")).dirs();
+    ensure.that(paths).eq(TPath.parse("/test"));
   }
 
   public void testRetrieveAnyDirectory() throws Exception {
-    TPath[] paths = zip.listFiles(TPath.parse("/test"));
-    ensure.that(paths.length).eq(1);
-    ensure.that(paths[0]).eq(TPath.parse("/test/test.txt"));
-    ensure.that(zip.listDirs(TPath.parse("/test")).length).eq(0);
+    List<TPath> paths = zip.list(TPath.parse("/test")).files();
+    ensure.that(paths).eq(TPath.parse("/test/test.txt"));
+    ensure.that(zip.list(TPath.parse("/test")).dirs()).isEmpty();
   }
 
   private FileSystem filesystem() throws TIoException {
@@ -53,9 +52,8 @@ public class ZipFileSystemTest extends TestCase {
   }
 
   public void testListRootFiles() throws Exception {
-    TPath[] tPath = zip.listFiles(TPath.parse("/"));
-    ensure.that(tPath.length).eq(1);
-    ensure.that(tPath[0]).eq(TPath.parse("/test.txt"));
+    List<TPath> tPath = zip.list(TPath.parse("/")).files();
+    ensure.that(tPath).eq(TPath.parse("/test.txt"));
   }
 
   public void testKnowIfAnEntryExists() throws Exception {

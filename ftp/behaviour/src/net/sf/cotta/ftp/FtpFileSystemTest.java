@@ -60,16 +60,16 @@ public class FtpFileSystemTest extends FtpTestCase {
 
   public void shoudlNotCountFileWhenListingDir() throws IOException {
     fileSystem.createFile(_("hello"));
-    ensure.integer(fileSystem.listDirs(_("/")).length).eq(0);
+    ensure.that(fileSystem.list(_("/")).dirs()).isEmpty();
     fileSystem.createDir(_("abc"));
-    ensure.that(fileSystem.listDirs(_("."))).eq(_("abc"));
+    ensure.that(fileSystem.list(_(".")).dirs()).eq(_("abc"));
   }
 
   public void testNotCountDirWhenListingFile() throws IOException {
     fileSystem.createDir(_("abc"));
-    ensure.integer(fileSystem.listFiles(_("/")).length).eq(0);
+    ensure.that(fileSystem.list(_("/")).files()).isEmpty();
     fileSystem.createFile(_("hello"));
-    ensure.that(fileSystem.listFiles(_("."))).eq(_("hello"));
+    ensure.that(fileSystem.list(_(".")).files()).eq(_("hello"));
   }
 
   public void testBeAbleToDeleteDirectory() throws IOException {

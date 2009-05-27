@@ -114,8 +114,8 @@ public class TDirectory extends TEntry {
    */
   public List<TDirectory> listDirs(TDirectoryFilter directoryFilter) throws TIoException {
     checkDirectoryExists();
-    TPath[] paths = filesystem().listDirs(this.path);
-    List<TDirectory> directories = new ArrayList<TDirectory>(paths.length);
+    List<TPath> paths = filesystem().list(this.path).dirs();
+    List<TDirectory> directories = new ArrayList<TDirectory>(paths.size());
     for (TPath path : paths) {
       TDirectory candidate = new TDirectory(factory(), path);
       if (directoryFilter.accept(candidate)) {
@@ -150,8 +150,8 @@ public class TDirectory extends TEntry {
    */
   public List<TFile> listFiles(TFileFilter fileFilter) throws TIoException {
     checkDirectoryExists();
-    TPath[] paths = filesystem().listFiles(path);
-    List<TFile> files = new ArrayList<TFile>(paths.length);
+    List<TPath> paths = filesystem().list(path).files();
+    List<TFile> files = new ArrayList<TFile>(paths.size());
     for (TPath path : paths) {
       TFile candidate = new TFile(factory(), path);
       if (fileFilter.accept(candidate)) {

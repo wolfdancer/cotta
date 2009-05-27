@@ -51,14 +51,6 @@ public class ZipFileSystem implements FileSystem, TResource {
     return entrySystem.dirExists(path);
   }
 
-  public TPath[] listDirs(TPath path) {
-    return entrySystem.listDirs(path);
-  }
-
-  public TPath[] listFiles(TPath path) {
-    return entrySystem.listFiles(path);
-  }
-
   public InputStream createInputStream(TPath path) throws TIoException {
     if (!entrySystem.fileExists(path)) {
       throw new TFileNotFoundException(path);
@@ -81,6 +73,10 @@ public class ZipFileSystem implements FileSystem, TResource {
 
   public void createDir(TPath path) throws TIoException {
     throw new UnsupportedOperationException();
+  }
+
+  public PathContent list(TPath path) {
+    return entrySystem.list(path);
   }
 
   public void createFile(TPath path) throws TIoException {

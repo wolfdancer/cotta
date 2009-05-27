@@ -59,6 +59,17 @@ abstract public class TEntry implements Comparable<TEntry> {
   }
 
   /**
+   * Alias of path() which returns system specific path string
+   * For example, on physical system the path separator will be OS specific
+   *
+   * @return path string
+   * @see #path()
+   */
+  public String toPathString() {
+    return path();
+  }
+
+  /**
    * Converts the instance to java.io.File.  This is used to integrate with the system
    * that uses java.io.File
    *
@@ -69,6 +80,13 @@ abstract public class TEntry implements Comparable<TEntry> {
     return filesystem().toJavaFile(path);
   }
 
+  /**
+   * Ssystem specific path string
+   * For example, on physical system the path separator will be OS specific
+   *
+   * @return path string
+   * @see #toPathString()
+   */
   public String path() {
     return filesystem().pathString(path);
   }

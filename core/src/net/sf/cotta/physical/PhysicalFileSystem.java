@@ -1,6 +1,7 @@
 package net.sf.cotta.physical;
 
 import net.sf.cotta.FileSystem;
+import net.sf.cotta.PathContent;
 import net.sf.cotta.TIoException;
 import net.sf.cotta.TPath;
 import net.sf.cotta.io.OutputMode;
@@ -55,36 +56,20 @@ public class PhysicalFileSystem implements FileSystem {
     }
   }
 
-  public TPath[] listDirs(TPath path) throws TIoException {
-    File[] files = file(path).listFiles(new FileFilter() {
-      public boolean accept(File pathname) {
-        return pathname.isDirectory();
-      }
-    });
+  public PathContent list(TPath path) throws TIoException {
+    File[] files = file(path).listFiles();
     if (files == null) {
       throw new TIoException(path, "listing dirs");
     }
-    return convert(path, files);
-  }
-
-  private TPath[] convert(TPath parent, File[] files) {
-    TPath[] paths = new TPath[files.length];
-    for (int i = 0; i < files.length; i++) {
-      paths[i] = parent.join(files[i].getName());
-    }
-    return paths;
-  }
-
-  public TPath[] listFiles(TPath path) throws TIoException {
-    File[] files = file(path).listFiles(new FileFilter() {
-      public boolean accept(File pathname) {
-        return pathname.isFile();
+    PathContent content = new PathContent(files.length);
+    for (File file : files) {
+      if (file.isDirectory()) {
+        content.addDirectoryPath(path.join(file.getName()));
+      } else if (file.isFile()) {
+        content.addFilePath(path.join(file.getName()));
       }
-    });
-    if (files == null) {
-      throw new TIoException(path, "list files");
     }
-    return convert(path, files);
+    return content;
   }
 
   public InputStream createInputStream(TPath path) throws TIoException {

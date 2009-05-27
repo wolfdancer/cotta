@@ -1,9 +1,6 @@
 package net.sf.cotta.physical;
 
-import net.sf.cotta.TFile;
-import net.sf.cotta.TFileFactory;
-import net.sf.cotta.TIoException;
-import net.sf.cotta.TPath;
+import net.sf.cotta.*;
 import net.sf.cotta.io.OutputMode;
 import net.sf.cotta.test.assertion.CodeBlock;
 
@@ -24,15 +21,18 @@ public class PhysicalFileSystemTest extends PhysicalFileSystemTestCase {
   public void testListEmptyDirectory() throws Exception {
     TPath tmp = TPath.parse("tmp");
     fileSystem.createDir(tmp);
-    ensure.that(fileSystem.listDirs(tmp).length).eq(0);
+    PathContent content = fileSystem.list(tmp);
+    ensure.that(content.files()).isEmpty();
+    ensure.that(content.dirs()).isEmpty();
   }
 
   public void testCreateDirectory() throws Exception {
-    fileSystem.createDir(TPath.parse("tmp/tmp"));
+    TPath path = TPath.parse("tmp/tmp");
+    fileSystem.createDir(path);
     ensure.that(fileSystem.dirExists(TPath.parse("tmp/tmp"))).eq(true);
-    TPath[] sub = fileSystem.listDirs(TPath.parse("tmp"));
-    ensure.that(sub.length).eq(1);
-    ensure.that(sub[0]).eq(TPath.parse("tmp/tmp"));
+    PathContent content = fileSystem.list(TPath.parse("tmp"));
+    ensure.that(content.dirs()).eq(path);
+    ensure.that(content.files()).isEmpty();
   }
 
   public void testCreateFileAndItsParent() throws Exception {
@@ -41,9 +41,8 @@ public class PhysicalFileSystemTest extends PhysicalFileSystemTestCase {
     fileSystem.createFile(fileToCreate);
     ensure.that(fileSystem.fileExists(fileToCreate)).eq(true);
     ensure.that(fileSystem.dirExists(fileToCreate.parent())).eq(true);
-    TPath[] files = fileSystem.listFiles(fileToCreate.parent());
-    ensure.that(files.length).eq(1);
-    ensure.that(files[0]).eq(fileToCreate);
+    PathContent content = fileSystem.list(fileToCreate.parent());
+    ensure.that(content.files()).eq(fileToCreate);
   }
 
   public void testCreateParentDirectoryWhenCreatingOutputStream() throws Exception {
@@ -94,20 +93,9 @@ public class PhysicalFileSystemTest extends PhysicalFileSystemTestCase {
     final TPath path = TPath.parse("tmp/directory");
     ensure.code(new CodeBlock() {
       public void execute() throws Exception {
-        fileSystem.listDirs(path);
+        fileSystem.list(path);
       }
     }).throwsException(TIoException.class);
-    ensure.code(new CodeBlock() {
-      public void execute() throws Exception {
-        fileSystem.listFiles(path);
-      }
-    }).throwsException(TIoException.class);
-  }
-
-  public void testReturnAnEmptyArrayForEmptyDirectory() throws Exception {
-    TPath path = TPath.parse("tmp/empty");
-    fileSystem.createDir(path);
-    ensure.that(fileSystem.listDirs(path).length).eq(0);
   }
 
   public void testGetJavaFile() {

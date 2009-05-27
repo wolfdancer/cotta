@@ -8,7 +8,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class InMemoryFileSystem implements FileSystem {
   private Map<TPath, DirectoryContent> createDirs = new HashMap<TPath, DirectoryContent>();
@@ -96,18 +99,12 @@ public class InMemoryFileSystem implements FileSystem {
     createDirs.put(path, new DirectoryContent());
   }
 
-  public TPath[] listDirs(TPath path) {
-    return sort(getChildren(path, createDirs).dirs());
-  }
-
-  private TPath[] sort(Collection<TPath> dirs) {
-    List<TPath> collection = new ArrayList<TPath>(dirs);
-    collection = order.sort(collection);
-    return collection.toArray(new TPath[collection.size()]);
-  }
-
-  public TPath[] listFiles(TPath path) {
-    return sort(getChildren(path, createDirs).files());
+  public PathContent list(TPath path) {
+    DirectoryContent content = getChildren(path, createDirs);
+    PathContent result = new PathContent(content.dirs(), content.files());
+    order.sort(result.files());
+    order.sort(result.dirs());
+    return result;
   }
 
   private DirectoryContent getChildren(TPath parent, Map<TPath, DirectoryContent> collection) {
@@ -179,20 +176,19 @@ public class InMemoryFileSystem implements FileSystem {
 
   public void moveDirectory(TPath source, TPath destination) throws TIoException {
     createDir(destination);
-    moveSubDirectories(source, destination);
-    moveFiles(source, destination);
+    PathContent content = list(source);
+    moveSubDirectories(content.dirs(), destination);
+    moveFiles(content.files(), destination);
     deleteDirectory(source);
   }
 
-  private void moveSubDirectories(TPath source, TPath destination) throws TIoException {
-    TPath[] directories = listDirs(source);
+  private void moveSubDirectories(List<TPath> directories, TPath destination) throws TIoException {
     for (TPath directory : directories) {
       moveDirectory(directory, destination.join(directory.lastElementName()));
     }
   }
 
-  private void moveFiles(TPath source, TPath destination) throws TIoException {
-    TPath[] files = listFiles(source);
+  private void moveFiles(List<TPath> files, TPath destination) throws TIoException {
     for (TPath file : files) {
       moveFile(file, destination.join(file.lastElementName()));
     }

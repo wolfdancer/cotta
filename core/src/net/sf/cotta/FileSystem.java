@@ -21,9 +21,14 @@ public interface FileSystem {
 
   void createDir(TPath path) throws TIoException;
 
-  TPath[] listDirs(TPath path) throws TIoException;
-
-  TPath[] listFiles(TPath path) throws TIoException;
+  /**
+   * List the content of the path
+   *
+   * @param path path
+   * @return path content, which contains a list of paths for the files and a list of paths for the directories
+   * @throws TIoException exception from the system.  For example, when a direcotry does not exist, a physical system will throw the exception
+   */
+  PathContent list(TPath path) throws TIoException;
 
   InputStream createInputStream(TPath path) throws TIoException;
 
@@ -75,4 +80,5 @@ public interface FileSystem {
    * @return hash code
    */
   int hashCode(TPath path);
+
 }

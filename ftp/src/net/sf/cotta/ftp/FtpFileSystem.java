@@ -1,6 +1,7 @@
 package net.sf.cotta.ftp;
 
 import net.sf.cotta.FileSystem;
+import net.sf.cotta.PathContent;
 import net.sf.cotta.TIoException;
 import net.sf.cotta.TPath;
 import net.sf.cotta.ftp.client.commonsNet.CommonsNetFtpClient;
@@ -12,7 +13,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
-import java.util.ArrayList;
 
 public class FtpFileSystem implements FileSystem {
 
@@ -63,14 +63,6 @@ public class FtpFileSystem implements FileSystem {
     } catch (IOException e) {
       throw new TIoException(path, "Create dir failed", e);
     }
-  }
-
-  public final TPath[] listDirs(TPath path) throws TIoException {
-    return listPathsOfType(path, FtpFileType.DIRECTORY);
-  }
-
-  public final TPath[] listFiles(TPath path) throws TIoException {
-    return listPathsOfType(path, FtpFileType.FILE);
   }
 
   public final InputStream createInputStream(final TPath path) throws TIoException {
@@ -184,20 +176,17 @@ public class FtpFileSystem implements FileSystem {
     return false;
   }
 
-  private TPath[] listPathsOfType(TPath path, FtpFileType targetFileType) {
+  public PathContent list(TPath path) throws TIoException {
     FtpFile[] ftpFiles = listFtpDirectory(path);
-    ArrayList<TPath> pathList = new ArrayList<TPath>();
+    PathContent content = new PathContent(ftpFiles.length);
     for (FtpFile ftpFile : ftpFiles) {
-      if (ftpFile.getFileType().equals(targetFileType)) {
-        pathList.add(ftpFile.getPath());
+      if (FtpFileType.DIRECTORY.equals(ftpFile.getFileType())) {
+        content.addDirectoryPath(ftpFile.getPath());
+      } else if (FtpFileType.FILE.equals(ftpFile.getFileType())) {
+        content.addFilePath(ftpFile.getPath());
       }
     }
-    TPath[] paths = new TPath[pathList.size()];
-    for (int i = 0; i < pathList.size(); i++) {
-      TPath tPath = pathList.get(i);
-      paths[i] = tPath;
-    }
-    return paths;
+    return content;
   }
 
   private FtpFile[] listFtpDirectory(TPath path) {
