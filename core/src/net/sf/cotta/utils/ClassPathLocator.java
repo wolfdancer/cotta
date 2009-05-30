@@ -5,6 +5,7 @@ import java.net.URL;
 /**
  * @deprecated use ClassPathEntryLocator
  */
+@SuppressWarnings({"deprecation"})
 public class ClassPathLocator extends ClassPathEntryLocator {
   public ClassPathLocator(Class clazz) {
     super(clazz);

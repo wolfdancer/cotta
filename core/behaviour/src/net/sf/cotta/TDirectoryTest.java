@@ -1,6 +1,7 @@
 package net.sf.cotta;
 
 import net.sf.cotta.memory.InMemoryFileSystem;
+import net.sf.cotta.memory.ListingOrder;
 import net.sf.cotta.physical.PhysicalFileSystemTestCase;
 import net.sf.cotta.test.assertion.CodeBlock;
 import net.sf.cotta.zip.ZipFileSystem;
@@ -35,7 +36,11 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
   }
 
   private TFileFactory factory() {
-    return new TFileFactory(new InMemoryFileSystem());
+    return factory(ListingOrder.NULL);
+  }
+
+  private TFileFactory factory(ListingOrder order) {
+    return new TFileFactory(new InMemoryFileSystem(order));
   }
 
   public void testBeCreatedWithCorrectNameAndNotExists() throws Exception {
@@ -98,13 +103,68 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
     ensure.that(subDirectories).isOfSize(2);
   }
 
+  public void testBeAbleToListDirsOrdered() throws TIoException {
+    TDirectory root = factory(ListingOrder.ZToA).dir("root");
+    TDirectory a = root.dir("a").ensureExists();
+    TDirectory b = root.dir("b").ensureExists();
+    List<TDirectory> actual = root.listDirsOrdered();
+    ensure.that(actual).eq(a, b);
+  }
+
+  public void testBeAbleToListDirsOrderedWithFilter() throws TIoException {
+    TDirectory root = factory(ListingOrder.ZToA).dir("root");
+    TDirectory a = root.dir("a").ensureExists();
+    TDirectory b = root.dir("b").ensureExists();
+    TDirectory c = root.dir("c").ensureExists();
+    List<TDirectory> actual = root.listDirsOrdered(new TDirectoryFilter() {
+      public boolean accept(TDirectory directory) {
+        return !directory.name().equals("c");
+      }
+    });
+    ensure.that(actual).eq(a, b);
+  }
+
   public void testBeAbleToLisInMemoryFilesInDirectory() throws Exception {
-    TDirectory root = factory().dir("root");
-    root.ensureExists();
-    root.file("one.txt").create();
-    root.file("two.txt").create();
+    TDirectory root = factory(ListingOrder.AToZ).dir("root");
+    TFile one = root.file("one.txt").create();
+    TFile two = root.file("two.txt").create();
     List<TFile> files = root.listFiles();
-    ensure.that(files.size()).eq(2);
+    ensure.that(root.listFiles()).eq(one, two);
+  }
+
+  public void testBeAbleToListFilesSorted() throws TIoException {
+    TDirectory root = factory(ListingOrder.ZToA).dir("root");
+    TFile a = root.file("a.txt").create();
+    TFile b = root.file("b.txt").create();
+    ensure.that(root.listFilesOrdered()).eq(a, b);
+  }
+
+  public void testListFilesOrderedWithFilter() throws TIoException {
+    TDirectory root = factory(ListingOrder.ZToA).dir("root");
+    TFile a = root.file("a.txt").create();
+    TFile b = root.file("b.txt").create();
+    TFile c = root.file("c.zip").create();
+    ensure.that(root.listFilesOrdered(new TFileFilter() {
+      public boolean accept(TFile file) {
+        return file.extname().equals("txt");
+      }
+    })).eq(a, b);
+  }
+
+  public void testListShouldReturnEntriesInCurrentDir() throws TIoException {
+    TDirectory root = factory(ListingOrder.ZToA).dir("root");
+    TFile a = root.file("a.txt").create();
+    TFile b = root.file("b.txt").create();
+    TDirectory c = root.dir("c").ensureExists();
+    ensure.that(root.list()).eq(c, b, a);
+  }
+
+  public void testListOrderedShouldReturnEntriesInCurrentDir() throws TIoException {
+    TDirectory root = factory(ListingOrder.ZToA).dir("root");
+    TFile a = root.file("a.txt").create();
+    TFile b = root.file("b.txt").create();
+    TDirectory c = root.dir("c").ensureExists();
+    ensure.that(root.listOrdered()).eq(c, a, b);
   }
 
   public void testBeEqualToAnotherDirectoryWithTheSamePathAndFactory() throws Exception {

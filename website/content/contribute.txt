@@ -8,11 +8,11 @@ that you think will improve the document.
 
 h1. Discussing It
 
-Like it, hate it, has opinion about it?  Post your thoughts on the "forum":http://sourceforge.net/forum/?group_id=171037,
+Like it, hate it, has opinion about it?  Post your thoughts on the "forum":http://groups.google.com/group/cotta
 
 h1. Report It
 
-Try it out, figure it out, and report your grief to the "issue tracker":http://sourceforge.net/tracker/?group_id=171037&atid=856430, or consider contributing.
+Try it out, figure it out, and report your grief to the "forum":http://groups.google.com/group/cotta, or consider contributing.
 
 |_.Name|_.Contribution|
 |"Sergey Abramov":http://coldcore.com|Performance fix for in memory file system|

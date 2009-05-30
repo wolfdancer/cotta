@@ -6,6 +6,7 @@ import net.sf.cotta.io.OutputProcessor;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -106,6 +107,16 @@ public class TDirectory extends TEntry {
   }
 
   /**
+   * List the sub-directories in the alphabetic order
+   *
+   * @return sorted mutable list of sub-directories
+   * @throws TIoException for erros in reading the directory
+   */
+  public List<TDirectory> listDirsOrdered() throws TIoException {
+    return sort(listDirs());
+  }
+
+  /**
    * List the sub-directories of the current directory that can be accepted by the filter
    *
    * @param directoryFilter filter for the directory
@@ -113,17 +124,95 @@ public class TDirectory extends TEntry {
    * @throws TIoException for error in reading the directory
    */
   public List<TDirectory> listDirs(TDirectoryFilter directoryFilter) throws TIoException {
-    checkDirectoryExists();
-    List<TPath> paths = filesystem().list(this.path).dirs();
-    List<TDirectory> directories = new ArrayList<TDirectory>(paths.size());
+    PathContent content = listContent();
+    List<TDirectory> directories = new ArrayList<TDirectory>(content.dirs().size());
+    addDirectories(directories, directoryFilter, content);
+    return directories;
+  }
+
+  @SuppressWarnings({"unchecked"})
+  private void addDirectories(List list, TDirectoryFilter directoryFilter, PathContent content) {
+    List<TPath> paths = content.dirs();
     for (TPath path : paths) {
       TDirectory candidate = new TDirectory(factory(), path);
       if (directoryFilter.accept(candidate)) {
-        directories.add(candidate);
+        list.add(candidate);
       }
     }
-    return directories;
   }
+
+  @SuppressWarnings({"unchecked"})
+  private void addFiles(List list, TFileFilter fileFilter, PathContent content) {
+    List<TPath> paths = content.files();
+    for (TPath path : paths) {
+      TFile candidate = new TFile(factory(), path);
+      if (fileFilter.accept(candidate)) {
+        list.add(candidate);
+      }
+    }
+  }
+
+  /**
+   * List the sub-directories of the current directory that can be accepted by the filter, and sort the result
+   *
+   * @param directoryFilter filter for the directory
+   * @return list of ordered sub-directories
+   * @throws TIoException for error in reading the directory
+   */
+  public List<TDirectory> listDirsOrdered(TDirectoryFilter directoryFilter) throws TIoException {
+    List<TDirectory> list = listDirs(directoryFilter);
+    return sort(list);
+  }
+
+  /**
+   * List the current directory
+   *
+   * @return list of TEntry that are either TFile or TDirectory
+   * @throws TIoException for error in reading current directory
+   */
+  public List<TEntry> list() throws TIoException {
+    return list(TEntryFilter.ALL);
+  }
+
+  /**
+   * List the current directory with entry filter
+   *
+   * @param filter entry filter
+   * @return filted lits of entries
+   * @throws TIoException for error in reading current directory
+   */
+  public List<TEntry> list(TEntryFilter filter) throws TIoException {
+    PathContent content = listContent();
+    List<TEntry> result = new ArrayList<TEntry>(content.dirs().size() + content.files().size());
+    addDirectories(result, filter, content);
+    addFiles(result, filter, content);
+    return result;
+  }
+
+  /**
+   * List the current directory and sort the result
+   *
+   * @return ordered list of TEntry that are either TFile or TDirectory
+   * @throws TIoException for error in reading current  directory
+   */
+  public List<TEntry> listOrdered() throws TIoException {
+    return listOrdered(TEntryFilter.ALL);
+  }
+
+  private List<TEntry> listOrdered(TEntryFilter filter) throws TIoException {
+    return sort(list(filter));
+  }
+
+  private <T extends TEntry> List<T> sort(List<T> list) {
+    Collections.sort(list);
+    return list;
+  }
+
+  private PathContent listContent() throws TIoException {
+    checkDirectoryExists();
+    return filesystem().list(this.path);
+  }
+
 
   private void checkDirectoryExists() throws TIoException {
     if (!filesystem().dirExists(path)) {
@@ -142,23 +231,38 @@ public class TDirectory extends TEntry {
   }
 
   /**
+   * List files under current directory and return them as sorted list
+   *
+   * @return sorted list of files under current directory
+   * @throws TIoException error in reading form current directory
+   */
+  public List<TFile> listFilesOrdered() throws TIoException {
+    return sort(listFiles());
+  }
+
+  /**
    * List files under current directory that accepted by the file filter
    *
    * @param fileFilter file filter for the list
    * @return a mutable list of files
-   * @throws TIoException error in reading form current directory
+   * @throws TIoException error in reading from current directory
    */
   public List<TFile> listFiles(TFileFilter fileFilter) throws TIoException {
-    checkDirectoryExists();
-    List<TPath> paths = filesystem().list(path).files();
-    List<TFile> files = new ArrayList<TFile>(paths.size());
-    for (TPath path : paths) {
-      TFile candidate = new TFile(factory(), path);
-      if (fileFilter.accept(candidate)) {
-        files.add(candidate);
-      }
-    }
+    PathContent content = listContent();
+    List<TFile> files = new ArrayList<TFile>(content.files().size());
+    addFiles(files, fileFilter, content);
     return files;
+  }
+
+  /**
+   * List files under current directory that accepted by the file filter, and sort the result
+   *
+   * @param fileFilter file filter for the list
+   * @return a mutable ordede list of files
+   * @throws TIoException error in reading from current directory
+   */
+  public List<TFile> listFilesOrdered(TFileFilter fileFilter) throws TIoException {
+    return sort(listFiles(fileFilter));
   }
 
   public String toString() {

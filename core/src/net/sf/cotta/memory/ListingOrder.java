@@ -12,13 +12,18 @@ import java.util.Random;
  */
 public interface ListingOrder {
   /**
-   * NULL value that does not do any sorting
+   * NULL value that does not do any sorting.  The order of the list will
+   * be depending on the file system's implementation
    */
   ListingOrder NULL = new ListingOrder() {
     public List<TPath> sort(List<TPath> paths) {
       return paths;
     }
   };
+
+  /**
+   * Sort in the order in which a appears before z
+   */
   ListingOrder AToZ = new ListingOrder() {
     public List<TPath> sort(List<TPath> paths) {
       Collections.sort(paths, new Comparator<TPath>() {
@@ -29,6 +34,10 @@ public interface ListingOrder {
       return paths;
     }
   };
+
+  /**
+   * Sort in the order in which z appears before a
+   */
   ListingOrder ZToA = new ListingOrder() {
     public List<TPath> sort(List<TPath> paths) {
       Collections.sort(paths, new Comparator<TPath>() {
@@ -40,7 +49,9 @@ public interface ListingOrder {
     }
   };
 
-
+  /**
+   * Sort in random order.  This is good for exploratory testing but not recommended for unit testing
+   */
   ListingOrder Random = new ListingOrder() {
     public List<TPath> sort(List<TPath> paths) {
       Random random = new Random(System.currentTimeMillis());
