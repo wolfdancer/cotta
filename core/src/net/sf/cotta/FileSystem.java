@@ -11,13 +11,13 @@ import java.nio.channels.FileChannel;
  * The file system that handles the implementation of the file operations
  */
 public interface FileSystem {
-  boolean fileExists(TPath path) throws TIoException;
+  boolean fileExists(TPath path);
 
   void createFile(TPath path) throws TIoException;
 
   void deleteFile(TPath path) throws TIoException;
 
-  boolean dirExists(TPath path) throws TIoException;
+  boolean dirExists(TPath path);
 
   void createDir(TPath path) throws TIoException;
 
@@ -44,7 +44,7 @@ public interface FileSystem {
 
   String pathString(TPath path);
 
-  long fileLength(TPath path) throws TIoException;
+  long fileLength(TPath path);
 
   File toJavaFile(TPath path);
 
@@ -52,7 +52,7 @@ public interface FileSystem {
 
   FileChannel createInputChannel(TPath path) throws TIoException;
 
-  long fileLastModified(TPath path) throws TIoException;
+  long fileLastModified(TPath path);
 
   /**
    * Compares the two path

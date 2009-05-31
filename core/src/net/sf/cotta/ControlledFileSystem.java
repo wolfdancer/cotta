@@ -21,8 +21,8 @@ public class ControlledFileSystem implements FileSystem {
     this.fileSystem = fileSystem;
   }
 
-  public boolean fileExists(TPath path) throws TIoException {
-    controller.readOperationControl(path);
+  public boolean fileExists(TPath path) {
+    readControl(path);
     return fileSystem.fileExists(path);
   }
 
@@ -36,8 +36,8 @@ public class ControlledFileSystem implements FileSystem {
     fileSystem.deleteFile(path);
   }
 
-  public boolean dirExists(TPath path) throws TIoException {
-    controller.readOperationControl(path);
+  public boolean dirExists(TPath path) {
+    readControl(path);
     return fileSystem.dirExists(path);
   }
 
@@ -92,13 +92,13 @@ public class ControlledFileSystem implements FileSystem {
     return fileSystem.pathString(path);
   }
 
-  public long fileLength(TPath path) throws TIoException {
-    controller.readOperationControl(path);
+  public long fileLength(TPath path) {
+    readControl(path);
     return fileSystem.fileLength(path);
   }
 
-  public long fileLastModified(TPath path) throws TIoException {
-    controller.readOperationControl(path);
+  public long fileLastModified(TPath path) {
+    readControl(path);
     return fileSystem.fileLastModified(path);
   }
 
