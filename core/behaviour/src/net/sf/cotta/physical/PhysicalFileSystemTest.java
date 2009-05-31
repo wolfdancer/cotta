@@ -5,10 +5,75 @@ import net.sf.cotta.io.OutputMode;
 import net.sf.cotta.test.assertion.CodeBlock;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
 
 public class PhysicalFileSystemTest extends PhysicalFileSystemTestCase {
+
+  public void testDirExistsReturnsFalseForFile() throws TIoException {
+    TPath path = TPath.parse("tmp/test.txt");
+    fileSystem.createDir(path.parent());
+    fileSystem.createFile(path);
+    ensure.that(fileSystem.dirExists(path)).eq(false);
+    ensure.that(fileSystem.fileExists(path)).eq(true);
+  }
+
+  public void testFileExistsReturnsFalseForDirectory() throws TIoException {
+    TPath path = TPath.parse("tmp/dir");
+    fileSystem.createDir(path.parent());
+    fileSystem.createDir(path);
+    ensure.that(fileSystem.dirExists(path)).eq(true);
+    ensure.that(fileSystem.fileExists(path)).eq(false);
+  }
+
+  public void testDeleteThrowsExceptionWhenFailed() {
+    final TPath path = TPath.parse("tmp/dir");
+    ensure.that(new CodeBlock() {
+      public void execute() throws Exception {
+        fileSystem.deleteDirectory(path);
+      }
+    }).throwsException(TIoException.class);
+  }
+
+  public void testListingThrowsExceptionIfDirDoesNotExist() {
+    final TPath path = TPath.parse("tmp/dir");
+    ensure.that(new CodeBlock() {
+      public void execute() throws Exception {
+        fileSystem.list(path);
+      }
+    }).throwsException(TIoException.class);
+  }
+
+  public void testMoveFileThrowsExceptionWhenFailed() {
+    final TPath from = TPath.parse("tmp/from.txt");
+    final TPath to = TPath.parse("tmp/to.txt");
+    ensure.that(new CodeBlock() {
+      public void execute() throws Exception {
+        fileSystem.moveFile(from, to);
+      }
+    }).throwsException(TIoException.class);
+  }
+
+  public void testMoveDirectoryThrowsExceptionWhenFailed() {
+    final TPath from = TPath.parse("tmp/from.txt");
+    final TPath to = TPath.parse("tmp/to.txt");
+    ensure.that(new CodeBlock() {
+      public void execute() throws Exception {
+        fileSystem.moveDirectory(from, to);
+      }
+    }).throwsException(TIoException.class);
+  }
+
+  public void testMoveDirectory() throws TIoException {
+    final TPath from = TPath.parse("tmp/from.txt");
+    final TPath to = TPath.parse("tmp/to.txt");
+    fileSystem.createDir(from.parent());
+    fileSystem.createDir(from);
+    fileSystem.moveDirectory(from, to);
+    ensure.that(fileSystem.dirExists(from)).eq(false);
+    ensure.that(fileSystem.dirExists(to)).eq(true);
+  }
 
   public void testCreateAndDeleteDirectory() throws Exception {
     TPath tmp = TPath.parse("tmp");
@@ -47,11 +112,22 @@ public class PhysicalFileSystemTest extends PhysicalFileSystemTestCase {
 
   public void testCreateParentDirectoryWhenCreatingOutputStream() throws Exception {
     TPath fileToCreate = TPath.parse("tmp/ttt.txt");
-    OutputStream os = fileSystem.createOutputStream(fileToCreate, OutputMode.APPEND);
-    registerResource(os);
-    os.write("test".getBytes());
-    os.close();
+    OutputStream stream = fileSystem.createOutputStream(fileToCreate, OutputMode.APPEND);
+    registerResource(stream);
+    stream.write("test".getBytes());
+    stream.close();
     ensure.that(fileSystem.fileExists(fileToCreate));
+  }
+
+  public void testCreateOutputStreamThrowsExceptionWhenNotFound() throws IOException {
+    final TPath fileToCreate = TPath.parse("tmp/ttt.txt");
+    fileSystem.createDir(fileToCreate.parent());
+    fileSystem.createDir(fileToCreate);
+    ensure.that(new CodeBlock() {
+      public void execute() throws Exception {
+        fileSystem.createOutputStream(fileToCreate, OutputMode.OVERWRITE);
+      }
+    }).throwsException(TIoException.class);
   }
 
   public void testMoveFile() throws Exception {
@@ -107,5 +183,25 @@ public class PhysicalFileSystemTest extends PhysicalFileSystemTestCase {
   public void testHashCode() {
     TPath path = TPath.parse("one/two/path.txt");
     ensure.that(fileSystem.hashCode(path)).eq(new File(path.toPathString()).hashCode());
+  }
+
+  public void testCreateFileFailure() throws TIoException {
+    final TPath path = TPath.parse("tmp/test.txt");
+    fileSystem.createDir(TPath.parse("tmp"));
+    fileSystem.createFile(path);
+    ensure.that(new CodeBlock() {
+      public void execute() throws Exception {
+        fileSystem.createFile(path);
+      }
+    }).throwsException(TIoException.class);
+  }
+
+  public void testDeleteFailure() throws TIoException {
+    final TPath path = TPath.parse("tmp/test.txt");
+    ensure.that(new CodeBlock() {
+      public void execute() throws Exception {
+        fileSystem.deleteFile(path);
+      }
+    }).throwsException(TIoException.class);
   }
 }

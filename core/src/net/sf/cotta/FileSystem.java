@@ -13,6 +13,12 @@ import java.nio.channels.FileChannel;
 public interface FileSystem {
   boolean fileExists(TPath path);
 
+  /**
+   * Create file pointed by the given path
+   *
+   * @param path path of the file to create
+   * @throws TIoException error in creating the file
+   */
   void createFile(TPath path) throws TIoException;
 
   void deleteFile(TPath path) throws TIoException;
