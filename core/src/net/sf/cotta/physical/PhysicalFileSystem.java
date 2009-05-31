@@ -1,9 +1,7 @@
 package net.sf.cotta.physical;
 
 import net.sf.cotta.FileSystem;
-import net.sf.cotta.PathContent;
-import net.sf.cotta.TIoException;
-import net.sf.cotta.TPath;
+import net.sf.cotta.*;
 import net.sf.cotta.io.OutputMode;
 
 import java.io.*;
@@ -13,6 +11,11 @@ import java.nio.channels.FileChannel;
  * File system that represents the physical file.
  */
 public class PhysicalFileSystem implements FileSystem {
+  public static final PhysicalFileSystem instance = new PhysicalFileSystem();
+
+  private PhysicalFileSystem() {
+  }
+
   public boolean fileExists(TPath path) {
     File file = file(path);
     return file.exists() && file.isFile();
@@ -143,7 +146,7 @@ public class PhysicalFileSystem implements FileSystem {
     try {
       return toJavaFile(path).getCanonicalPath();
     } catch (IOException e) {
-      throw new RuntimeException(e.getMessage(), e);
+      throw new TIoRuntimeException("toCanonicalPath", path, e);
     }
   }
 
@@ -151,14 +154,4 @@ public class PhysicalFileSystem implements FileSystem {
     return ((FileInputStream) createInputStream(path)).getChannel();
   }
 
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    return o != null && getClass() == o.getClass();
-  }
-
-  public int hashCode() {
-    return getClass().hashCode();
-  }
 }

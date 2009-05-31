@@ -35,7 +35,7 @@ public class ClassCollector {
   }
 
   private void collectClasses(ArrayList<String> result) throws TIoException {
-    for (TFile file : directory.listFiles()) {
+    for (TFile file : directory.list().files()) {
       if (looksLikeBehaviourClassFile(file)) {
         result.add(fullClassName(shortClassName(file.name())));
       }
@@ -43,7 +43,7 @@ public class ClassCollector {
   }
 
   private void collectSubDirectories(List<String> result) throws TIoException {
-    for (TDirectory directory : this.directory.listDirs()) {
+    for (TDirectory directory : this.directory.list().dirs()) {
       ClassCollector classCollector = new ClassCollector(directory, packageNamePrefix + directory.name(), filter);
       result.addAll(classCollector.collectNames());
     }

@@ -37,7 +37,7 @@ public class TFileFactory {
    * @see net.sf.cotta.physical.PhysicalFileSystem
    */
   public TFileFactory() {
-    this(new PhysicalFileSystem());
+    this(PhysicalFileSystem.instance);
   }
 
   public TFileFactory(FileSystem fileSystem) {
@@ -59,9 +59,20 @@ public class TFileFactory {
    * @param pathString The path string that represents the file
    * @return The TFile object
    * @see net.sf.cotta.TPath#parse(java.lang.String)
+   * @see #file(TPath)
    */
   public TFile file(String pathString) {
-    return fileFromPath(fileSystem, pathString);
+    return file(TPath.parse(pathString));
+  }
+
+  /**
+   * Create the TFile that is repsented by the path and backed by the file system
+   *
+   * @param path the path that represents the file
+   * @return the TFile object
+   */
+  public TFile file(TPath path) {
+    return new TFile(this, path);
   }
 
   /**
@@ -70,9 +81,20 @@ public class TFileFactory {
    * @param pathString The pat string that represento the directory
    * @return The TDirectory object
    * @see net.sf.cotta.TPath#parse(String)
+   * @see #dir(TPath)
    */
   public TDirectory dir(String pathString) {
-    return new TDirectory(this, TPath.parse(pathString));
+    return dir(TPath.parse(pathString));
+  }
+
+  /**
+   * Create the TDirectory that is repersented by the path and backed by the file system
+   *
+   * @param path the path that represents the directory
+   * @return the TDirectory object
+   */
+  public TDirectory dir(TPath path) {
+    return new TDirectory(this, path);
   }
 
   /**
@@ -114,7 +136,7 @@ public class TFileFactory {
     }
     String jarUrlString = file.substring(0, index);
     URL jarUrl = url(jarUrlString);
-    return fileFromPath(new PhysicalFileSystem(), jarUrl.getFile().replace("%20", " "));
+    return physical().file(jarUrl.getFile().replace("%20", " "));
   }
 
   private static URL url(String jarUrlString) {
@@ -135,11 +157,7 @@ public class TFileFactory {
    * @deprecated use file(java.io.File)
    */
   public static TFile fileFromJavaFile(File file) {
-    return fileFromPath(new PhysicalFileSystem(), file.getAbsolutePath());
-  }
-
-  private static TFile fileFromPath(FileSystem fileSystem, String pathString) {
-    return new TFile(new TFileFactory(fileSystem), TPath.parse(pathString));
+    return physical().file(file.getAbsolutePath());
   }
 
   /**
@@ -151,12 +169,9 @@ public class TFileFactory {
    * @see #physicalDir(java.io.File)
    * @deprecated use #physicalDir
    */
+  @Deprecated
   public static TDirectory directoryFromJavaFile(File file) {
-    return directoryFromPath(new PhysicalFileSystem(), file.getAbsolutePath());
-  }
-
-  private static TDirectory directoryFromPath(FileSystem fileSystem, String pathString) {
-    return new TDirectory(new TFileFactory(fileSystem), TPath.parse(pathString));
+    return physical().dir(file.getAbsolutePath());
   }
 
   /**
@@ -177,7 +192,7 @@ public class TFileFactory {
     return "jar".equalsIgnoreCase(url.getProtocol());
   }
 
-  private static final TFileFactory PHYSICAL = new TFileFactory(new PhysicalFileSystem());
+  private static final TFileFactory PHYSICAL = new TFileFactory(PhysicalFileSystem.instance);
   /**
    * File factory backed by a physical file system
    *

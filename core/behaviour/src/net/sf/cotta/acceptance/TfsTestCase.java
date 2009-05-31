@@ -55,14 +55,14 @@ public abstract class TfsTestCase extends TestCase {
   }
 
   private void ensureThatContainsSubDirectory(TDirectory directory, String subDirectoryName) throws TIoException {
-    List<TDirectory> subDirectories = directory.listDirs();
+    List<TDirectory> subDirectories = directory.list().dirs();
     ensure.that(subDirectories.size()).eq(1);
     ensure.that(subDirectories.get(0).exists()).eq(true);
     ensure.that(subDirectories.get(0).name()).eq(subDirectoryName);
   }
 
   private void ensureThatListFilesReturnsAListOfExistingFiles(TDirectory directory) throws TIoException {
-    List<TFile> files = directory.listFiles();
+    List<TFile> files = directory.list().files();
     ensure.that(files.size()).eq(1);
     ensure.that(files.get(0).exists()).eq(true);
     ensure.that(files.get(0).name()).eq("test.txt");
@@ -165,7 +165,7 @@ public abstract class TfsTestCase extends TestCase {
     stream.write("this is a line".getBytes());
     stream.close();
     ensure.that(file.parent().exists()).eq(true);
-    List<TFile> actual = file.parent().listFiles();
+    List<TFile> actual = file.parent().list().files();
     ensure.that(actual.size()).eq(1);
     ensure.that(actual.get(0)).eq(file);
     ensure.that(file.load()).eq("this is a line");
@@ -220,7 +220,7 @@ public abstract class TfsTestCase extends TestCase {
     final TDirectory directory = factory.dir("tmp/directory");
     ensure.code(new CodeBlock() {
       public void execute() throws Exception {
-        directory.listDirs();
+        directory.list().dirs();
       }
     }).throwsException(TDirectoryNotFoundException.class);
   }
@@ -230,7 +230,7 @@ public abstract class TfsTestCase extends TestCase {
     final TDirectory directory = factory.dir("tmp/directory");
     ensure.code(new CodeBlock() {
       public void execute() throws Exception {
-        directory.listFiles();
+        directory.list().files();
       }
     }).throwsException(TDirectoryNotFoundException.class);
   }
@@ -296,18 +296,18 @@ public abstract class TfsTestCase extends TestCase {
     ensure.that(directory.path()).eq(fileSystem.pathString(TPath.parse(pathString)));
     ensure.code(new CodeBlock() {
       public void execute() throws Exception {
-        directory.listDirs();
+        directory.list().dirs();
       }
     }).throwsException(TDirectoryNotFoundException.class);
     ensure.code(new CodeBlock() {
       public void execute() throws Exception {
-        directory.listFiles();
+        directory.list().files();
       }
     }).throwsException(TDirectoryNotFoundException.class);
 
     directory.ensureExists();
-    ensure.that(directory.listDirs()).isEmpty();
-    ensure.that(directory.listFiles()).isEmpty();
+    ensure.that(directory.list().dirs()).isEmpty();
+    ensure.that(directory.list().files()).isEmpty();
   }
 
   public void testCopyDirectoryAndFile() throws TIoException {

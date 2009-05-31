@@ -48,11 +48,11 @@ public class TestFtpServerFileSystem implements FileSystem {
 
   private Set<ListingFile> internalListDirectory(TDirectory directory) throws TIoException {
     HashSet<ListingFile> listingFiles = new HashSet<ListingFile>();
-    List<TFile> files = directory.listFiles();
+    List<TFile> files = directory.list().files();
     for (TFile file : files) {
       listingFiles.add(new FtpFile(file));
     }
-    List<TDirectory> dirs = directory.listDirs();
+    List<TDirectory> dirs = directory.list().dirs();
     for (TDirectory dir : dirs) {
       listingFiles.add(new FtpDirectory(dir));
     }

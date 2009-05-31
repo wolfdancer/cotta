@@ -12,12 +12,13 @@ abstract public class AbstractFileVisitor implements FileVisitor {
   }
 
   public void visit(TDirectory directory) throws TIoException {
-    for (TFile file : directory.listFiles()) {
+    TDirectoryListing listing = directory.list();
+    for (TFile file : listing.files()) {
       visit(file);
     }
 
     if (recursive) {
-      for (TDirectory subDirectory : directory.listDirs()) {
+      for (TDirectory subDirectory : listing.dirs()) {
         subDirectory.visit(this);
       }
     }

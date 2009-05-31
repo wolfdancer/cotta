@@ -34,7 +34,7 @@ public class ClassPathEntryTest extends TestCase {
     ClassPathEntry pathEntry = loadTestZipFileInResource();
     ensure.that(pathEntry.type()).eq(ClassPathType.FILE);
     TDirectory directory = pathEntry.openAsDirectory();
-    List<TFile> filesInZip = directory.listFiles();
+    List<TFile> filesInZip = directory.list().files();
     ensure.that(1).eq(filesInZip.size());
     ensure.that("test.txt").eq(filesInZip.get(0).name());
     pathEntry.closeResource();

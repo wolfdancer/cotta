@@ -236,4 +236,7 @@ public class TFile extends TEntry {
     return result.get(0);
   }
 
+  public TFile toCanonicalFile() {
+    return factory().file(toCanonicalPath());
+  }
 }

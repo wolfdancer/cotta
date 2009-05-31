@@ -5,8 +5,6 @@ import net.sf.cotta.io.OutputProcessor;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -14,8 +12,9 @@ import java.util.zip.ZipOutputStream;
 /**
  * The class that represent the directory.  To create TDirectory, use TFile, TDirectory, and TFileFactory
  *
- * @see TFileFactory#directoryFromJavaFile(java.io.File)
+ * @see TFileFactory#physicalDir(java.io.File)
  * @see TFileFactory#dir(String)
+ * @see TFileFactory#dir(TPath)
  * @see TFile#parent()
  * @see TDirectory#parent()
  * @see TDirectory#dir(String)
@@ -79,7 +78,7 @@ public class TDirectory extends TEntry {
   /**
    * Constructs a subdirectory given the directory name
    *
-   * @param relativePath the relative path of the subdirectory
+   * @param relativePath the relative path of the sub-directory
    * @return The directory that is under the current directory with the given name
    */
   public TDirectory dir(String relativePath) {
@@ -101,19 +100,11 @@ public class TDirectory extends TEntry {
    *
    * @return mutable list of TDirectory that can be sorted
    * @throws TIoException for error in reading the directory
+   * @deprecated use list().dirs()
    */
+  @Deprecated
   public List<TDirectory> listDirs() throws TIoException {
-    return listDirs(TDirectoryFilter.ALL);
-  }
-
-  /**
-   * List the sub-directories in the alphabetic order
-   *
-   * @return sorted mutable list of sub-directories
-   * @throws TIoException for erros in reading the directory
-   */
-  public List<TDirectory> listDirsOrdered() throws TIoException {
-    return sort(listDirs());
+    return list().dirs();
   }
 
   /**
@@ -122,46 +113,11 @@ public class TDirectory extends TEntry {
    * @param directoryFilter filter for the directory
    * @return list of sub-directories
    * @throws TIoException for error in reading the directory
+   * @deprecated use list(directoryFilter).dirs()
    */
+  @Deprecated
   public List<TDirectory> listDirs(TDirectoryFilter directoryFilter) throws TIoException {
-    PathContent content = listContent();
-    List<TDirectory> directories = new ArrayList<TDirectory>(content.dirs().size());
-    addDirectories(directories, directoryFilter, content);
-    return directories;
-  }
-
-  @SuppressWarnings({"unchecked"})
-  private void addDirectories(List list, TDirectoryFilter directoryFilter, PathContent content) {
-    List<TPath> paths = content.dirs();
-    for (TPath path : paths) {
-      TDirectory candidate = new TDirectory(factory(), path);
-      if (directoryFilter.accept(candidate)) {
-        list.add(candidate);
-      }
-    }
-  }
-
-  @SuppressWarnings({"unchecked"})
-  private void addFiles(List list, TFileFilter fileFilter, PathContent content) {
-    List<TPath> paths = content.files();
-    for (TPath path : paths) {
-      TFile candidate = new TFile(factory(), path);
-      if (fileFilter.accept(candidate)) {
-        list.add(candidate);
-      }
-    }
-  }
-
-  /**
-   * List the sub-directories of the current directory that can be accepted by the filter, and sort the result
-   *
-   * @param directoryFilter filter for the directory
-   * @return list of ordered sub-directories
-   * @throws TIoException for error in reading the directory
-   */
-  public List<TDirectory> listDirsOrdered(TDirectoryFilter directoryFilter) throws TIoException {
-    List<TDirectory> list = listDirs(directoryFilter);
-    return sort(list);
+    return list(directoryFilter).dirs();
   }
 
   /**
@@ -170,7 +126,7 @@ public class TDirectory extends TEntry {
    * @return list of TEntry that are either TFile or TDirectory
    * @throws TIoException for error in reading current directory
    */
-  public List<TEntry> list() throws TIoException {
+  public TDirectoryListing list() throws TIoException {
     return list(TEntryFilter.ALL);
   }
 
@@ -178,34 +134,50 @@ public class TDirectory extends TEntry {
    * List the current directory with entry filter
    *
    * @param filter entry filter
-   * @return filted lits of entries
+   * @return directory listing that has file filter and directory filter set to the filterd passed in
    * @throws TIoException for error in reading current directory
    */
-  public List<TEntry> list(TEntryFilter filter) throws TIoException {
-    PathContent content = listContent();
-    List<TEntry> result = new ArrayList<TEntry>(content.dirs().size() + content.files().size());
-    addDirectories(result, filter, content);
-    addFiles(result, filter, content);
-    return result;
+  public TDirectoryListing list(TEntryFilter filter) throws TIoException {
+    return listing().filteredBy(filter, filter);
   }
 
   /**
-   * List the current directory and sort the result
+   * List the current directory with file filter
    *
-   * @return ordered list of TEntry that are either TFile or TDirectory
-   * @throws TIoException for error in reading current  directory
+   * @param filter file filter
+   * @return filted directory listing with the directory filter set to ALL and file filter set to the filter passed in
+   * @throws TIoException for error in reading current directory
    */
-  public List<TEntry> listOrdered() throws TIoException {
-    return listOrdered(TEntryFilter.ALL);
+  public TDirectoryListing list(TFileFilter filter) throws TIoException {
+    return listing().filteredBy(TDirectoryFilter.ALL, filter);
   }
 
-  private List<TEntry> listOrdered(TEntryFilter filter) throws TIoException {
-    return sort(list(filter));
+  /**
+   * List the current directory with directory filter
+   *
+   * @param filter directory filter
+   * @return filted direcotry listing with the directory filter set to the filter passed on, and file filter set to ALL
+   * @throws TIoException for error in reading current directory
+   */
+  public TDirectoryListing list(TDirectoryFilter filter) throws TIoException {
+    return listing().filteredBy(filter, TFileFilter.ALL);
   }
 
-  private <T extends TEntry> List<T> sort(List<T> list) {
-    Collections.sort(list);
-    return list;
+  /**
+   * List the current directory with file filter and directory filter
+   *
+   * @param directoryFilter directory filter
+   * @param fileFilter      file filter
+   * @return filted direcotry listing with the directory filter set to the filter passed on, and file filter set to ALL
+   * @throws TIoException for error in reading current directory
+   */
+  public TDirectoryListing list(TDirectoryFilter directoryFilter, TFileFilter fileFilter) throws TIoException {
+    return listing().filteredBy(directoryFilter, fileFilter);
+  }
+
+  private TDirectoryListing listing() throws TIoException {
+    checkDirectoryExists();
+    return new TDirectoryListing(factory(), listContent());
   }
 
   private PathContent listContent() throws TIoException {
@@ -225,19 +197,11 @@ public class TDirectory extends TEntry {
    *
    * @return a mutable list of files under current directory
    * @throws TIoException error in reading from current directory
+   * @deprecated
    */
+  @Deprecated
   public List<TFile> listFiles() throws TIoException {
-    return listFiles(TFileFilter.ALL);
-  }
-
-  /**
-   * List files under current directory and return them as sorted list
-   *
-   * @return sorted list of files under current directory
-   * @throws TIoException error in reading form current directory
-   */
-  public List<TFile> listFilesOrdered() throws TIoException {
-    return sort(listFiles());
+    return list(TFileFilter.ALL).files();
   }
 
   /**
@@ -246,23 +210,11 @@ public class TDirectory extends TEntry {
    * @param fileFilter file filter for the list
    * @return a mutable list of files
    * @throws TIoException error in reading from current directory
+   * @deprecated use list(fileFilter).files()
    */
+  @Deprecated
   public List<TFile> listFiles(TFileFilter fileFilter) throws TIoException {
-    PathContent content = listContent();
-    List<TFile> files = new ArrayList<TFile>(content.files().size());
-    addFiles(files, fileFilter, content);
-    return files;
-  }
-
-  /**
-   * List files under current directory that accepted by the file filter, and sort the result
-   *
-   * @param fileFilter file filter for the list
-   * @return a mutable ordede list of files
-   * @throws TIoException error in reading from current directory
-   */
-  public List<TFile> listFilesOrdered(TFileFilter fileFilter) throws TIoException {
-    return sort(listFiles(fileFilter));
+    return list(fileFilter).files();
   }
 
   public String toString() {
@@ -285,11 +237,12 @@ public class TDirectory extends TEntry {
    * @throws TIoException error in the operation
    */
   public void deleteAll() throws TIoException {
-    for (TDirectory aSubDirectory : listDirs()) {
+    TDirectoryListing listing = list();
+    for (TDirectory aSubDirectory : listing.dirs()) {
       aSubDirectory.deleteAll();
     }
 
-    List<TFile> files = listFiles();
+    List<TFile> files = listing.files();
     for (TFile file : files) {
       file.delete();
     }
@@ -303,13 +256,13 @@ public class TDirectory extends TEntry {
   }
 
   private void copySubDirectories(TDirectory target) throws TIoException {
-    for (TDirectory subdir : listDirs()) {
+    for (TDirectory subdir : list().dirs()) {
       subdir.mergeTo(target.dir(subdir.name()));
     }
   }
 
   private void copyFiles(TDirectory target) throws TIoException {
-    List<TFile> files = listFiles();
+    List<TFile> files = list().files();
     for (TFile file : files) {
       file.copyTo(target.file(file.name()));
     }
@@ -334,6 +287,7 @@ public class TDirectory extends TEntry {
    * @return java.io.File presentation of the directory
    * @deprecated use #toJavaFile()
    */
+  @Deprecated
   public File getJavaFile() {
     return toJavaFile();
   }
@@ -353,11 +307,12 @@ public class TDirectory extends TEntry {
       }
 
       private void addDirEntry(ZipOutputStream zipStream, String path, TDirectory directory) throws IOException {
-        List<TFile> files = directory.listFiles();
+        TDirectoryListing listing = directory.list();
+        List<TFile> files = listing.files();
         for (TFile file : files) {
           addFileEntry(zipStream, path, file);
         }
-        for (TDirectory subDirectory : directory.listDirs()) {
+        for (TDirectory subDirectory : listing.dirs()) {
           addDirEntry(zipStream, path + subDirectory.name() + "/", subDirectory);
         }
         zipStream.putNextEntry(new ZipEntry(path + "/"));
@@ -375,5 +330,9 @@ public class TDirectory extends TEntry {
 
   public void visit(FileVisitor fileVisitor) throws TIoException {
     fileVisitor.visit(this);
+  }
+
+  public TDirectory toCanonicalDir() {
+    return factory().dir(toCanonicalPath());
   }
 }

@@ -39,14 +39,14 @@ public class TestFtpServerFileSystemTest extends FtpTestCase {
   public void testBeAbleToMakeDirectory() throws IOException {
     boolean success = ftpClient.makeDirectory("testDir");
     ensure.booleanValue(success).isTrue();
-    List<TDirectory> listedDirs = rootDir.listDirs();
+    List<TDirectory> listedDirs = rootDir.list().dirs();
     ensure.list(listedDirs).eq(rootDir.dir("testDir"));
   }
 
   public void testBeAbleToRemoveDirectory() throws IOException {
     ftpClient.makeDirectory("testDir");
     ftpClient.removeDirectory("testDir");
-    ensure.list(rootDir.listDirs()).eq();
+    ensure.list(rootDir.list().dirs()).eq();
   }
 
   public void testBeAbleToChangeWorkingDirectory() throws IOException {
@@ -94,13 +94,13 @@ public class TestFtpServerFileSystemTest extends FtpTestCase {
   public void testBeAbleToRenameFile() throws IOException {
     rootDir.file("testFile").save("");
     ftpClient.rename("testFile", "renamedTestFile");
-    ensure.list(rootDir.listFiles()).eq(rootDir.file("renamedTestFile"));
+    ensure.list(rootDir.list().files()).eq(rootDir.file("renamedTestFile"));
   }
 
   public void testBeAbleToRenameDirectory() throws IOException {
     rootDir.dir("testDir").ensureExists();
     ftpClient.rename("testDir", "renamedTestDir");
-    ensure.that(rootDir.listDirs()).eq(rootDir.dir("renamedTestDir"));
+    ensure.that(rootDir.list().dirs()).eq(rootDir.dir("renamedTestDir"));
   }
 
   public void testBeAbleToChangeToParentDirectory() throws IOException {

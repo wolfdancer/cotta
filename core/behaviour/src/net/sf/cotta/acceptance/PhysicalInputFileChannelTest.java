@@ -13,7 +13,7 @@ import java.nio.channels.FileChannel;
 
 public class PhysicalInputFileChannelTest extends InputFileChannelTestCase {
   protected FileSystem fileSystem() {
-    return new PhysicalFileSystem();
+    return PhysicalFileSystem.instance;
   }
 
   public void testMapWithReadOption() throws Exception {

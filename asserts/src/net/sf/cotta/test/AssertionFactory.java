@@ -2,6 +2,8 @@ package net.sf.cotta.test;
 
 import net.sf.cotta.test.assertion.*;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -45,6 +47,26 @@ public class AssertionFactory {
   public <T> ListAssert<T> list(List<T> value) {
     return new ListAssert<T>(value);
   }
+
+  public <T> ListAssert<T> that(Iterable<T> value) {
+    return that(value.iterator());
+  }
+
+  public <T> ListAssert<T> that(Iterator<T> value) {
+    return new ListAssert<T>(toList(value));
+  }
+
+  private <T> List<T> toList(Iterator<T> value) {
+    if (value == null) {
+      return null;
+    }
+    List<T> list = new ArrayList<T>();
+    while (value.hasNext()) {
+      list.add(value.next());
+    }
+    return list;
+  }
+
 
   public ByteListAssert that(byte[] value) {
     return bytes(value);

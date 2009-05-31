@@ -295,4 +295,11 @@ public class TFileTest extends TestCase {
     ensure.that(actual).eq("content");
   }
 
+  public void testToCanonicalFile() {
+    String pathString = "/one/two/../three.txt";
+    TFile file = TFileFactory.physical().file(pathString);
+    ensure.that(file.toPath()).eq(TPath.parse(pathString));
+    ensure.that(file.toCanonicalFile()).eq(file.factory().file(file.toCanonicalPath()));
+  }
+
 }

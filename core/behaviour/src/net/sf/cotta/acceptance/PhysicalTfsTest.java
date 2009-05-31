@@ -21,6 +21,6 @@ public class PhysicalTfsTest extends TfsTestCase {
 */
 
   protected FileSystem fileSystem() {
-    return ControlledFileSystem.pathControlledFileSystem(new PhysicalFileSystem(), TPath.parse("./tmp"));
+    return ControlledFileSystem.pathControlledFileSystem(PhysicalFileSystem.instance, TPath.parse("./tmp"));
   }
 }

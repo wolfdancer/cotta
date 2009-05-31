@@ -54,11 +54,6 @@ public class PhysicalFileSystemTest extends PhysicalFileSystemTestCase {
     ensure.that(fileSystem.fileExists(fileToCreate));
   }
 
-  public void testAlwaysEqualToEachOther() throws Exception {
-    ensure.that(new PhysicalFileSystem().equals(new PhysicalFileSystem())).eq(true);
-    ensure.that(new PhysicalFileSystem().hashCode() == new PhysicalFileSystem().hashCode()).eq(true);
-  }
-
   public void testMoveFile() throws Exception {
     String content = "move file directly";
     TPath source = TPath.parse("tmp/source.txt");
