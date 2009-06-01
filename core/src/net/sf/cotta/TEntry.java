@@ -95,6 +95,11 @@ abstract public class TEntry implements Comparable<TEntry> {
   public String toString() {
     StringBuilder buffer = new StringBuilder(getClass().getSimpleName());
     buffer.append("<").append(path()).append(">");
+    if (path.isRelative()) {
+      buffer.append(" relative to <");
+      buffer.append(filesystem().toCanonicalPath(TPath.parse("./")));
+      buffer.append(">");
+    }
     return buffer.toString();
   }
 

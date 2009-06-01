@@ -217,10 +217,6 @@ public class TDirectory extends TEntry {
     return list(fileFilter).files();
   }
 
-  public String toString() {
-    return "TDirectory " + path();
-  }
-
   /**
    * Delete the current directory.  Most file system will fail
    * if the current directory is not empty

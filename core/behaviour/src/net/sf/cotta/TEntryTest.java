@@ -9,22 +9,20 @@ import java.io.File;
 public class TEntryTest extends TestCase {
   public void testAccessToFactory() {
     TFileFactory factory = new TFileFactory();
-    TEntry entry = new TEntry(factory, TPath.parse("/path")) {
-      public boolean exists() throws TIoException {
-        return false;
-      }
-    };
+    TEntry entry = new TestEntry(factory, "/path", false);
     ensure.that(entry.factory()).sameAs(factory);
   }
 
   public void testToStringContainsEntryTypeAndPath() {
     TFileFactory factory = TFileFactory.inMemory();
-    TEntry entry = new TEntry(factory, TPath.parse("/path")) {
-      public boolean exists() throws TIoException {
-        return false;
-      }
-    };
-    ensure.that(entry.toString()).eq("</path>");
+    TEntry entry = new TestEntry(factory, "/path", false);
+    ensure.that(entry.toString()).eq("TestEntry</path>");
+  }
+
+  public void testToStringDisplaysCurrentDirectoryIfPathIsRelative() {
+    TFileFactory factory = TFileFactory.inMemory();
+    TEntry entry = new TestEntry(factory, "./path", false);
+    ensure.that(entry.toString()).eq("TestEntry<./path> relative to <memory://.>");
   }
 
   public void testHashCode() {
@@ -58,5 +56,18 @@ public class TEntryTest extends TestCase {
     ensure.that(file.compareTo(directory)).eq(1);
     ensure.that(directory.compareTo(file)).eq(-1);
     context.assertIsSatisfied();
+  }
+
+  private static class TestEntry extends TEntry {
+    private boolean exists;
+
+    public TestEntry(TFileFactory factory, String path, boolean exists) {
+      super(factory, TPath.parse(path));
+      this.exists = exists;
+    }
+
+    public boolean exists() throws TIoException {
+      return exists;
+    }
   }
 }
