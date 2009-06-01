@@ -5,54 +5,59 @@ import net.sf.cotta.TPath;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.List;
 
-public class OutputManager {
-  private IoManager io;
+public class OutputManager extends ResourceManager<OutputProcessor> {
   private OutputMode mode;
+  private IoFactory ioFactory;
 
-  public OutputManager(StreamFactory factory, OutputMode mode) {
-    this.io = new IoManager(factory);
+  public OutputManager(StreamFactory streamFactory, OutputMode mode) {
+    this(streamFactory, mode, new ArrayList<Closeable>());
+  }
+
+  public OutputManager(StreamFactory streamFactory, OutputMode mode, List<Closeable> resourceList) {
+    super(resourceList);
+    this.ioFactory = new IoFactory(streamFactory);
     this.mode = mode;
   }
 
   public OutputStream outputStream() throws TIoException {
-    return io.outputStream(mode);
+    OutputStream outputStream = ioFactory.outputStream(mode);
+    registerResource(outputStream);
+    return outputStream;
   }
 
   public Writer writer() throws TIoException {
-    return io.writer(mode);
+    Writer writer = ioFactory.writer(mode);
+    registerResource(writer);
+    return writer;
   }
 
   public Writer writer(String encoding) throws TIoException {
-    return io.writer(mode, encoding);
+    Writer writer = ioFactory.writer(mode, encoding);
+    registerResource(writer);
+    return writer;
   }
 
   public BufferedWriter bufferedWriter() throws TIoException {
-    return io.bufferedWriter(mode);
+    BufferedWriter bufferedWriter = ioFactory.bufferedWriter(mode);
+    registerResource(bufferedWriter);
+    return bufferedWriter;
   }
 
   public PrintWriter printWriter() throws TIoException {
-    return io.printWriter(mode);
+    PrintWriter writer = ioFactory.printWriter(mode);
+    registerResource(writer);
+    return writer;
   }
 
-  public void registerResource(OutputStream os) {
-    io.registerResource(os);
+  protected void process(OutputProcessor processor) throws IOException {
+    processor.process(this);
   }
 
-  public void registerResource(Writer writer) {
-    io.registerResource(writer);
-  }
-
-  public void registerResource(Closeable resource) {
-    io.registerResource(resource);
-  }
-
-  public void open(final OutputProcessor processor) throws TIoException {
-    io.open(new IoProcessor() {
-      public void process(IoManager io) throws IOException {
-        processor.process(OutputManager.this);
-      }
-    });
+  protected TPath path() {
+    return ioFactory.path();
   }
 
   public static Output with(final OutputStream stream) {

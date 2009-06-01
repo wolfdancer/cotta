@@ -5,6 +5,7 @@ import java.net.URL;
 /**
  * @deprecated use ClassPathEntryLocator
  */
+@Deprecated
 @SuppressWarnings({"deprecation"})
 public class ClassPathLocator extends ClassPathEntryLocator {
   public ClassPathLocator(Class clazz) {
@@ -15,6 +16,7 @@ public class ClassPathLocator extends ClassPathEntryLocator {
     super(absoluteResourcePath);
   }
 
+  @Deprecated
   public ClassPath locate() {
     URL url = getClass().getResource(resourceString);
     if ("jar".equalsIgnoreCase(url.getProtocol())) {

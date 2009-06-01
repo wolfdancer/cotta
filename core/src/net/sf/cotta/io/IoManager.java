@@ -8,6 +8,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * I/O manager that handles creation and management of the I/O resources
+ *
+ * @deprecated use InputManager or OutputManager
+ */
+@Deprecated
 public class IoManager {
   private static final int INITIAL_CAPACITY = 3;
 
@@ -99,6 +105,7 @@ public class IoManager {
     resourceList.add(Closeable);
   }
 
+  @SuppressWarnings({"deprecation"})
   public void open(IoProcessor ioProcessor) throws TIoException {
     boolean errorOccurred = true;
     try {

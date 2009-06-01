@@ -3,68 +3,69 @@ package net.sf.cotta.io;
 import net.sf.cotta.TIoException;
 import net.sf.cotta.TPath;
 
-import java.io.BufferedReader;
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.LineNumberReader;
-import java.io.OutputStream;
-import java.io.Reader;
+import java.io.*;
 import java.lang.reflect.Method;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.ArrayList;
+import java.util.List;
 
-public class InputManager {
-  private IoManager ioManager;
+public class InputManager extends ResourceManager<InputProcessor> {
+  private IoFactory ioFactory;
 
   public InputManager(StreamFactory streamFactory) {
-    ioManager = new IoManager(streamFactory);
+    this(streamFactory, new ArrayList<Closeable>());
+  }
+
+  public InputManager(StreamFactory streamFactory, List<Closeable> resourceList) {
+    super(resourceList);
+    ioFactory = new IoFactory(streamFactory);
   }
 
   public InputStream inputStream() throws TIoException {
-    return ioManager.inputStream();
+    InputStream inputStream = ioFactory.inputStream();
+    registerResource(inputStream);
+    return inputStream;
   }
 
   public Reader reader() throws TIoException {
-    return ioManager.reader();
+    Reader reader = ioFactory.reader();
+    registerResource(reader);
+    return reader;
   }
 
   public Reader reader(String encoding) throws TIoException {
-    return ioManager.reader(encoding);
+    Reader reader = ioFactory.reader(encoding);
+    registerResource(reader);
+    return reader;
   }
 
   public BufferedReader bufferedReader() throws TIoException {
-    return ioManager.bufferedReader();
+    BufferedReader reader = ioFactory.bufferedReader();
+    registerResource(reader);
+    return reader;
   }
 
   public LineNumberReader lineNumberReader() throws TIoException {
-    return ioManager.lineNumberReader();
+    LineNumberReader reader = ioFactory.lineNumberReader();
+    registerResource(reader);
+    return reader;
   }
 
   public FileChannel channel() throws TIoException {
-    return ioManager.inputChannel();
+    FileChannel channel = ioFactory.inputChannel();
+    registerResource(channel);
+    return channel;
   }
 
-  public void registerResource(InputStream is) {
-    ioManager.registerResource(is);
+  protected void process(final InputProcessor processor) throws IOException {
+    processor.process(this);
   }
 
-  public void registerResource(Reader reader) {
-    ioManager.registerResource(reader);
-  }
-
-  public void registerResource(Closeable Closeable) {
-    ioManager.registerResource(Closeable);
-  }
-
-  public void open(final InputProcessor processor) throws TIoException {
-    ioManager.open(new IoProcessor() {
-      public void process(IoManager io) throws IOException {
-        processor.process(InputManager.this);
-      }
-    });
+  protected TPath path() {
+    return ioFactory.path();
   }
 
   /**
@@ -79,12 +80,12 @@ public class InputManager {
       public Object run() {
         try {
           Method getCleanerMethod = buffer.getClass
-                  ().getMethod("cleaner",
-                  new Class[0]);
+              ().getMethod("cleaner",
+              new Class[0]);
           getCleanerMethod.setAccessible(true);
           sun.misc.Cleaner cleaner =
-                  (sun.misc.Cleaner) getCleanerMethod.invoke(buffer, new Object
-                          [0]);
+              (sun.misc.Cleaner) getCleanerMethod.invoke(buffer, new Object
+                  [0]);
           cleaner.clean();
         } catch (Exception e) {
           e.printStackTrace();

@@ -153,6 +153,7 @@ public class TFileTest extends TestCase {
     ensure.that("").eq(file.basename());
   }
 
+  @SuppressWarnings({"deprecation"})
   public void testPassBackFileIoAndCloseResource() throws Exception {
     TPath path = TPath.parse("/tmp/test.txt");
     Mockery context = new Mockery();
@@ -180,8 +181,8 @@ public class TFileTest extends TestCase {
         will(returnValue(inputStream));
       }
     });
-    file.open(new IoProcessor() {
-      public void process(IoManager io) throws IOException {
+    file.read(new InputProcessor() {
+      public void process(InputManager io) throws IOException {
         io.inputStream();
       }
     });
@@ -247,8 +248,8 @@ public class TFileTest extends TestCase {
     TFileFactory factory = new TFileFactory(fileSystem);
     TFile file = factory.file(path.toPathString());
     try {
-      file.open(new IoProcessor() {
-        public void process(IoManager io) throws IOException {
+      file.read(new InputProcessor() {
+        public void process(InputManager io) throws IOException {
           io.inputStream();
           throw new IOException("test");
         }

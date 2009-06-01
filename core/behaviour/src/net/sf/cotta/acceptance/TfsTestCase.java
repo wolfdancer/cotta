@@ -169,15 +169,15 @@ public abstract class TfsTestCase extends TestCase {
     ensure.that(actual.size()).eq(1);
     ensure.that(actual.get(0)).eq(file);
     ensure.that(file.load()).eq("this is a line");
-    file.open(new IoProcessor() {
-      public void process(IoManager io) throws IOException {
-        io.printWriter(OutputMode.APPEND).print("-appended");
+    file.append(new OutputProcessor() {
+      public void process(OutputManager io) throws IOException {
+        io.printWriter().print("-appended");
       }
     });
     ensure.that(file.load()).eq("this is a line-appended");
-    file.open(new IoProcessor() {
-      public void process(IoManager io) throws IOException {
-        io.printWriter(OutputMode.OVERWRITE).print("new content");
+    file.write(new OutputProcessor() {
+      public void process(OutputManager io) throws IOException {
+        io.printWriter().print("new content");
       }
     });
     final StringBuffer buffer = new StringBuffer();

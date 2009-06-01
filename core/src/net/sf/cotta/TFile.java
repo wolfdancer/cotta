@@ -160,6 +160,18 @@ public class TFile extends TEntry {
     return new IoFactory(streamFactory(), factory().defaultEncoding());
   }
 
+  /**
+   * Open the file for I/O processing
+   *
+   * @param processor processor call back
+   * @throws TIoException error in the processing
+   * @see #read(net.sf.cotta.io.InputProcessor)
+   * @see #write(net.sf.cotta.io.OutputProcessor)
+   * @see #append(net.sf.cotta.io.OutputProcessor)
+   * @deprecated use read(), write(), and append() instead
+   */
+  @SuppressWarnings({"deprecation"})
+  @Deprecated
   public void open(IoProcessor processor) throws TIoException {
     new IoManager(streamFactory(), factory().defaultEncoding()).open(processor);
   }
@@ -177,9 +189,9 @@ public class TFile extends TEntry {
   }
 
   public void open(final LineProcessor lineProcessor) throws TIoException {
-    open(new IoProcessor() {
-      public void process(IoManager io) throws IOException {
-        BufferedReader reader = io.bufferedReader();
+    read(new InputProcessor() {
+      public void process(InputManager manager) throws IOException {
+        BufferedReader reader = manager.bufferedReader();
         String line = reader.readLine();
         while (line != null) {
           lineProcessor.process(line);
@@ -191,8 +203,8 @@ public class TFile extends TEntry {
 
   public String load() throws TIoException {
     final StringBuffer buffer = new StringBuffer();
-    open(new IoProcessor() {
-      public void process(IoManager io) throws IOException {
+    read(new InputProcessor() {
+      public void process(InputManager io) throws IOException {
         loadContent(buffer, io.reader());
       }
     });
@@ -216,9 +228,9 @@ public class TFile extends TEntry {
    * @throws TIoException if there are any exception thrown during the operation
    */
   public TFile save(final String content) throws TIoException {
-    open(new IoProcessor() {
-      public void process(IoManager io) throws IOException {
-        Writer writer = io.writer(OutputMode.OVERWRITE);
+    write(new OutputProcessor() {
+      public void process(OutputManager io) throws IOException {
+        Writer writer = io.writer();
         writer.write(content);
         writer.flush();
       }
