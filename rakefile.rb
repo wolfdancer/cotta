@@ -96,3 +96,9 @@ task :package do
     package.add(ftp.prod.output, ftp.prod.src)
   end
 end
+
+task :javadoc do
+  api = dist.dir('api')
+  asserts.javadoc(api.dir('cotta-asserts')).run(build.file('javadoc-asserts.xml'))
+  core.javadoc(api.dir('cotta')).run(build.file('javadoc-core.xml'))
+end
