@@ -42,7 +42,7 @@ pscp.copy(cotta_core_release_source.path, "#{builds_dir}/#{cotta_core_release_so
 pscp.copy(cotta_testbase_release_jar, "#{builds_dir}/#{cotta_testbase_release_jar.name}")
 pscp.copy(cotta_core_release_source, "#{builds_dir}/#{cotta_core_release_source.name}")
 pscp.copy(dir.dir('build/report'), "#{report_dir}")
-pscp.copy(dir.dir('dist/javadoc'), "#{javadoc_dir}")
+pscp.copy(dir.dir('build/dist/javadoc'), "#{javadoc_dir}")
 puts <<TODO
 staging jar and source zip
 staging Java Doc
