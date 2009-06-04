@@ -49,7 +49,7 @@ ftp = BuildMaster::JavaProject.new(root.dir('ftp')) do |project|
   project.tests_with testbase
 end
 
-task :default => [:test, :package]
+task :default => [:test, :package, :javadoc]
 task :make_testbase => [:make_asserts]
 task :make_cotta => [:make_testbase]
 task :make_ftp => [:make_cotta]
@@ -98,7 +98,7 @@ task :package do
 end
 
 task :javadoc do
-  api = dist.dir('api')
+  api = dist.dir('javadoc')
   asserts.javadoc(api.dir('cotta-asserts')).run(build.file('javadoc-asserts.xml'))
   core.javadoc(api.dir('cotta')).run(build.file('javadoc-core.xml'))
 end

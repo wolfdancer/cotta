@@ -1,0 +1,34 @@
+-------------------------
+JUnit Assertion Adapter
+-------------------------
+h1. JUnit Asserts
+
+Cotta also extends JUnit to make assertion easier.  These are release as <code>cotta-asserts</code>.
+
+This is the final product of several attempts, including the one in "DBFixture":http://confluence.public.thoughtworks.org/display/DBFIX/Home.
+It is an extension of the JUnit 4 assertion syntax, into "Fluent Pattern":http://www.martinfowler.com/bliki/FluentInterface.html
+like FEST-assert:http://fest.easytesting.org/assert/wiki/pmwiki.php but aim to complement JUnit assertions
+
+h1. How to Use Cotta Asserts
+
+* Download @cotta-assert.jar@ file and add it to your test library.
+* Declare a static field in the test case base class as
+ @public static final AssertionFactory ensure = new AssertionFactory();@
+* For all the tests that extends this test calss, you will now be able to write assertios like
+ @ensure.that(actual).eq(expected)@
+
+With this API, the assertions object returned by @that@ method will be dependent on the type of the value you pass in, which means
+that for different type of value you will see different available assertion methods.
+
+You can also check out the "API JavaDoc":./javadoc/2.0/cotta-asserts/index.html
+
+h1. How to Extend the Assertion API
+
+All the classes are public, which means that you can extend any of them to override the behavior of the assertion method.  You can even create
+your own assertion factory and declare it as the @ensure@ variable
+
+h1. How to Contribute
+
+Of course, it would be best if you can share it with the rest of the community.  Please feel free to post your question or patch to
+"cotta google group":http://groups.google.com/group/cotta
+

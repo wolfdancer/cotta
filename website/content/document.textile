@@ -62,6 +62,7 @@ method call.
 <template:code source="document-sample.java" tag="IOFACTORY" syntax="java"/>
 
 <a name="filesystems"> </a>
+
 h1. File Systems
 
 h2. PhysicalFileSystem
@@ -69,6 +70,7 @@ h2. PhysicalFileSystem
 The wrapper of Java file operations.  This is the default file system that @TFileFactory@ uses.
 
 <a name="inmemory"> </a>
+
 h2. InMemoryFileSystem
 
 This is used mainly for testing by replacing the FileSystem.  @InMemoryFileSystem@ also treat
@@ -77,16 +79,19 @@ current working directory.  You can also configure the @InMemoryFileSystem@ to h
 path separator or listing order
 
 <a name="zip"> </a>
+
 h2. ZipFileSystem
 
 A read-only file system that allows archive file browsing.
 
 <a name="ftp"> </a>
+
 h2. FtpFileSystem
 
 A file system as a FTP client.
 
 <a name="test"> </a>
+
 h2. ControlledFileSystem and CatastrophicFileSystem
 
 These are wrapper classes used to control the file system read and writer operations.  @CatastrophicFileSystem@
