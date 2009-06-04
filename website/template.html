@@ -99,41 +99,11 @@
                         <template:text property="release"/>
                     </a></td>
                 </tr>
-                <tr>
-                    <td><a>
-                        <template:href url="download.html#prerelease"/>
-                        Prerelease:</a></td>
-                    <td><a>
-                        <template:href url="download.html#prerelease"/>
-                        <template:text property="prerelease"/>
-                    </a></td>
-                </tr>
-                <tr>
-                    <td><a>
-                        <template:href url="download.html#snapshot"/>
-                        Snapshot:</a></td>
-                    <td><a>
-                        <template:href url="download.html#snapshot"/>
-                        <template:text property="snapshot"/>
-                    </a></td>
-                </tr>
             </table>
             <p class="NewsMore"><a>
                 <template:href url="versioning.html"/>
                 About cotta version numbers...</a></p>
         </div>
-        <!--<div class="NewsGroup">
-        	<h1>Recent News</h1>
-				<template:each source="news-rss2.xml" select="/rss/channel/item" count="3">
-                <div class="NewsItem">
-                    <p class="NewsTitle"><template:include elements="./title/text()"/></p>
-                    <p class="NewsDate"><template:include elements="./pubDate/text()"/></p>
-                    <p class="NewsText"><template:include elements="./xhtml:div/node()"/></p>
-                </div>
-                </template:each>
-
-  			<p class="NewsMore"><a href="/news-rss2.xml">News feed (RSS 2.0)</a></p>
-				</div>-->
     </div>
 </template:when>
 

@@ -3,14 +3,24 @@ Download
 -------------------------------------------------
 h1. Release Notes
 
-h2. Release 2.0.0 (In development)
-* Fixed the gap on file system controlled, the read operation should throw
-TIoException
-* Broke the backward compatibility for throwing io exception on read. bump
-the version number
+h2. "Release 2.0.0":https://sourceforge.net/project/showfiles.php?group_id=171037&package_id=195405&release_id=687194
+
+* Broke the backward compatibility for changing the list method on FileSystem interface
+* Fixed the gap on file system controller to invoke read check on all directory reading operations
+* Deprecated IoManager and IoProcessor and separated input processing and output processing
+* Improved toString so that it shows:
+** File or Directory
+** Path used to construct the entry
+** Cononical path of the current directory if the path is relative path
+* Consolidated the API to use list() method to return a listing object to apply filter and ordering on it.
+** Deprecated listFile and listDir methods
+* Changed the implementation of equals(), compare() and hashCode() of TFile and TDirectory by delegating to file system.  In this way
+the behavior is the same as the java.io.File
+* Added method to create reader and writer with an encoding.
 
 h2. "Release 1.3.3":https://sourceforge.net/project/showfiles.php?group_id=171037&package_id=195405&release_id=683025
 
+* Added method on InputManager and OutputManager so that they can be used with any InpuStream and OutputStream, respectively.
 * Make dir.file and dir.dir support absolute path
 * Added parse method on TFile
 * Deprecated IoResource in favor of java.io.Closeable
@@ -23,13 +33,9 @@ I/O Stream
 
 h2. "Release 1.3.1":http://sourceforge.net/project/showfiles.php?group_id=171037&package_id=195405&release_id=645441
 
-h1. Snapshot
-
-Development snapshots can be downloaded from "builds":builds/?M=D page.
-
 h1. Developer Build
 
-You can also check it out of the repository and build it using ANT.
+You can also check it out of the repository and build it using Ruby rake.
 
 http://github.com/wolfdancer/cotta/tree/master
 

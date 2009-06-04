@@ -11,7 +11,7 @@ like FEST-assert:http://fest.easytesting.org/assert/wiki/pmwiki.php but aim to c
 
 h1. How to Use Cotta Asserts
 
-* Download @cotta-assert.jar@ file and add it to your test library.
+* Download @cotta-assert.jar@ file from "download page":https://sourceforge.net/project/showfiles.php?group_id=171037&package_id=325112 and add it to your test library.
 * Declare a static field in the test case base class as
  @public static final AssertionFactory ensure = new AssertionFactory();@
 * For all the tests that extends this test calss, you will now be able to write assertios like
