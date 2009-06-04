@@ -99,6 +99,6 @@ end
 
 task :javadoc do
   api = dist.dir('javadoc')
-  asserts.javadoc(api.dir('cotta-asserts')).run(build.file('javadoc-asserts.xml'))
-  core.javadoc(api.dir('cotta')).run(build.file('javadoc-core.xml'))
+  asserts.javadoc(api.dir('asserts')).run(build.file('javadoc-asserts.xml'))
+  core.javadoc(api.dir('core')).run(build.file('javadoc-core.xml'))
 end

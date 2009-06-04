@@ -1,0 +1,9 @@
+-----------------------
+JavaDoc
+------------------------
+h1. Cotta JavaDoc
+
+|_.Release|_.Package|_.Link|
+|1.x      |cotta    |"index.html":./1.x/core/index.html|
+|/2.2.0.0 |asserts  |"index.html":./2.0.0/asserts/index.html|
+|cotta|"index.html":./2.0.0/core/index.html|

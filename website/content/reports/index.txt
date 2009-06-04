@@ -1,0 +1,9 @@
+------------
+Reports
+-------------
+h1. Cotta Reports
+
+|_.Release|_.Package|_.JUnit Report                         |_.Code Coverage|
+|1.x      |cotta    |"index.html":./1.x/core/test/index.html|"index.html":./1.x/core/coverage/index.html|
+|/2.2.0.0 |asserts  |"index.html":./2.0.0/asserts/test/index.html|"index.html":./2.0.0/asserts/coverage/index.html|
+|core               |"index.html":./2.0.0/core/test/index.html|"index.html":./2.0.0/core/coverage/index.html|

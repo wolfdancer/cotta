@@ -1,7 +1,9 @@
 import net.sf.cotta.Info;
 import net.sf.cotta.TIoException;
 
-/** @noinspection JavaDoc*/
+/**
+ * Main class for retriving the Cotta version
+ */
 public class Cotta {
   private Cotta() {
   }
