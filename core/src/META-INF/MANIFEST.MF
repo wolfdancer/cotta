@@ -1,6 +1,6 @@
 Implementation-Title: Cotta
 Implementation-Version: 2.0.0
-Implementation-Build: 76
+Implementation-Build: 77
 Implementation-Vendor: SourceForge Cotta
 Implementation-Vendor-Id: net.sf.cotta
 Implementation-URL: http://cotta.sourceforge.net
