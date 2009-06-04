@@ -1,7 +1,7 @@
 package net.sf.cotta.memory;
 
-import net.sf.cotta.TestCase;
 import net.sf.cotta.TPath;
+import net.sf.cotta.TestCase;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,7 +14,7 @@ public class ListingOrderTest extends TestCase {
     TPath c = TPath.parse("/z/c");
     List<TPath> list = new ArrayList<TPath>(Arrays.asList(b, a, c));
     ListingOrder.NULL.sort(list);
-    ensure.list(list).eq(b, a, c);
+    ensure.that(list).eq(b, a, c);
   }
 
   public void testHaveAToZSorting() throws Exception {
@@ -23,7 +23,7 @@ public class ListingOrderTest extends TestCase {
     TPath c = TPath.parse("/z/c");
     List<TPath> list = new ArrayList<TPath>(Arrays.asList(b, a, c));
     ListingOrder.AToZ.sort(list);
-    ensure.list(list).eq(a, b, c);
+    ensure.that(list).eq(a, b, c);
   }
 
   public void testHaveZToASorting() throws Exception {
@@ -32,7 +32,7 @@ public class ListingOrderTest extends TestCase {
     TPath c = TPath.parse("/z/c");
     List<TPath> list = new ArrayList<TPath>(Arrays.asList(b, a, c));
     ListingOrder.ZToA.sort(list);
-    ensure.list(list).eq(c, b, a);
+    ensure.that(list).eq(c, b, a);
   }
 
   public void testDoRandomSorting() throws Exception {
@@ -41,7 +41,7 @@ public class ListingOrderTest extends TestCase {
     TPath c = TPath.parse("/z/c");
     List<TPath> list = new ArrayList<TPath>(Arrays.asList(b, a, c));
     ListingOrder.Random.sort(list);
-    ensure.list(list).contains(c, b, a);
+    ensure.that(list).contains(c, b, a);
   }
 
 }

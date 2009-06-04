@@ -22,13 +22,13 @@ public abstract class TfsTestCase extends TestCase {
       directory.delete();
       fail("TIoException should have occurred");
     } catch (TIoException e) {
-      ensure.exception(e).message().contains("./tmp");
+      ensure.that(e).message().contains("./tmp");
     }
   }
 
   private TDirectory ensureThatDirectoryCanBeCreated(TFileFactory factory, String directoryPath) throws TIoException {
     TDirectory directory = factory.dir(directoryPath);
-    ensure.string(directory.name()).eq(directoryPath);
+    ensure.that(directory.name()).eq(directoryPath);
     ensure.that(directory.exists()).eq(false);
     directory.ensureExists();
     ensure.that(directory.exists()).eq(true);
@@ -154,7 +154,7 @@ public abstract class TfsTestCase extends TestCase {
     InputStream stream = file.io().inputStream();
     registerResource(stream);
     int expected = -1;
-    ensure.integer(stream.read()).eq(expected);
+    ensure.that(stream.read()).eq(expected);
   }
 
   public void testProvideOutputStreamBasedOnMode() throws Exception {

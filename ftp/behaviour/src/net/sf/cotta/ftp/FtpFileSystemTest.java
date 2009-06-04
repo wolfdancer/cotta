@@ -23,42 +23,42 @@ public class FtpFileSystemTest extends FtpTestCase {
 
   public void testTellFileExistsOrNot() throws TIoException {
     boolean exists = fileSystem.fileExists(_("/testFile"));
-    ensure.booleanValue(exists).isFalse();
+    ensure.that(exists).isFalse();
     rootDir.file("testFile").save("");
     exists = fileSystem.fileExists(_("/testFile"));
-    ensure.booleanValue(exists).isTrue();
+    ensure.that(exists).isTrue();
   }
 
   public void testTellDirExistsOrNot() throws IOException {
-    ensure.booleanValue(fileSystem.dirExists(_("/"))).isTrue();
-    ensure.booleanValue(fileSystem.dirExists(_("/abc"))).isFalse();
+    ensure.that(fileSystem.dirExists(_("/"))).isTrue();
+    ensure.that(fileSystem.dirExists(_("/abc"))).isFalse();
     ftpClient.makeDirectory("abc");
-    ensure.booleanValue(fileSystem.dirExists(_("/abc"))).isTrue();
+    ensure.that(fileSystem.dirExists(_("/abc"))).isTrue();
     ftpClient.changeWorkingDirectory("abc");
     ftpClient.makeDirectory("def");
-    ensure.booleanValue(fileSystem.dirExists(_("/abc/def"))).isTrue();
+    ensure.that(fileSystem.dirExists(_("/abc/def"))).isTrue();
   }
 
   public void testLeaveZeroByteFileAfterFileCreated() throws IOException {
     fileSystem.createFile(_("hello"));
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     ftpClient.retrieveFile("/hello", outputStream);
-    ensure.integer(outputStream.toByteArray().length).eq(0);
+    ensure.that(outputStream.toByteArray().length).eq(0);
   }
 
   public void testBeAbleToDeleteFile() throws IOException {
     fileSystem.createFile(_("hello"));
     fileSystem.deleteFile(_("/hello"));
-    ensure.integer(ftpClient.listNames().length).eq(0);
+    ensure.that(ftpClient.listNames().length).eq(0);
   }
 
   public void testBeAbleToCreateDirectory() throws IOException {
     fileSystem.createDir(_("hello/world"));
-    ensure.string(ftpClient.listNames()[0]).eq("hello/");
-    ensure.string(ftpClient.listNames("hello")[0]).eq("world/");
+    ensure.that(ftpClient.listNames()[0]).eq("hello/");
+    ensure.that(ftpClient.listNames("hello")[0]).eq("world/");
   }
 
-  public void shoudlNotCountFileWhenListingDir() throws IOException {
+  public void testNotCountFileWhenListingDir() throws IOException {
     fileSystem.createFile(_("hello"));
     ensure.that(fileSystem.list(_("/")).dirs()).isEmpty();
     fileSystem.createDir(_("abc"));
@@ -75,28 +75,28 @@ public class FtpFileSystemTest extends FtpTestCase {
   public void testBeAbleToDeleteDirectory() throws IOException {
     fileSystem.createDir(_("abc"));
     fileSystem.deleteDirectory(_("abc"));
-    ensure.integer(ftpClient.listNames().length).eq(0);
+    ensure.that(ftpClient.listNames().length).eq(0);
   }
 
   public void testBeAbleToMoveFile() throws IOException {
     fileSystem.createFile(_("abc"));
     fileSystem.createDir(_("hello"));
     fileSystem.moveFile(_("abc"), _("hello/abc"));
-    ensure.string(ftpClient.listNames()[0]).eq("hello/");
-    ensure.string(ftpClient.listNames("hello")[0]).eq("abc");
+    ensure.that(ftpClient.listNames()[0]).eq("hello/");
+    ensure.that(ftpClient.listNames("hello")[0]).eq("abc");
   }
 
   public void testBeAbleToMoveDirectory() throws IOException {
     fileSystem.createDir(_("abc"));
     fileSystem.createDir(_("hello"));
     fileSystem.moveDirectory(_("abc"), _("hello/abc"));
-    ensure.string(ftpClient.listNames()[0]).eq("hello/");
-    ensure.string(ftpClient.listNames("hello")[0]).eq("abc/");
+    ensure.that(ftpClient.listNames()[0]).eq("hello/");
+    ensure.that(ftpClient.listNames("hello")[0]).eq("abc/");
   }
 
   public void testBeAbleToTellFileLength() throws IOException {
     fileSystem.createFile(_("hello"));
-    ensure.longValue(fileSystem.fileLength(_("hello"))).eq(0);
+    ensure.that(fileSystem.fileLength(_("hello"))).eq(0);
   }
 
   public void testBeAbleToDownloadAndUpload() throws IOException {

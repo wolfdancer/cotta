@@ -19,7 +19,7 @@ public class ByteArrayBufferTest extends TestCase {
     buffer.append((byte) 2);
     ensure.that(buffer.size()).eq(2);
     byte[] actual = buffer.toByteArray();
-    ensure.bytes(actual).eq(1, 2);
+    ensure.that(actual).eq(1, 2);
   }
 
   public void testIncreaseCapacityAutomatically() throws Exception {
@@ -27,7 +27,7 @@ public class ByteArrayBufferTest extends TestCase {
     buffer.append((byte) 0);
     buffer.append((byte) 1);
     buffer.append((byte) 2);
-    ensure.bytes(buffer.toByteArray()).eq(0, 1, 2);
+    ensure.that(buffer.toByteArray()).eq(0, 1, 2);
   }
 
   public void testProvideByteAtAnyPosition() throws Exception {
@@ -82,8 +82,8 @@ public class ByteArrayBufferTest extends TestCase {
     source.put("source".getBytes());
     source.rewind();
     int copied = buffer.copyFrom(source);
-    ensure.integer(copied).eq(source.limit());
-    ensure.string(buffer.toString()).eq("testsource");
+    ensure.that(copied).eq(source.limit());
+    ensure.that(buffer.toString()).eq("testsource");
   }
 
   public void testCopyToByteBuffer() throws Exception {
@@ -92,7 +92,7 @@ public class ByteArrayBufferTest extends TestCase {
     ByteBuffer target = ByteBuffer.allocate(8);
     target.put("source".getBytes());
     long copied = buffer.copyTo(target, 1, 2);
-    ensure.longValue(copied).eq(2);
+    ensure.that(copied).eq(2);
     ensure.string(target.array()).eq("sourcees");
   }
 
@@ -100,19 +100,19 @@ public class ByteArrayBufferTest extends TestCase {
     ByteArrayBuffer buffer = new ByteArrayBuffer(30);
     buffer.append("test");
     ByteBuffer target = ByteBuffer.allocate(30);
-    ensure.longValue(buffer.copyTo(target, 1, 20)).eq(3);
-    ensure.string(new String(target.array(), 0, target.position())).eq("est");
+    ensure.that(buffer.copyTo(target, 1, 20)).eq(3);
+    ensure.that(new String(target.array(), 0, target.position())).eq("est");
   }
 
   public void testCopyZeroBytesWhenPositionPassesLimitsForByteBuffer() throws Exception {
     ByteArrayBuffer buffer = new ByteArrayBuffer(20);
     buffer.append("123");
-    ensure.longValue(buffer.copyTo(ByteBuffer.allocate(5), 10, 5)).eq(0);
+    ensure.that(buffer.copyTo(ByteBuffer.allocate(5), 10, 5)).eq(0);
   }
 
   public void testCopyZeroBytesWhenPositionPassesLimitsForChannel() throws Exception {
     ByteArrayBuffer buffer = new ByteArrayBuffer(20);
     buffer.append("123");
-    ensure.longValue(buffer.copyTo(new InMemoryOutputFileChannel(new ByteArrayBuffer(20)), 10, 5)).eq(0);
+    ensure.that(buffer.copyTo(new InMemoryOutputFileChannel(new ByteArrayBuffer(20)), 10, 5)).eq(0);
   }
 }

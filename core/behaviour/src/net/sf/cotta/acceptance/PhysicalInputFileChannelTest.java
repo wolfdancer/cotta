@@ -24,8 +24,8 @@ public class PhysicalInputFileChannelTest extends InputFileChannelTestCase {
         MappedByteBuffer buffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, 10);
         ByteArrayBuffer target = new ByteArrayBuffer(10);
         int read = target.copyFrom(buffer);
-        ensure.integer(read).eq(10);
-        ensure.string(target.toString()).eq("1234567890");
+        ensure.that(read).eq(10);
+        ensure.that(target.toString()).eq("1234567890");
         inputManager.clean(buffer);
         channel.close();
       }

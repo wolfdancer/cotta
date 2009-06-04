@@ -19,41 +19,41 @@ import java.util.List;
 public class TestFtpServerFileSystemTest extends FtpTestCase {
   public void testBeAtRootAndNoFileInitially() throws InterruptedException, IOException {
     String workingDirectory = ftpClient.printWorkingDirectory();
-    ensure.string(workingDirectory).eq("/");
+    ensure.that(workingDirectory).eq("/");
     String[] listedNames = ftpClient.listNames();
-    ensure.array(listedNames).eq();
+    ensure.that(listedNames).eq();
   }
 
   public void testBeAbleToListFiles() throws IOException {
     rootDir.file("testFile").ensureExists();
     String[] listedNames = ftpClient.listNames();
-    ensure.array(listedNames).eq("testFile");
+    ensure.that(listedNames).eq("testFile");
   }
 
   public void testBeAbleToListDirectories() throws IOException {
     rootDir.file("testDir").ensureExists();
     String[] listedNames = ftpClient.listNames();
-    ensure.array(listedNames).eq("testDir");
+    ensure.that(listedNames).eq("testDir");
   }
 
   public void testBeAbleToMakeDirectory() throws IOException {
     boolean success = ftpClient.makeDirectory("testDir");
-    ensure.booleanValue(success).isTrue();
+    ensure.that(success).isTrue();
     List<TDirectory> listedDirs = rootDir.list().dirs();
-    ensure.list(listedDirs).eq(rootDir.dir("testDir"));
+    ensure.that(listedDirs).eq(rootDir.dir("testDir"));
   }
 
   public void testBeAbleToRemoveDirectory() throws IOException {
     ftpClient.makeDirectory("testDir");
     ftpClient.removeDirectory("testDir");
-    ensure.list(rootDir.list().dirs()).eq();
+    ensure.that(rootDir.list().dirs()).eq();
   }
 
   public void testBeAbleToChangeWorkingDirectory() throws IOException {
     ftpClient.makeDirectory("testDir");
     ftpClient.cwd("testDir");
     String workingDirectory = ftpClient.printWorkingDirectory();
-    ensure.string(workingDirectory).eq("/testDir");
+    ensure.that(workingDirectory).eq("/testDir");
   }
 
   public void testBeAbleToStoreFile() throws IOException {
@@ -63,7 +63,7 @@ public class TestFtpServerFileSystemTest extends FtpTestCase {
     rootDir.file("testFile").read(new InputProcessor() {
       public void process(InputManager inputManager) throws IOException {
         byte[] fileContentRead = IOUtils.toByteArray(inputManager.inputStream());
-        ensure.bytes(fileContentRead).eq(fileContentRead);
+        ensure.that(fileContentRead).eq(fileContentRead);
       }
     });
   }
@@ -88,13 +88,13 @@ public class TestFtpServerFileSystemTest extends FtpTestCase {
     ByteArrayOutputStream fileContentReadBuffer = new ByteArrayOutputStream();
     ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
     ftpClient.retrieveFile("testFile", fileContentReadBuffer);
-    ensure.bytes(fileContentReadBuffer.toByteArray()).eq(fileContent);
+    ensure.that(fileContentReadBuffer.toByteArray()).eq(fileContent);
   }
 
   public void testBeAbleToRenameFile() throws IOException {
     rootDir.file("testFile").save("");
     ftpClient.rename("testFile", "renamedTestFile");
-    ensure.list(rootDir.list().files()).eq(rootDir.file("renamedTestFile"));
+    ensure.that(rootDir.list().files()).eq(rootDir.file("renamedTestFile"));
   }
 
   public void testBeAbleToRenameDirectory() throws IOException {
@@ -107,7 +107,7 @@ public class TestFtpServerFileSystemTest extends FtpTestCase {
     ftpClient.makeDirectory("TestChangeToPaqrentDirectory");
     ftpClient.cwd("TestChangeToPaqrentDirectory");
     ftpClient.changeToParentDirectory();
-    ensure.string(ftpClient.printWorkingDirectory()).eq("/");
+    ensure.that(ftpClient.printWorkingDirectory()).eq("/");
   }
 
   private byte[] createTestFileContent() {

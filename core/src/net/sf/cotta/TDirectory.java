@@ -103,8 +103,9 @@ public class TDirectory extends TEntry {
    * @deprecated use list().dirs()
    */
   @Deprecated
-  public List<TDirectory> listDirs() throws TIoException {
-    return list().dirs();
+  public TDirectory[] listDirs() throws TIoException {
+    List<TDirectory> dirs = list().dirs();
+    return dirs.toArray(new TDirectory[dirs.size()]);
   }
 
   /**
@@ -116,8 +117,9 @@ public class TDirectory extends TEntry {
    * @deprecated use list(directoryFilter).dirs()
    */
   @Deprecated
-  public List<TDirectory> listDirs(TDirectoryFilter directoryFilter) throws TIoException {
-    return list(directoryFilter).dirs();
+  public TDirectory[] listDirs(TDirectoryFilter directoryFilter) throws TIoException {
+    List<TDirectory> dirs = list(directoryFilter).dirs();
+    return dirs.toArray(new TDirectory[dirs.size()]);
   }
 
   /**
@@ -200,8 +202,9 @@ public class TDirectory extends TEntry {
    * @deprecated
    */
   @Deprecated
-  public List<TFile> listFiles() throws TIoException {
-    return list(TFileFilter.ALL).files();
+  public TFile[] listFiles() throws TIoException {
+    List<TFile> files = list(TFileFilter.ALL).files();
+    return files.toArray(new TFile[files.size()]);
   }
 
   /**
@@ -213,8 +216,9 @@ public class TDirectory extends TEntry {
    * @deprecated use list(fileFilter).files()
    */
   @Deprecated
-  public List<TFile> listFiles(TFileFilter fileFilter) throws TIoException {
-    return list(fileFilter).files();
+  public TFile[] listFiles(TFileFilter fileFilter) throws TIoException {
+    List<TFile> files = list(fileFilter).files();
+    return files.toArray(new TFile[files.size()]);
   }
 
   /**

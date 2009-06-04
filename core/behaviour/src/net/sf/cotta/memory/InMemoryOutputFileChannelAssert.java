@@ -18,7 +18,7 @@ public class InMemoryOutputFileChannelAssert extends BaseAssert<InMemoryOutputFi
   }
 
   public InMemoryOutputFileChannelAssert hasContent(String expected) {
-    ensure.string(value().getContent().toString()).eq(expected);
+    ensure.that(value().getContent().toString()).eq(expected);
     return this;
   }
 }

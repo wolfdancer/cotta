@@ -174,7 +174,7 @@ public class InMemoryFileSystemTest extends TestCase {
     InputStream is = fileSystem.createInputStream(path);
     registerResource(is);
     int expected = -1;
-    ensure.integer(is.read()).eq(expected);
+    ensure.that(is.read()).eq(expected);
   }
 
   public void testThrowExceptionIfFileNotFoundWhenCreatingInputStream() throws Exception {
