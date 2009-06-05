@@ -1,14 +1,13 @@
-package net.sf.cotta;
+package net.sf.cotta.io;
 
-import net.sf.cotta.io.IoFactory;
-import net.sf.cotta.io.OutputMode;
-import net.sf.cotta.io.StreamFactory;
+import net.sf.cotta.TIoException;
 import net.sf.cotta.test.TestCase;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 
 import java.io.*;
 
+@SuppressWarnings({"deprecation"})
 public class IoFactoryTest extends TestCase {
   private Mockery context;
 

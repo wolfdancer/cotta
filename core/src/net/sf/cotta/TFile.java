@@ -25,7 +25,8 @@ public class TFile extends TEntry {
    * @param fileSystem file system backing the file
    * @param path       path for the file
    * @see #TFile(TFileFactory, TPath)
-   * @deprecated use the other constructor for default encoding support
+   * @see #TFile(TFileFactory, TPath)
+   * @deprecated use the other constructor for default encoding support provided by factory
    */
   public TFile(FileSystem fileSystem, TPath path) {
     this(new TFileFactory(fileSystem), path);
@@ -67,6 +68,35 @@ public class TFile extends TEntry {
     filesystem().deleteFile(path);
   }
 
+  private InputStreamFactory inputStreamFactory() {
+    return new InputStreamFactory() {
+      public InputStream inputStream() throws TIoException {
+        return TFile.this.inputStream();
+      }
+
+      public FileChannel inputChannel() throws TIoException {
+        return TFile.this.inputChannel();
+      }
+
+      public TPath path() {
+        return TFile.this.toPath();
+      }
+    };
+  }
+
+  private OutputStreamFactory outputStreamFactory(final OutputMode mode) {
+    return new OutputStreamFactory() {
+      public OutputStream outputStream() throws TIoException {
+        return TFile.this.outputStream(mode);
+      }
+
+      public TPath path() {
+        return TFile.this.toPath();
+      }
+    };
+  }
+
+  @SuppressWarnings({"deprecation"})
   private StreamFactory streamFactory() {
     return new StreamFactory() {
       public InputStream inputStream() throws TIoException {
@@ -92,12 +122,25 @@ public class TFile extends TEntry {
     return filesystem().createInputChannel(path);
   }
 
-  private OutputStream outputStream(OutputMode mode) throws TIoException {
+  /**
+   * Create the output stream
+   *
+   * @param mode output mode
+   * @return output stream for the file
+   * @throws TIoException error in creating the output stream
+   */
+  public OutputStream outputStream(OutputMode mode) throws TIoException {
     parent().ensureExists();
     return filesystem().createOutputStream(path, mode);
   }
 
-  private InputStream inputStream() throws TIoException {
+  /**
+   * Create the input stream
+   *
+   * @return input stream for the file
+   * @throws TIoException error in creating the input stream
+   */
+  public InputStream inputStream() throws TIoException {
     return filesystem().createInputStream(path);
   }
 
@@ -156,6 +199,17 @@ public class TFile extends TEntry {
     return this;
   }
 
+  /**
+   * Returns the IoFactory backed by the current TFile
+   *
+   * @return IoFactory
+   * @see #inputChannel()
+   * @see #inputStream()
+   * @see #outputStream(net.sf.cotta.io.OutputMode)
+   * @deprecated use TFile itself is more effective
+   */
+  @SuppressWarnings({"deprecation"})
+  @Deprecated
   public IoFactory io() {
     return new IoFactory(streamFactory(), factory().defaultEncoding());
   }
@@ -176,31 +230,53 @@ public class TFile extends TEntry {
     new IoManager(streamFactory(), factory().defaultEncoding()).open(processor);
   }
 
+  /**
+   * Read the file with a input processor
+   *
+   * @param processor processor for the input stream
+   * @throws TIoException error in reading the file
+   */
   public void read(final InputProcessor processor) throws TIoException {
-    new InputManager(streamFactory()).open(processor);
+    InputManager.with(inputStreamFactory()).read(processor);
+  }
+
+  /**
+   * Read the file with a line processor
+   *
+   * @param lineProcessor line processor for the lines
+   * @throws TIoException error in reading the file
+   */
+  public void read(final LineProcessor lineProcessor) throws TIoException {
+    InputManager.with(inputStreamFactory()).readLines(lineProcessor);
   }
 
   public void append(final OutputProcessor processor) throws TIoException {
-    new OutputManager(streamFactory(), OutputMode.APPEND).open(processor);
+    OutputManager.with(outputStreamFactory(OutputMode.APPEND), null).write(processor);
   }
 
   public void write(final OutputProcessor processor) throws TIoException {
-    new OutputManager(streamFactory(), OutputMode.OVERWRITE).open(processor);
+    OutputManager.with(outputStreamFactory(OutputMode.OVERWRITE), null).write(processor);
   }
 
+  /**
+   * Read the file with a line processor
+   *
+   * @param lineProcessor line processor for the lines
+   * @throws TIoException error in reading the file
+   * @see #read(net.sf.cotta.io.LineProcessor)
+   * @deprecated use #read(LineProcessor)
+   */
+  @Deprecated
   public void open(final LineProcessor lineProcessor) throws TIoException {
-    read(new InputProcessor() {
-      public void process(InputManager manager) throws IOException {
-        BufferedReader reader = manager.bufferedReader();
-        String line = reader.readLine();
-        while (line != null) {
-          lineProcessor.process(line);
-          line = reader.readLine();
-        }
-      }
-    });
+    read(lineProcessor);
   }
 
+  /**
+   * Load the content of the file into string using system default encoding
+   *
+   * @return content of the file
+   * @throws TIoException error in reading the file
+   */
   public String load() throws TIoException {
     final StringBuffer buffer = new StringBuffer();
     read(new InputProcessor() {
@@ -238,6 +314,14 @@ public class TFile extends TEntry {
     return this;
   }
 
+  /**
+   * Parse the file into an object
+   *
+   * @param parser parser to call after opening the file for read
+   * @param <T>    the type of the object to return
+   * @return the parsed object
+   * @throws TIoException error in reading the file
+   */
   public <T> T parse(final Parser<T> parser) throws TIoException {
     final List<T> result = new ArrayList<T>(1);
     read(new InputProcessor() {
@@ -248,6 +332,11 @@ public class TFile extends TEntry {
     return result.get(0);
   }
 
+  /**
+   * Converts to the instance with a cononical path
+   *
+   * @return the instance with a cononical path
+   */
   public TFile toCanonicalFile() {
     return factory().file(toCanonicalPath());
   }

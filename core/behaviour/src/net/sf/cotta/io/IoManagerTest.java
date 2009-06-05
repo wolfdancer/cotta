@@ -1,6 +1,5 @@
 package net.sf.cotta.io;
 
-import net.sf.cotta.InputStreamStub;
 import net.sf.cotta.OutputStreamStub;
 import net.sf.cotta.TIoException;
 import net.sf.cotta.TPath;

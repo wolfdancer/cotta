@@ -151,7 +151,7 @@ public abstract class TfsTestCase extends TestCase {
     TFileFactory factory = new TFileFactory(fileSystem());
     TFile file = factory.file("tmp/test.txt");
     file.save("");
-    InputStream stream = file.io().inputStream();
+    InputStream stream = file.inputStream();
     registerResource(stream);
     int expected = -1;
     ensure.that(stream.read()).eq(expected);
@@ -160,7 +160,7 @@ public abstract class TfsTestCase extends TestCase {
   public void testProvideOutputStreamBasedOnMode() throws Exception {
     TFileFactory factory = new TFileFactory(fileSystem());
     TFile file = factory.file("tmp/test.txt");
-    OutputStream stream = file.io().outputStream(OutputMode.OVERWRITE);
+    OutputStream stream = file.outputStream(OutputMode.OVERWRITE);
     registerResource(stream);
     stream.write("this is a line".getBytes());
     stream.close();
@@ -181,7 +181,7 @@ public abstract class TfsTestCase extends TestCase {
       }
     });
     final StringBuffer buffer = new StringBuffer();
-    file.open(new LineProcessor() {
+    file.read(new LineProcessor() {
       public void process(String line) {
         buffer.append(line);
       }
@@ -192,11 +192,11 @@ public abstract class TfsTestCase extends TestCase {
   public void testProvideReaderAndWriter() throws Exception {
     TFileFactory factory = new TFileFactory(fileSystem());
     TFile file = factory.file("tmp/test.txt");
-    Writer writer = file.io().writer(OutputMode.APPEND);
+    Writer writer = new OutputStreamWriter(file.outputStream(OutputMode.APPEND));
     registerResource(writer);
     writer.write("line\n");
     writer.close();
-    Reader reader = file.io().reader();
+    Reader reader = new InputStreamReader(file.inputStream());
     registerResource(reader);
     ensure.character(reader.read()).eq('l');
   }
@@ -204,11 +204,11 @@ public abstract class TfsTestCase extends TestCase {
   public void testBeAbleToAppendToFile() throws Exception {
     TFileFactory factory = new TFileFactory(fileSystem());
     TFile file = factory.file("tmp/test.txt");
-    Writer writer = file.io().writer(OutputMode.APPEND);
+    Writer writer = new OutputStreamWriter(file.outputStream(OutputMode.APPEND));
     registerResource(writer);
     writer.write("one");
     writer.close();
-    Writer anotherWriter = file.io().writer(OutputMode.APPEND);
+    Writer anotherWriter = new OutputStreamWriter(file.outputStream(OutputMode.APPEND));
     registerResource(anotherWriter);
     anotherWriter.write("two");
     anotherWriter.close();

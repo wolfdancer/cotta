@@ -6,6 +6,13 @@ import net.sf.cotta.TPath;
 import java.io.*;
 import java.nio.channels.FileChannel;
 
+/**
+ * IoFactory used to create I/O objects
+ *
+ * @deprecated use InputFactory or OutputFactory
+ */
+@SuppressWarnings({"deprecation"})
+@Deprecated
 public class IoFactory {
   private StreamFactory streamFactory;
   private String defaultEncoding;

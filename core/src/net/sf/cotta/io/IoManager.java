@@ -13,6 +13,7 @@ import java.util.List;
  *
  * @deprecated use InputManager or OutputManager
  */
+@SuppressWarnings({"deprecation"})
 @Deprecated
 public class IoManager {
   private static final int INITIAL_CAPACITY = 3;

@@ -6,7 +6,7 @@ import net.sf.cotta.TPath;
 import java.io.OutputStream;
 
 public interface OutputStreamFactory {
-  OutputStream outputStream(OutputMode mode) throws TIoException;
+  OutputStream outputStream() throws TIoException;
 
   TPath path();
 }

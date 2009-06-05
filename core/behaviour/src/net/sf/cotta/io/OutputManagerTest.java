@@ -1,7 +1,7 @@
 package net.sf.cotta.io;
 
-import net.sf.cotta.TestCase;
 import net.sf.cotta.TIoException;
+import net.sf.cotta.TestCase;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 
@@ -13,14 +13,14 @@ public class OutputManagerTest extends TestCase {
   public Mockery context = new Mockery();
 
   public void testDelegateToStreamFactory() throws Exception {
-    final StreamFactory factory = context.mock(StreamFactory.class);
+    final OutputStreamFactory factory = context.mock(OutputStreamFactory.class);
     context.checking(new Expectations() {
       {
-        one(factory).outputStream(OutputMode.APPEND);
+        one(factory).outputStream();
         will(returnValue(new ByteArrayOutputStream()));
       }
     });
-    OutputManager output = new OutputManager(factory, OutputMode.APPEND);
+    OutputManager output = new OutputManager(factory, null);
     output.open(new OutputProcessor() {
       public void process(OutputManager manager) throws IOException {
         manager.outputStream();
@@ -30,14 +30,14 @@ public class OutputManagerTest extends TestCase {
   }
 
   public void testHasAllOutputFactoryApis() throws Exception {
-    final StreamFactory factory = context.mock(StreamFactory.class);
+    final OutputStreamFactory factory = context.mock(OutputStreamFactory.class);
     context.checking(new Expectations() {
       {
-        exactly(4).of(factory).outputStream(OutputMode.OVERWRITE);
+        exactly(4).of(factory).outputStream();
         will(returnValue(new ByteArrayOutputStream()));
       }
     });
-    OutputManager output = new OutputManager(factory, OutputMode.OVERWRITE);
+    OutputManager output = new OutputManager(factory, null);
     output.open(new OutputProcessor() {
       public void process(OutputManager manager) throws IOException {
         manager.registerResource(manager.outputStream());
@@ -48,7 +48,7 @@ public class OutputManagerTest extends TestCase {
     });
     context.assertIsSatisfied();
   }
-  
+
   public void testWithStaticFactoryMethod() throws TIoException {
     final OutputStream stream = new ByteArrayOutputStream();
     OutputManager.with(stream).write(new OutputProcessor() {
@@ -57,7 +57,7 @@ public class OutputManagerTest extends TestCase {
       }
     });
   }
-  
+
   public void testWithStaticFactorySupportsPath() throws TIoException {
     OutputStream stream = new ByteArrayOutputStream();
     OutputManager.with(stream).write(new OutputProcessor() {

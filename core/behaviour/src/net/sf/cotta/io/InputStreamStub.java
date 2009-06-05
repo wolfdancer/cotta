@@ -1,4 +1,4 @@
-package net.sf.cotta;
+package net.sf.cotta.io;
 
 import java.io.IOException;
 import java.io.InputStream;

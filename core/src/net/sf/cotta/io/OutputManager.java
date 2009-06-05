@@ -4,50 +4,42 @@ import net.sf.cotta.TIoException;
 import net.sf.cotta.TPath;
 
 import java.io.*;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-import java.util.List;
 
 public class OutputManager extends ResourceManager<OutputProcessor> {
-  private OutputMode mode;
-  private IoFactory ioFactory;
+  private OutputFactory output;
 
-  public OutputManager(StreamFactory streamFactory, OutputMode mode) {
-    this(streamFactory, mode, new ArrayList<Closeable>());
-  }
-
-  public OutputManager(StreamFactory streamFactory, OutputMode mode, List<Closeable> resourceList) {
-    super(resourceList);
-    this.ioFactory = new IoFactory(streamFactory);
-    this.mode = mode;
+  protected OutputManager(OutputStreamFactory streamFactory, String defaultEncoding) {
+    super(new ArrayList<Closeable>());
+    this.output = new OutputFactory(streamFactory, defaultEncoding);
   }
 
   public OutputStream outputStream() throws TIoException {
-    OutputStream outputStream = ioFactory.outputStream(mode);
+    OutputStream outputStream = output.outputStream();
     registerResource(outputStream);
     return outputStream;
   }
 
   public Writer writer() throws TIoException {
-    Writer writer = ioFactory.writer(mode);
+    Writer writer = output.writer();
     registerResource(writer);
     return writer;
   }
 
   public Writer writer(String encoding) throws TIoException {
-    Writer writer = ioFactory.writer(mode, encoding);
+    Writer writer = output.writer(encoding);
     registerResource(writer);
     return writer;
   }
 
   public BufferedWriter bufferedWriter() throws TIoException {
-    BufferedWriter bufferedWriter = ioFactory.bufferedWriter(mode);
+    BufferedWriter bufferedWriter = output.bufferedWriter();
     registerResource(bufferedWriter);
     return bufferedWriter;
   }
 
   public PrintWriter printWriter() throws TIoException {
-    PrintWriter writer = ioFactory.printWriter(mode);
+    PrintWriter writer = output.printWriter();
     registerResource(writer);
     return writer;
   }
@@ -57,31 +49,56 @@ public class OutputManager extends ResourceManager<OutputProcessor> {
   }
 
   protected TPath path() {
-    return ioFactory.path();
+    return output.path();
   }
 
+  /**
+   * Creates the output instance with the given output stream and use system encoding
+   *
+   * @param stream output stream
+   * @return output instance
+   */
   public static Output with(final OutputStream stream) {
-    final OutputManager manager = new OutputManager(new StreamFactory() {
-      public InputStream inputStream() throws TIoException {
-        throw new UnsupportedOperationException();
-      }
+    return with(stream, null);
+  }
 
-      public FileChannel inputChannel() throws TIoException {
-        throw new UnsupportedOperationException();
-      }
-
+  /**
+   * Create the output instance with the given output steram and default encoding
+   *
+   * @param stream          output stream
+   * @param defaultEncoding default encoding for creating the writers
+   * @return output instance
+   */
+  public static Output with(final OutputStream stream, String defaultEncoding) {
+    return with(new OutputStreamFactory() {
       public TPath path() {
         return TPath.parse("/output stream");
       }
 
-      public OutputStream outputStream(OutputMode mode) throws TIoException {
+      public OutputStream outputStream() throws TIoException {
         return stream;
       }
-    }, OutputMode.APPEND);
-    return new Output() {
-      public void write(OutputProcessor processor) throws TIoException {
-        manager.open(processor);
-      }
-    };
+    }, defaultEncoding);
+  }
+
+  /**
+   * Create the output instance with the stream factory and use system encoding
+   *
+   * @param streamFactory stream factory
+   * @return output instance
+   */
+  public static Output with(OutputStreamFactory streamFactory) {
+    return with(streamFactory, null);
+  }
+
+  /**
+   * Creates the output instance
+   *
+   * @param streamFactory   output stream factory
+   * @param defaultEncoding default encoding for the writers
+   * @return output instance
+   */
+  public static Output with(OutputStreamFactory streamFactory, String defaultEncoding) {
+    return new Output(new OutputManager(streamFactory, defaultEncoding));
   }
 }

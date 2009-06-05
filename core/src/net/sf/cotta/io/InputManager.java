@@ -10,52 +10,47 @@ import java.nio.channels.FileChannel;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
-import java.util.List;
 
 public class InputManager extends ResourceManager<InputProcessor> {
-  private IoFactory ioFactory;
+  private InputFactory inputFactory;
 
-  public InputManager(StreamFactory streamFactory) {
-    this(streamFactory, new ArrayList<Closeable>());
-  }
-
-  public InputManager(StreamFactory streamFactory, List<Closeable> resourceList) {
-    super(resourceList);
-    ioFactory = new IoFactory(streamFactory);
+  protected InputManager(InputStreamFactory streamFactory, String defaultEncoding) {
+    super(new ArrayList<Closeable>());
+    inputFactory = new InputFactory(streamFactory, defaultEncoding);
   }
 
   public InputStream inputStream() throws TIoException {
-    InputStream inputStream = ioFactory.inputStream();
+    InputStream inputStream = inputFactory.inputStream();
     registerResource(inputStream);
     return inputStream;
   }
 
   public Reader reader() throws TIoException {
-    Reader reader = ioFactory.reader();
+    Reader reader = inputFactory.reader();
     registerResource(reader);
     return reader;
   }
 
   public Reader reader(String encoding) throws TIoException {
-    Reader reader = ioFactory.reader(encoding);
+    Reader reader = inputFactory.reader(encoding);
     registerResource(reader);
     return reader;
   }
 
   public BufferedReader bufferedReader() throws TIoException {
-    BufferedReader reader = ioFactory.bufferedReader();
+    BufferedReader reader = inputFactory.bufferedReader();
     registerResource(reader);
     return reader;
   }
 
   public LineNumberReader lineNumberReader() throws TIoException {
-    LineNumberReader reader = ioFactory.lineNumberReader();
+    LineNumberReader reader = inputFactory.lineNumberReader();
     registerResource(reader);
     return reader;
   }
 
   public FileChannel channel() throws TIoException {
-    FileChannel channel = ioFactory.inputChannel();
+    FileChannel channel = inputFactory.inputChannel();
     registerResource(channel);
     return channel;
   }
@@ -65,7 +60,7 @@ public class InputManager extends ResourceManager<InputProcessor> {
   }
 
   protected TPath path() {
-    return ioFactory.path();
+    return inputFactory.path();
   }
 
   /**
@@ -95,8 +90,25 @@ public class InputManager extends ResourceManager<InputProcessor> {
     });
   }
 
+  /**
+   * A static factory to create an Input instance for processing the input stream with system default encoding
+   *
+   * @param stream the input stream to process
+   * @return The Input instance
+   */
   public static Input with(final InputStream stream) {
-    final InputManager manager = new InputManager(new StreamFactory() {
+    return with(stream, null);
+  }
+
+  /**
+   * A static factory to create an Input instance for processing the input stream with the given encoding when creating readers
+   *
+   * @param stream   the input stream to process
+   * @param encoding encoding used when creating readers
+   * @return The Input instance
+   */
+  public static Input with(final InputStream stream, String encoding) {
+    return with(new InputStreamFactory() {
       public InputStream inputStream() throws TIoException {
         return stream;
       }
@@ -109,15 +121,31 @@ public class InputManager extends ResourceManager<InputProcessor> {
         return TPath.parse("/input stream");
       }
 
-      public OutputStream outputStream(OutputMode mode) throws TIoException {
-        throw new UnsupportedOperationException();
-      }
-    });
-    return new Input() {
-      public void read(InputProcessor processor) throws TIoException {
-        manager.open(processor);
-      }
-    };
+    }, encoding);
+  }
+
+  /**
+   * A static factory to create an Input instance for processing the input stream
+   * to be created by the InputStreamFactory with system default encoding
+   *
+   * @param streamFactory input stream factory
+   * @return the Input instance
+   */
+  public static Input with(InputStreamFactory streamFactory) {
+    return with(streamFactory, null);
+  }
+
+  /**
+   * A static factory to create an Input instance for processing the input stream
+   * to be created by the InputStreamFactory with provided encoding
+   *
+   * @param streamFactory input stream factory
+   * @param encoding      encoding used to create readers
+   * @return the Input instance
+   */
+  public static Input with(InputStreamFactory streamFactory, String encoding) {
+    final InputManager manager = new InputManager(streamFactory, encoding);
+    return new Input(manager);
   }
 
 }
