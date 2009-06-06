@@ -118,7 +118,13 @@ public class TFile extends TEntry {
     };
   }
 
-  private FileChannel inputChannel() throws TIoException {
+  /**
+   * Creates the input channel for the file
+   *
+   * @return FileChannel for input
+   * @throws TIoException error in creating the input channel
+   */
+  public FileChannel inputChannel() throws TIoException {
     return filesystem().createInputChannel(path);
   }
 
@@ -237,7 +243,7 @@ public class TFile extends TEntry {
    * @throws TIoException error in reading the file
    */
   public void read(final InputProcessor processor) throws TIoException {
-    InputManager.with(inputStreamFactory()).read(processor);
+    Input.with(inputStreamFactory()).read(processor);
   }
 
   /**
@@ -247,15 +253,15 @@ public class TFile extends TEntry {
    * @throws TIoException error in reading the file
    */
   public void read(final LineProcessor lineProcessor) throws TIoException {
-    InputManager.with(inputStreamFactory()).readLines(lineProcessor);
+    Input.with(inputStreamFactory()).readLines(lineProcessor);
   }
 
   public void append(final OutputProcessor processor) throws TIoException {
-    OutputManager.with(outputStreamFactory(OutputMode.APPEND), null).write(processor);
+    Output.with(outputStreamFactory(OutputMode.APPEND), null).write(processor);
   }
 
   public void write(final OutputProcessor processor) throws TIoException {
-    OutputManager.with(outputStreamFactory(OutputMode.OVERWRITE), null).write(processor);
+    Output.with(outputStreamFactory(OutputMode.OVERWRITE), null).write(processor);
   }
 
   /**

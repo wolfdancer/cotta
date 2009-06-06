@@ -41,8 +41,7 @@ public class TDirectoryListing implements Iterable<TEntry> {
     return list;
   }
 
-  @SuppressWarnings({"unchecked"})
-  private void addFiles(ArrayList entries, List<TPath> files) {
+  private void addFiles(ArrayList<? super TFile> entries, List<TPath> files) {
     for (TPath path : files) {
       TFile file = factory.file(path);
       if (fileFilter.accept(file)) {
@@ -51,8 +50,7 @@ public class TDirectoryListing implements Iterable<TEntry> {
     }
   }
 
-  @SuppressWarnings({"unchecked"})
-  private void addDirs(ArrayList entries, List<TPath> dirs) {
+  private void addDirs(ArrayList<? super TDirectory> entries, List<TPath> dirs) {
     for (TPath path : dirs) {
       TDirectory dir = factory.dir(path);
       if (directoryFilter.accept(dir)) {

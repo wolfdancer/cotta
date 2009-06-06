@@ -1,16 +1,16 @@
 package net.sf.cotta.io;
 
 import net.sf.cotta.TIoException;
-import net.sf.cotta.test.TestCase;
+import net.sf.cotta.TestCase;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
-public class InputManagerTest extends TestCase {
+public class InputTest extends TestCase {
   public void testWithStaticFactoryMethod() throws TIoException {
     final InputStream stream = new ByteArrayInputStream(new byte[0]);
-    InputManager.with(stream).read(new InputProcessor() {
+    Input.with(stream).read(new InputProcessor() {
       public void process(InputManager inputManager) throws IOException {
         ensure.that(inputManager.inputStream()).sameAs(stream);
       }
@@ -19,7 +19,7 @@ public class InputManagerTest extends TestCase {
 
   public void testWStaticFactorySupportsPath() throws TIoException {
     InputStream stream = new ByteArrayInputStream(new byte[0]);
-    InputManager.with(stream).read(new InputProcessor() {
+    Input.with(stream).read(new InputProcessor() {
       public void process(InputManager inputManager) throws IOException {
         try {
           inputManager.reader("aoeuaoeuaoeu");

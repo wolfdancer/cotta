@@ -105,7 +105,7 @@ public class TestFtpServerFileSystem implements FileSystem {
 
   public ReadableByteChannel readFile(String filename, long position, Session userSession) throws FailedActionException {
     try {
-      return Channels.newChannel(pathToFile(filename).io().inputStream());
+      return Channels.newChannel(pathToFile(filename).inputStream());
     } catch (TIoException e) {
       throw reportError(e);
     }
@@ -113,7 +113,7 @@ public class TestFtpServerFileSystem implements FileSystem {
 
   public WritableByteChannel saveFile(String filename, boolean append, Session userSession) throws FailedActionException {
     try {
-      return Channels.newChannel(pathToFile(filename).io().outputStream(append ? OutputMode.APPEND : OutputMode.OVERWRITE));
+      return Channels.newChannel(pathToFile(filename).outputStream(append ? OutputMode.APPEND : OutputMode.OVERWRITE));
     } catch (TIoException e) {
       throw reportError(e);
     }

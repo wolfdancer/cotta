@@ -39,12 +39,19 @@ public class TestLoader {
     Class<? extends TestCase> testClass;
     try {
       Class<?> loadedClass = Class.forName(name);
-      //noinspection unchecked
-      testClass = (Class<? extends TestCase>) loadedClass;
+      testClass = checkAndCast(loadedClass);
     } catch (ClassNotFoundException e) {
       throw new RuntimeException(e.getMessage(), e);
     }
     return testClass;
+  }
+
+  @SuppressWarnings({"unchecked"})
+  private Class<? extends TestCase> checkAndCast(Class<?> loadedClass) {
+    if (TestCase.class.isAssignableFrom(loadedClass)) {
+      return (Class<TestCase>) loadedClass;
+    }
+    throw new RuntimeException(loadedClass + " is not a sub-class of TestCase");
   }
 
   private ClassPathEntryProcessor collectNames() {

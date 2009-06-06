@@ -1,13 +1,11 @@
 package net.sf.cotta.io;
 
-import net.sf.cotta.TIoException;
 import net.sf.cotta.TestCase;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 
 public class OutputManagerTest extends TestCase {
   public Mockery context = new Mockery();
@@ -47,28 +45,5 @@ public class OutputManagerTest extends TestCase {
       }
     });
     context.assertIsSatisfied();
-  }
-
-  public void testWithStaticFactoryMethod() throws TIoException {
-    final OutputStream stream = new ByteArrayOutputStream();
-    OutputManager.with(stream).write(new OutputProcessor() {
-      public void process(OutputManager manager) throws IOException {
-        ensure.that(manager.outputStream()).sameAs(stream);
-      }
-    });
-  }
-
-  public void testWithStaticFactorySupportsPath() throws TIoException {
-    OutputStream stream = new ByteArrayOutputStream();
-    OutputManager.with(stream).write(new OutputProcessor() {
-      public void process(OutputManager manager) throws IOException {
-        try {
-          manager.writer("aoeuaoeuaoeu");
-          fail("should have thrown exception for wrong encoding");
-        } catch (TIoException e) {
-          ensure.that(e).message().contains("output stream");
-        }
-      }
-    });
   }
 }

@@ -6,6 +6,9 @@ import net.sf.cotta.TPath;
 import java.io.*;
 import java.util.ArrayList;
 
+/**
+ * Output resource management class to be used through {@link net.sf.cotta.io.Output}
+ */
 public class OutputManager extends ResourceManager<OutputProcessor> {
   private OutputFactory output;
 
@@ -57,9 +60,11 @@ public class OutputManager extends ResourceManager<OutputProcessor> {
    *
    * @param stream output stream
    * @return output instance
+   * @deprecated moved to Output
    */
+  @Deprecated
   public static Output with(final OutputStream stream) {
-    return with(stream, null);
+    return Output.with(stream);
   }
 
   /**
@@ -68,17 +73,11 @@ public class OutputManager extends ResourceManager<OutputProcessor> {
    * @param stream          output stream
    * @param defaultEncoding default encoding for creating the writers
    * @return output instance
+   * @deprecated moved to Output
    */
+  @Deprecated
   public static Output with(final OutputStream stream, String defaultEncoding) {
-    return with(new OutputStreamFactory() {
-      public TPath path() {
-        return TPath.parse("/output stream");
-      }
-
-      public OutputStream outputStream() throws TIoException {
-        return stream;
-      }
-    }, defaultEncoding);
+    return Output.with(stream, defaultEncoding);
   }
 
   /**
@@ -86,9 +85,11 @@ public class OutputManager extends ResourceManager<OutputProcessor> {
    *
    * @param streamFactory stream factory
    * @return output instance
+   * @deprecated moved to Output
    */
+  @Deprecated
   public static Output with(OutputStreamFactory streamFactory) {
-    return with(streamFactory, null);
+    return Output.with(streamFactory);
   }
 
   /**
@@ -97,8 +98,10 @@ public class OutputManager extends ResourceManager<OutputProcessor> {
    * @param streamFactory   output stream factory
    * @param defaultEncoding default encoding for the writers
    * @return output instance
+   * @deprecated
    */
+  @Deprecated
   public static Output with(OutputStreamFactory streamFactory, String defaultEncoding) {
-    return new Output(new OutputManager(streamFactory, defaultEncoding));
+    return Output.with(streamFactory, defaultEncoding);
   }
 }

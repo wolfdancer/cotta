@@ -9,6 +9,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * resource manager that handles the resource management.  This class is to
+ * be used through its sub-classes
+ *
+ * @param <P> The processor to be used for call back
+ */
 abstract public class ResourceManager<P> {
   private List<Closeable> resourceList;
 
@@ -24,7 +30,7 @@ abstract public class ResourceManager<P> {
     resourceList.add(resource);
   }
 
-  public void open(P processor) throws TIoException {
+  protected void open(P processor) throws TIoException {
     boolean errorOccurred = true;
     try {
       process(processor);

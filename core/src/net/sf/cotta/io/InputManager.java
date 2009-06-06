@@ -11,6 +11,10 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
 
+/**
+ * InputManager for input resource management.  This class is to be used
+ * through {@link net.sf.cotta.io.Input}
+ */
 public class InputManager extends ResourceManager<InputProcessor> {
   private InputFactory inputFactory;
 
@@ -70,17 +74,16 @@ public class InputManager extends ResourceManager<InputProcessor> {
    *
    * @param buffer the buffer to clean up
    */
+  @SuppressWarnings("unchecked")
   public void clean(final MappedByteBuffer buffer) {
     AccessController.doPrivileged(new PrivilegedAction() {
       public Object run() {
         try {
           Method getCleanerMethod = buffer.getClass
-              ().getMethod("cleaner",
-              new Class[0]);
+              ().getMethod("cleaner");
           getCleanerMethod.setAccessible(true);
           sun.misc.Cleaner cleaner =
-              (sun.misc.Cleaner) getCleanerMethod.invoke(buffer, new Object
-                  [0]);
+              (sun.misc.Cleaner) getCleanerMethod.invoke(buffer);
           cleaner.clean();
         } catch (Exception e) {
           e.printStackTrace();
@@ -95,9 +98,11 @@ public class InputManager extends ResourceManager<InputProcessor> {
    *
    * @param stream the input stream to process
    * @return The Input instance
+   * @deprecated Moved to Input
    */
+  @Deprecated
   public static Input with(final InputStream stream) {
-    return with(stream, null);
+    return Input.with(stream);
   }
 
   /**
@@ -106,22 +111,11 @@ public class InputManager extends ResourceManager<InputProcessor> {
    * @param stream   the input stream to process
    * @param encoding encoding used when creating readers
    * @return The Input instance
+   * @deprecated Moved to Input
    */
+  @Deprecated
   public static Input with(final InputStream stream, String encoding) {
-    return with(new InputStreamFactory() {
-      public InputStream inputStream() throws TIoException {
-        return stream;
-      }
-
-      public FileChannel inputChannel() throws TIoException {
-        throw new UnsupportedOperationException();
-      }
-
-      public TPath path() {
-        return TPath.parse("/input stream");
-      }
-
-    }, encoding);
+    return Input.with(stream, encoding);
   }
 
   /**
@@ -130,9 +124,11 @@ public class InputManager extends ResourceManager<InputProcessor> {
    *
    * @param streamFactory input stream factory
    * @return the Input instance
+   * @deprecated Moved to Input
    */
+  @Deprecated
   public static Input with(InputStreamFactory streamFactory) {
-    return with(streamFactory, null);
+    return Input.with(streamFactory);
   }
 
   /**
@@ -142,10 +138,11 @@ public class InputManager extends ResourceManager<InputProcessor> {
    * @param streamFactory input stream factory
    * @param encoding      encoding used to create readers
    * @return the Input instance
+   * @deprecated Moved to Input
    */
+  @Deprecated
   public static Input with(InputStreamFactory streamFactory, String encoding) {
-    final InputManager manager = new InputManager(streamFactory, encoding);
-    return new Input(manager);
+    return Input.with(streamFactory, encoding);
   }
 
 }

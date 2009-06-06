@@ -36,7 +36,7 @@ public class ProductInfoTest extends TestCase {
     ensure.that(productInfo.title()).eq("Cotta");
     ensure.that(productInfo.vendor()).eq("SourceForge Cotta");
     ensure.that(productInfo.url()).eq("http://cotta.sourceforge.net");
-    ensure.that(productInfo.version().value()).eq("2.0.0");
+    ensure.that(productInfo.version().value()).eq("2.1.0");
     ensure.that(productInfo.version().build()).notNull();
   }
 
