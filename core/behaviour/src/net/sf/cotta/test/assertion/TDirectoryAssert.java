@@ -13,11 +13,7 @@ public class TDirectoryAssert extends BaseAssert<TDirectory, TDirectoryAssert> {
   public TDirectoryAssert exists() {
     matches(new BaseMatcher<TDirectory>() {
       public boolean matches(Object o) {
-        try {
-          return ((TDirectory) o).exists();
-        } catch (TIoException e) {
-          throw new RuntimeException(e.getMessage(), e);
-        }
+        return ((TDirectory) o).exists();
       }
 
       public void describeTo(Description description) {

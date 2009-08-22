@@ -13,11 +13,7 @@ public class TFileAssert extends BaseAssert<TFile, TFileAssert> {
   public TFileAssert fileExtists() {
     matches(new BaseMatcher<TFile>() {
       public boolean matches(Object item) {
-        try {
-          return ((TFile) item).exists();
-        } catch (TIoException e) {
-          throw new RuntimeException(e.getMessage(), e);
-        }
+        return ((TFile) item).exists();
       }
 
       public void describeTo(Description description) {
