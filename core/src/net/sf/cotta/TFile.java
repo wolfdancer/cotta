@@ -42,7 +42,7 @@ public class TFile extends TEntry {
     super(factory, path);
   }
 
-  public boolean exists() throws TIoException {
+  public boolean exists() {
     return filesystem().fileExists(path);
   }
 

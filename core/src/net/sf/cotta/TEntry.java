@@ -103,7 +103,7 @@ abstract public class TEntry implements Comparable<TEntry> {
     return buffer.toString();
   }
 
-  public abstract boolean exists() throws TIoException;
+  public abstract boolean exists();
 
   public int hashCode() {
     return filesystem().hashCode(path);

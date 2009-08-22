@@ -66,7 +66,7 @@ public class TEntryTest extends TestCase {
       this.exists = exists;
     }
 
-    public boolean exists() throws TIoException {
+    public boolean exists() {
       return exists;
     }
   }
