@@ -2,9 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="D:/Work/cotta/lib/hamcrest/hamcrest-library-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="D:/Work/cotta/lib/hamcrest/hamcrest-core-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="D:/Work/cotta/lib/junit/junit-4.4.jar" sourcepath="D:/Work/cotta/lib/junit/src/junit-4.4-src.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk5"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

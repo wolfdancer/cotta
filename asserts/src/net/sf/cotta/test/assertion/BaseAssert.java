@@ -17,7 +17,7 @@ import org.junit.matchers.JUnitMatchers;
  * @param <T> Type of the value under assertion
  * @param <A> Type of the current assertion class
  */
-abstract public class BaseAssert<T, A> extends Assert {
+public class BaseAssert<T, A> extends Assert {
   private String description = "";
   private T value;
 
@@ -30,15 +30,32 @@ abstract public class BaseAssert<T, A> extends Assert {
     return (A) this;
   }
 
+  /**
+   * Sets the description for the current assertion
+   * @param description description to show up when assertion failed
+   * @return self
+   */
   public A describedAs(String description) {
     this.description = description;
     return self();
   }
 
+  /**
+   * Returns value under assertion
+   * @return value under assertion
+   */
   public T value() {
     return this.value;
   }
 
+  /**
+   * This method is overriden to prevent misuse.  There is no need to compare assert classes, at
+   * the same time, it is easy for developer to call this method thinking that it does assertions
+   * on equals
+   * @see #eq
+   * @param obj object to compare
+   * @return this method will always throw UnsupportedOperationException
+   */
   @SuppressWarnings({"EqualsWhichDoesntCheckParameterClass"})
   public boolean equals(Object obj) {
     throw new UnsupportedOperationException("equals method is not supported by assertion, you probably wanted to use eq method");

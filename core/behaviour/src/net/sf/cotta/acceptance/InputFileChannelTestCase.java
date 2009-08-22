@@ -29,7 +29,7 @@ abstract public class InputFileChannelTestCase extends TestCase {
         InputFileChannelTestCase.this.process(inputManager.channel());
       }
     });
-    FileChannel channel = file.io().inputChannel();
+    FileChannel channel = file.inputChannel();
     process(channel);
     channel.close();
   }

@@ -7,7 +7,7 @@ public class IntegerAssertTest extends TestCase {
 
   public void testLessThanFailsWhenNotTrue() {
     final IntegerAssert assertion = new IntegerAssert(5);
-    code(new CodeBlock() {
+    ensure.code(new CodeBlock() {
       public void execute() throws Exception {
         assertion.lt(4);
       }
@@ -20,7 +20,7 @@ public class IntegerAssertTest extends TestCase {
 
   public void testGreaterThanFailsWhenNotTrue() {
     final IntegerAssert assertion = new IntegerAssert(6);
-    code(new CodeBlock() {
+    ensure.code(new CodeBlock() {
       public void execute() throws Exception {
         assertion.gt(6);
       }

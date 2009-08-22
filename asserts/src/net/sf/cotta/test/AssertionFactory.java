@@ -47,8 +47,8 @@ public class AssertionFactory {
    * @param block CodeBlock instance to assert
    * @return CodeBlockAssert instance
    */
-  public CodeBlockAssertion that(CodeBlock block) {
-    return new CodeBlockAssertion(block);
+  public CodeBlockAssert that(CodeBlock block) {
+    return new CodeBlockAssert(block);
   }
 
   /**
@@ -57,7 +57,7 @@ public class AssertionFactory {
    * @param block CodeBlock instance to assert
    * @return CodeBlockAssert instance
    */
-  public CodeBlockAssertion code(CodeBlock block) {
+  public CodeBlockAssert code(CodeBlock block) {
     return that(block);
   }
 

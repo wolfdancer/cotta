@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="behaviour/src"/>
 	<classpathentry kind="src" path="behaviour/resources"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.5.0_16"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/cotta-testbase"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk6"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
