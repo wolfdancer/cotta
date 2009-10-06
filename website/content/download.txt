@@ -43,5 +43,5 @@ h1. Developer Build
 
 You can also check it out of the repository and build it using Ruby rake.
 
-http://github.com/wolfdancer/cotta/tree/master
+"http://github.com/wolfdancer/cotta/tree/master":http://github.com/wolfdancer/cotta/tree/master
 
