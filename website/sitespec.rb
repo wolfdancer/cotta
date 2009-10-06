@@ -14,7 +14,7 @@ class MySiteSpec < BuildMaster::SiteSpec
     @output_dir = root.dir('output')
     @content_dir = root.dir('content')
     @template_file = root.file('template.html')
-    add_property('release', '2.0.0')
+    add_property('release', '2.1.0')
   end
 
   def center_class(content_path)
