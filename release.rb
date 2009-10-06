@@ -54,7 +54,8 @@ pscp.copy(cotta_asserts_release_jar, "#{builds_dir}/#{cotta_asserts_release_jar.
 pscp.copy(cotta_asserts_release_source, "#{builds_dir}/#{cotta_asserts_release_source.name}")
 
 pscp.copy(dir.dir('build/report'), "#{report_dir}")
-pscp.copy(dir.dir('build/dist/javadoc'), "#{javadoc_dir}")
+pscp.copy(dir.dir('build/dist/javadoc/asserts'), "#{javadoc_dir}")
+pscp.copy(dir.dir('build/dist/javadoc/core'), "#{javadoc_dir}")
 
 puts <<TODO
 staging site

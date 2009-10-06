@@ -3,7 +3,11 @@ Download
 -------------------------------------------------
 h1. Release Notes
 
-h2. "Release 2.1.0":
+h2. "Release 2.1.0":https://sourceforge.net/projects/cotta/files/
+
+* Reverted the API change in 2.0.0, so that it matches 1.x releases
+* Moved method from InputManager/OutputManager to Input/Output, so that any InputStream/OutputStream can be used
+through Input.with() and Output.with() method calls  
 
 h2. "Release 2.0.0":https://sourceforge.net/project/showfiles.php?group_id=171037&package_id=195405&release_id=687194
 
