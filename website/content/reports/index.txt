@@ -8,3 +8,5 @@ h1. Cotta Reports
 |ftp                |"index.html":./1.x/ftp/test/index.html|"index.html":./1.x/ftp/coverage/index.html|
 |/2.2.0.0 |asserts  |"index.html":./2.0.0/asserts/test/index.html|"index.html":./2.0.0/asserts/coverage/index.html|
 |core               |"index.html":./2.0.0/core/test/index.html|"index.html":./2.0.0/core/coverage/index.html|
+|/2.2.1.0 |asserts  |"index.html":./2.1.0/asserts/test/index.html|"index.html":./2.1.0/asserts/coverage/index.html|
+|core               |"index.html":./2.1.0/core/test/index.html|"index.html":./2.1.0/core/coverage/index.html|

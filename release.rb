@@ -18,33 +18,44 @@ git.add manifest_file.to_s.gsub(File::SEPARATOR, File::ALT_SEPARATOR || FILE::SE
 git.commit("releasing #{version.number}b#{version.build}")
 git.tag("version-#{version.number}b#{version.build}")
 dist_dir = dir.dir('build/dist')
+
 cotta_core_jar = dist_dir.file('cotta.jar')
 cotta_core_source_zip = dist_dir.file('cotta-src.zip')
 cotta_testbase_jar = dist_dir.file('cotta-testbase.jar')
 cotta_testbase_source_zip = dist_dir.file('cotta-testbase-src.zip')
+cotta_asserts_jar = dist_dir.file('cotta-asserts.jar')
+cotta_asserts_source_zip = dist_dir.file('cotta-asserts-src.zip')
 
 cotta_core_release_jar = dist_dir.file("cotta-#{version.number}b#{version.build}.jar")
 cotta_core_release_source = dist_dir.file("cotta-#{version.number}b#{version.build}-src.zip")
-cotta_core_jar.move_to(cotta_core_release_jar)
-cotta_core_source_zip.move_to(cotta_core_release_source)
+cotta_core_jar.copy_to(cotta_core_release_jar)
+cotta_core_source_zip.copy_to(cotta_core_release_source)
 
 cotta_testbase_release_jar = dist_dir.file("cotta-testbase-#{version.number}b#{version.build}.jar")
 cotta_testbase_release_source = dist_dir.file("cotta-testbase-#{version.number}b#{version.build}-src.zip")
-cotta_testbase_jar.move_to(cotta_testbase_release_jar)
-cotta_testbase_source_zip.move_to(cotta_testbase_release_source)
+cotta_testbase_jar.copy_to(cotta_testbase_release_jar)
+cotta_testbase_source_zip.copy_to(cotta_testbase_release_source)
+
+cotta_asserts_release_jar = dist_dir.file("cotta-asserts-#{version.number}b#{version.build}.jar")
+cotta_asserts_release_source = dist_dir.file("cotta-asserts-#{version.number}b#{version.build}-src.zip")
+cotta_asserts_jar.copy_to(cotta_asserts_release_jar)
+cotta_asserts_source_zip.copy_to(cotta_asserts_release_source)
 
 pscp = BuildMaster::PscpDriver.new("wolfdancer,cotta@web.sourceforge.net")
 builds_dir = '/home/groups/c/co/cotta/htdocs/builds'
 report_dir = "/home/groups/c/co/cotta/htdocs/reports/#{version.number}"
 javadoc_dir = "/home/groups/c/co/cotta/htdocs/javadoc/#{version.number}"
+
 pscp.copy(cotta_core_release_jar.path, "#{builds_dir}/#{cotta_core_release_jar.name}")
 pscp.copy(cotta_core_release_source.path, "#{builds_dir}/#{cotta_core_release_source.name}")
 pscp.copy(cotta_testbase_release_jar, "#{builds_dir}/#{cotta_testbase_release_jar.name}")
-pscp.copy(cotta_core_release_source, "#{builds_dir}/#{cotta_core_release_source.name}")
+pscp.copy(cotta_testbase_release_source, "#{builds_dir}/#{cotta_testbase_release_source.name}")
+pscp.copy(cotta_asserts_release_jar, "#{builds_dir}/#{cotta_asserts_release_jar.name}")
+pscp.copy(cotta_asserts_release_source, "#{builds_dir}/#{cotta_asserts_release_source.name}")
+
 pscp.copy(dir.dir('build/report'), "#{report_dir}")
 pscp.copy(dir.dir('build/dist/javadoc'), "#{javadoc_dir}")
+
 puts <<TODO
-staging jar and source zip
-staging Java Doc
 staging site
 TODO
