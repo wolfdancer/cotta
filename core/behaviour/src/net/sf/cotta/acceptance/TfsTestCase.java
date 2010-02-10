@@ -4,6 +4,7 @@ import net.sf.cotta.FileSystem;
 import net.sf.cotta.*;
 import net.sf.cotta.io.*;
 import net.sf.cotta.test.assertion.CodeBlock;
+import net.sf.cotta.utils.PlatformInfoUtil;
 
 import java.io.*;
 import java.util.List;
@@ -87,7 +88,7 @@ public abstract class TfsTestCase extends TestCase {
   public void testMakeSureRootDirectoryAlwaysExists() throws Exception {
     TFileFactory factory = new TFileFactory(fileSystem());
     ensure.that(factory.dir("/").exists()).eq(true);
-    ensure.that(factory.dir("C:/").exists()).eq(true);
+    ensure.that(factory.dir("C:/").exists()).eq(PlatformInfoUtil.isWindows());
     ensure.that(factory.dir("/tmp").parent().exists()).eq(true);
     ensure.that(factory.file("/tmp").parent().exists()).eq(true);
   }

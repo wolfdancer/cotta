@@ -3,6 +3,7 @@ package net.sf.cotta.memory;
 import net.sf.cotta.*;
 import net.sf.cotta.io.OutputMode;
 import net.sf.cotta.test.assertion.CodeBlock;
+import net.sf.cotta.utils.PlatformInfoUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,7 +24,7 @@ public class InMemoryFileSystemTest extends TestCase {
   public void testHaveBasicDirectoryExisting() throws Exception {
     ensure.that(fileSystem.dirExists(TPath.parse("/"))).eq(true);
     ensure.that(fileSystem.dirExists(TPath.parse("."))).eq(true);
-    ensure.that(fileSystem.dirExists(TPath.parse("C:\\"))).eq(true);
+    ensure.that(fileSystem.dirExists(TPath.parse("C:\\"))).eq(PlatformInfoUtil.isWindows());
   }
 
   public void testInstantiateFileWithCorrectName() throws Exception {

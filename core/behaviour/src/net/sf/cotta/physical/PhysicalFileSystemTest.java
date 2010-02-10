@@ -3,6 +3,7 @@ package net.sf.cotta.physical;
 import net.sf.cotta.*;
 import net.sf.cotta.io.OutputMode;
 import net.sf.cotta.test.assertion.CodeBlock;
+import net.sf.cotta.utils.PlatformInfoUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -142,7 +143,11 @@ public class PhysicalFileSystemTest extends PhysicalFileSystemTestCase {
 
   public void testGetFilePath() throws Exception {
     TPath path = TPath.parse("tmp/source.txt");
-    ensure.that(fileSystem.pathString(path)).eq(".\\tmp\\source.txt");
+    String expected = ".\\tmp\\source.txt";
+    if (!PlatformInfoUtil.isWindows()) {
+      expected = expected.replace('\\', '/');
+    }
+    ensure.that(fileSystem.pathString(path)).eq(expected);
   }
 
   public void testGetFileLength() throws Exception {
@@ -157,7 +162,7 @@ public class PhysicalFileSystemTest extends PhysicalFileSystemTestCase {
     String content = "content";
     Date timeBeforeCreation = new Date();
     new TFile(new TFileFactory(fileSystem), path).save(content);
-    ensure.that(fileSystem.fileLastModified(path)).ge(timeBeforeCreation.getTime());
+    ensure.that(fileSystem.fileLastModified(path) / 1000).ge(timeBeforeCreation.getTime() / 1000);
   }
 
   public void testThrowExceptionInCaseListReturnsNull() throws Exception {

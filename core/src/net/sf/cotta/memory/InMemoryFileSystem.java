@@ -2,6 +2,7 @@ package net.sf.cotta.memory;
 
 import net.sf.cotta.*;
 import net.sf.cotta.io.OutputMode;
+import net.sf.cotta.utils.PlatformInfoUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +21,7 @@ public class InMemoryFileSystem implements FileSystem {
   private ListingOrder order;
   private int fileInitialCapacity = 0;
   private int fileSizeIncrement = 16;
+  private boolean supportsWindowsDriveRootPath;
 
   public InMemoryFileSystem() {
     this(PathSeparator.Unix);
@@ -36,6 +38,9 @@ public class InMemoryFileSystem implements FileSystem {
   public InMemoryFileSystem(PathSeparator separator, ListingOrder order) {
     this.separator = separator;
     this.order = order;
+    this.supportsWindowsDriveRootPath = PlatformInfoUtil.isWindows();
+    createDirImpl(TPath.parse("/"));
+    createDirImpl(TPath.parse("."));
   }
 
   public void setFileInitialCapacity(int value) {
@@ -88,7 +93,7 @@ public class InMemoryFileSystem implements FileSystem {
     if (createDirs.containsKey(path)) {
       return true;
     }
-    if (path.parent() == null) {
+    if (path.parent() == null && supportsWindowsDriveRootPath) {
       createDirImpl(path);
       return true;
     }
