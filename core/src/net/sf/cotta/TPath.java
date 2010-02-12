@@ -8,22 +8,63 @@ import java.util.*;
  * An object presentation of path to mainly used by the implemenation of Cotta classes.
  * The methods on TPath has been exposed through TFile and TDirectory
  */
-public class TPath implements Comparable<TPath> {
-  private TPath parent;
-  private String[] elements;
+public final class TPath implements Comparable<TPath> {
+  private final String[] elements;
+  private final int offset;
+  private final int count;
+  private int hash; // Default to 0
   private static final String WINDOWS_SEPERATOR_PATTERN = "\\\\";
-  private static final String WINDOWOS_NETWORK_PATh = "\\\\";
+  private static final String WINDOWS_NETWORK_PATH = "\\\\";
   private static final char NATIVE_SEPERATOR_CHAR = '/';
   private static final String NATIVE_SEPERATOR = "/";
 
   /**
-   * Creates an instance of TPath with the array of path element
+   * Creates an instance of TPath with the given path elements
    *
    * @param elements path elements
    * @see #parse(String)
    */
-  private TPath(String[] elements) {
+  TPath(String[] elements) {
+    int size = elements.length;
+    this.elements = new String[size];
+    System.arraycopy(elements, 0, this.elements, 0, size);
+    this.offset = 0;
+    this.count = size;
+  }
+
+  /**
+   * Creates an instance of TPath with possibly a subarray of the given path elements
+   *
+   * @param elements path elements
+   * @param offset the initial offset
+   * @param count the length
+   */
+  private TPath(String[] elements, int offset, int count) {
+    if (offset < 0) {
+      throw new ArrayIndexOutOfBoundsException(offset);
+    }
+    if (count < 0) {
+      throw new ArrayIndexOutOfBoundsException(count);
+    }
+    if (offset > elements.length - count) {
+      throw new ArrayIndexOutOfBoundsException(offset + count);
+    }
+    this.elements = new String[count];
+    System.arraycopy(elements, offset, this.elements, 0, count);
+    this.offset = 0;
+    this.count = count;
+  }
+
+  /**
+   * Shares the element array for speed.
+   * @param offset the offset from which to begin in the element array
+   * @param count the length
+   * @param elements path elements
+   */
+  private TPath(int offset, int count, String[] elements) {
     this.elements = elements;
+    this.offset = offset;
+    this.count = count;
   }
 
   /**
@@ -34,7 +75,7 @@ public class TPath implements Comparable<TPath> {
    * @see TDirectory#name()
    */
   public String lastElementName() {
-    return elements[elements.length - 1];
+    return elements[offset + count - 1];
   }
 
   /**
@@ -45,15 +86,10 @@ public class TPath implements Comparable<TPath> {
    * @see TDirectory#parent()
    */
   public TPath parent() {
-    if (elements.length == 1) {
+    if (count - offset == 1) {
       return null;
     }
-    if (parent == null) {
-      String[] newElements = new String[elements.length - 1];
-      System.arraycopy(elements, 0, newElements, 0, elements.length - 1);
-      parent = new TPath(newElements);
-    }
-    return parent;
+    return subpath(0, count - 1);
   }
 
   /**
@@ -65,9 +101,9 @@ public class TPath implements Comparable<TPath> {
    * @see TDirectory#dir(String)
    */
   public TPath join(String name) {
-    String[] newElements = new String[elements.length + 1];
-    System.arraycopy(elements, 0, newElements, 0, elements.length);
-    newElements[elements.length] = name;
+    String[] newElements = new String[count + 1];
+    System.arraycopy(elements, offset, newElements, 0, count);
+    newElements[count] = name;
     return new TPath(newElements);
   }
 
@@ -82,9 +118,13 @@ public class TPath implements Comparable<TPath> {
    */
   public TPath join(TPath path) {
     Stack<String> result = new Stack<String>();
-    result.addAll(Arrays.asList(elements));
-    for (int i = 0; i < path.elements.length; i++) {
-      String element = path.elements[i];
+    int off = offset;
+    for (int i = 0; i < count; i++ ) {
+      result.add(elements[off++]);
+    }
+    off = path.offset;
+    for (int i = 0; i < path.count; i++) {
+      String element = path.elements[off++];
       if (isCurrentDirectory(element)) {
         // do nothing
       } else if (isParentDirectoryReference(element)) {
@@ -104,21 +144,52 @@ public class TPath implements Comparable<TPath> {
     return new TPath(result.toArray(new String[result.size()]));
   }
 
+  public TPath append(TPath path) {
+    TPath left = trim();
+    TPath right = path.trim();
+    int length = left.count + right.count;
+    String[] joined = new String[length];
+    System.arraycopy(left.elements, left.offset, joined, 0, left.count);
+    System.arraycopy(right.elements, right.offset, joined, left.count, right.count);
+    return new TPath(joined);
+  }
+
+  public TPath intern() {
+    return null;// TODO
+  }
+
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
 
-    final TPath tPath = (TPath) o;
-
-    return Arrays.equals(elements, tPath.elements);
+    if (o instanceof TPath) {
+      TPath tPath = (TPath) o;
+      int n = count;
+      if (n == tPath.count) {
+        String[] e1 = elements;
+        String[] e2 = tPath.elements;
+        int i = offset;
+        int j = tPath.offset;
+        while (n-- != 0) {
+          if (!e1[i++].equals(e2[j++])) {
+            return false;
+          }
+        }
+        return true;
+      }
+    }
+    return false;
   }
 
   public int hashCode() {
-    int result = 0;
-    for (String element : elements) {
-      result = 29 * result + element.hashCode();
+    int h = hash;
+    if (h == 0) {
+      int off = offset;
+      for (int i = 0; i < count; i++) {
+        h = 29 * h + elements[off++].hashCode();
+      }
+      hash = h;
     }
-    return result;
+    return hash;
   }
 
   /**
@@ -144,9 +215,9 @@ public class TPath implements Comparable<TPath> {
       throw new IllegalArgumentException("null or empty path string is not allowed");
     }
     String head = "";
-    if (pathString.startsWith(WINDOWOS_NETWORK_PATh)) {
-      head = WINDOWOS_NETWORK_PATh;
-      pathString = pathString.substring(WINDOWOS_NETWORK_PATh.length());
+    if (pathString.startsWith(WINDOWS_NETWORK_PATH)) {
+      head = WINDOWS_NETWORK_PATH;
+      pathString = pathString.substring(WINDOWS_NETWORK_PATH.length());
     }
     return new TPath(convertToElementArray(head + pathString.replaceAll(WINDOWS_SEPERATOR_PATTERN, NATIVE_SEPERATOR)));
   }
@@ -182,7 +253,7 @@ public class TPath implements Comparable<TPath> {
 
   private static boolean isTopElementWindowsNetworkHost(List<String> list) {
     String top = list.get(0);
-    return top.startsWith(WINDOWOS_NETWORK_PATh);
+    return top.startsWith(WINDOWS_NETWORK_PATH);
   }
 
   public String toPathString() {
@@ -307,5 +378,57 @@ public class TPath implements Comparable<TPath> {
       }
     }
     return len1 - len2;
+  }
+
+  public TPath subpath(int beginIndex, int endIndex) {
+    if (beginIndex < 0) {
+      throw new ArrayIndexOutOfBoundsException(beginIndex);
+    }
+    if (endIndex > count) {
+      throw new ArrayIndexOutOfBoundsException(endIndex);
+    }
+    if (beginIndex > endIndex) {
+      throw new ArrayIndexOutOfBoundsException(endIndex - beginIndex);
+    }
+    if (beginIndex == 0 && endIndex == count) {
+      return this;
+    }
+    else {
+      return new TPath(offset + beginIndex, endIndex - beginIndex, elements);
+    }
+  }
+
+  public TPath subpath(int beginIndex) {
+    return subpath(beginIndex, count);
+  }
+
+  public TPath trim() {
+    int len = count;
+    int st = 0;
+    
+    while (st < len && isCurrentDirectory(elements[offset + st])) {
+      st++;
+    }
+    while (st < len && isCurrentDirectory(elements[offset + len - 1])) {
+      len--;
+    }
+    return (st > 0 || len < count) ? subpath(st, len) : this;
+  }
+
+  public int length() {
+    return count;
+  }
+
+  TPath withNoLeadingDot() {
+    if (count > 0 && isCurrentDirectory(elements[offset])) {
+      return subpath(1);
+    }
+    return this;
+  }
+
+  String[] toElementArray() {
+    String[] result = new String[count];
+    System.arraycopy(elements, offset, result, 0, count);
+    return result;
   }
 }

@@ -117,6 +117,19 @@ public class TPathTest extends TestCase {
     ensure.that(path.join(relative)).eq(TPath.parse("../"));
   }
 
+  public void testAppendAnotherPath() throws Exception {
+    TPath pathOne = TPath.parse("/one/two");
+    TPath pathTwo = TPath.parse("three/four");
+    ensure.that(pathOne.append(pathTwo)).eq(TPath.parse("/one/two/three/four"));
+  }
+
+  public void testAppendWillStripCurrentDirElements() throws Exception {
+    TPath pathOne = TPath.parse("/one/two/./.");
+    TPath pathTwo = TPath.parse("././three/four/./.");
+    ensure.that(pathOne.append(pathTwo)).eq(TPath.parse("/one/two/three/four"));
+
+  }
+
   public void testAbsolutePath() throws Exception {
     ensure.that(TPath.parse("/one/two").isRelative()).eq(false);
   }
@@ -162,5 +175,109 @@ public class TPathTest extends TestCase {
     TPath a = TPath.parse("/one/two/a");
     TPath b = TPath.parse("/one/two/b");
     ensure.that(a.compareTo(b)).eq("a".compareTo("b"));
+  }
+
+  public void testSubpathWith1Arg() {
+    TPath path = TPath.parse("./one/two");
+    TPath subpath = path.subpath(1);
+    ensure.that(subpath.toElementArray()).eq("one", "two");
+    ensure.that(subpath.toElementArray()[0]).sameAs(path.toElementArray()[1]);
+  }
+
+  public void testSubpathWith2Args() {
+    TPath path = TPath.parse("./one/two");
+    TPath subpath = path.subpath(1, 3);
+    ensure.that(subpath.toElementArray()).eq("one", "two");
+    ensure.that(subpath.toElementArray()[0]).sameAs(path.toElementArray()[1]);
+
+    subpath = path.subpath(0, 2);
+    ensure.that(subpath.toElementArray()).eq(".", "one");
+    ensure.that(subpath.toElementArray()[0]).sameAs(path.toElementArray()[0]);
+  }
+
+  public void testSubpathHash() {
+    TPath path = TPath.parse("./one/two");
+    TPath subpath = path.subpath(1);
+    TPath expected = path.withNoLeadingDot();
+    ensure.that(subpath).eqWithHash(expected);
+
+    subpath = path.subpath(1, 3);
+    // (same expected)
+    ensure.that(subpath).eqWithHash(expected);
+
+    subpath = path.subpath(0, 2);
+    expected = TPath.parse("./one");
+    ensure.that(subpath).eqWithHash(expected);
+  }
+
+  public void testSubpathParent() {
+    // TODO
+  }
+
+  public void testSubpathJoin1Element() {
+    TPath path = TPath.parse("./one/two");
+    TPath subpath = path.subpath(1);
+    TPath joined = subpath.join("three");
+    ensure.that(joined.toElementArray()).eq("one", "two", "three");
+
+    subpath = path.subpath(0, 2);
+    joined = subpath.join("three");
+    ensure.that(joined.toElementArray()).eq(".", "one", "three");
+  }
+
+  public void testSubpathJoinPath() {
+    TPath leftPath = TPath.parse("./one/two");
+    TPath rightPath = TPath.parse("./three/four");
+    TPath leftSubpath = leftPath.subpath(1);
+    TPath joined = leftSubpath.join(rightPath);
+    ensure.that(joined.toElementArray()).eq("one", "two", "three", "four");
+
+    leftSubpath = leftPath.subpath(0, 2);
+    joined = leftSubpath.join(rightPath);
+    ensure.that(joined.toElementArray()).eq(".", "one", "three", "four");
+  }
+
+  public void testPathJoinSubpath() {
+    TPath leftPath = TPath.parse("./one/two");
+    TPath rightPath = TPath.parse("./three/four");
+    TPath rightSubpath = rightPath.subpath(2);
+    TPath joined = leftPath.join(rightSubpath);
+    ensure.that(joined.toElementArray()).eq(".", "one", "two", "four");
+
+    rightSubpath = rightPath.subpath(0, 2);
+    joined = leftPath.join(rightSubpath);
+    ensure.that(joined.toElementArray()).eq(".", "one", "two", "three");
+  }
+
+  public void testTrim() {
+    TPath path = new TPath(new String[] {"one", "two"});
+    ensure.that(path.trim()).sameAs(path);
+
+    path = new TPath(new String[] {"one", ".", "two"});
+    ensure.that(path.trim()).sameAs(path);
+
+    path = new TPath(new String[] {".", "one", "two"});
+    ensure.that(path.trim().toElementArray()).eq("one", "two");
+
+    path = new TPath(new String[] {".", ".", "one", "two"});
+    ensure.that(path.trim().toElementArray()).eq("one", "two");
+
+    path = new TPath(new String[] {"one", "two", "."});
+    ensure.that(path.trim().toElementArray()).eq("one", "two");
+
+    path = new TPath(new String[] {"one", "two", ".", "."});
+    ensure.that(path.trim().toElementArray()).eq("one", "two");
+  }
+
+  public void testWithNoLeadingDot() {
+    TPath path = TPath.parse("one/two");
+    ensure.that(path.toElementArray()).eq(".", "one", "two");
+    ensure.that(path.withNoLeadingDot().toElementArray()).eq("one", "two");
+
+    path = new TPath(new String[]{"one", "two"});
+    ensure.that(path.withNoLeadingDot()).sameAs(path);
+
+    path = new TPath(new String[0]);
+    ensure.that(path.withNoLeadingDot()).sameAs(path);
   }
 }
