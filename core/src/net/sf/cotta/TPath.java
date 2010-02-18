@@ -2,6 +2,8 @@ package net.sf.cotta;
 
 import java.io.File;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -9,62 +11,56 @@ import java.util.*;
  * The methods on TPath has been exposed through TFile and TDirectory
  */
 public final class TPath implements Comparable<TPath> {
+  private final String headElement;
   private final String[] elements;
   private final int offset;
   private final int count;
   private int hash; // Default to 0
-  private static final String WINDOWS_SEPERATOR_PATTERN = "\\\\";
-  private static final String WINDOWS_NETWORK_PATH = "\\\\";
+  private static final String WINDOWS_SEPARATOR_PATTERN = "\\\\";
   private static final char NATIVE_SEPERATOR_CHAR = '/';
-  private static final String NATIVE_SEPERATOR = "/";
+  private static final String NATIVE_SEPARATOR = "/";
+  private static final String ROOT_HEAD = "";
+  private static final String WINDOWS_NETWORK_ROOT_HEAD = "\\\\";
+  private static final String CURRENT_DIR_HEAD = ".";
 
   /**
    * Creates an instance of TPath with the given path elements
    *
+   * @param headElement head element
    * @param elements path elements
    * @see #parse(String)
    */
-  TPath(String[] elements) {
+  private TPath(String headElement, String[] elements) {
     int size = elements.length;
     this.elements = new String[size];
     System.arraycopy(elements, 0, this.elements, 0, size);
     this.offset = 0;
     this.count = size;
-  }
-
-  /**
-   * Creates an instance of TPath with possibly a subarray of the given path elements
-   *
-   * @param elements path elements
-   * @param offset the initial offset
-   * @param count the length
-   */
-  private TPath(String[] elements, int offset, int count) {
-    if (offset < 0) {
-      throw new ArrayIndexOutOfBoundsException(offset);
-    }
-    if (count < 0) {
-      throw new ArrayIndexOutOfBoundsException(count);
-    }
-    if (offset > elements.length - count) {
-      throw new ArrayIndexOutOfBoundsException(offset + count);
-    }
-    this.elements = new String[count];
-    System.arraycopy(elements, offset, this.elements, 0, count);
-    this.offset = 0;
-    this.count = count;
+    this.headElement = headElement;
   }
 
   /**
    * Shares the element array for speed.
+   *
+   * @param headElement head element
    * @param offset the offset from which to begin in the element array
    * @param count the length
    * @param elements path elements
    */
-  private TPath(int offset, int count, String[] elements) {
+  private TPath(String headElement, int offset, int count, String[] elements) {
     this.elements = elements;
     this.offset = offset;
     this.count = count;
+    this.headElement = headElement;
+  }
+
+  /**
+   * The name of the head element, e.g. "" (unix root), "c:", "."
+   *
+   * @return the name of the head element
+   */
+  public String headElement() {
+    return headElement;
   }
 
   /**
@@ -75,6 +71,9 @@ public final class TPath implements Comparable<TPath> {
    * @see TDirectory#name()
    */
   public String lastElementName() {
+    if (count == 0) {
+      return headElement;
+    }
     return elements[offset + count - 1];
   }
 
@@ -86,14 +85,14 @@ public final class TPath implements Comparable<TPath> {
    * @see TDirectory#parent()
    */
   public TPath parent() {
-    if (count - offset == 1) {
+    if (count == 0) {
       return null;
     }
     return subpath(0, count - 1);
   }
 
   /**
-   * Join with an pat element to form a new path.  Used by TDirectory to get subdirectory or file
+   * Join with a path element to form a new path.  Used by TDirectory to get subdirectory or file
    *
    * @param name The name of the path element to join
    * @return The resulting path under current path
@@ -104,11 +103,12 @@ public final class TPath implements Comparable<TPath> {
     String[] newElements = new String[count + 1];
     System.arraycopy(elements, offset, newElements, 0, count);
     newElements[count] = name;
-    return new TPath(newElements);
+    return new TPath(headElement, newElements);
   }
 
   /**
-   * Join with another relative path.  Used by TDirectory to get directory or file based on relative path
+   * Join with another relative path.  Used by TDirectory to get directory or file based on relative path.
+   * This will also normalize the path so that there are no current-dir or parent-dir references.
    *
    * @param path The relative path to join
    * @return The result of the join.
@@ -117,45 +117,54 @@ public final class TPath implements Comparable<TPath> {
    * @see TDirectory#dir(TPath)
    */
   public TPath join(TPath path) {
+    return append(path).normalize();
+  }
+
+  private TPath normalize() {
     Stack<String> result = new Stack<String>();
     int off = offset;
     for (int i = 0; i < count; i++ ) {
-      result.add(elements[off++]);
-    }
-    off = path.offset;
-    for (int i = 0; i < path.count; i++) {
-      String element = path.elements[off++];
-      if (isCurrentDirectory(element)) {
+      String element = elements[off++];
+      if (isCurrentDirectoryReference(element)) {
         // do nothing
       } else if (isParentDirectoryReference(element)) {
-        result.pop();
         if (result.isEmpty()) {
-          if (isRelative()) {
-            result.push(".");
-            result.push("..");
-          } else {
-            throw new IllegalArgumentException("Cannot join <" + toPathString() + "> to <" + path.toPathString() + ">");
+          if (!isRelative()) {
+            throw new IllegalArgumentException("Cannot normalize <" + toPathString() + ">");
           }
+          result.push(element);
+        }
+        else {
+          result.pop();
         }
       } else {
         result.push(element);
       }
     }
-    return new TPath(result.toArray(new String[result.size()]));
+    return new TPath(headElement, result.toArray(new String[result.size()]));
   }
 
+  /**
+   * Append with another path, without normalizing.
+   *
+   * @param path The relative path to append
+   * @return The result of the append
+   */
   public TPath append(TPath path) {
-    TPath left = trim();
-    TPath right = path.trim();
-    int length = left.count + right.count;
+    int length = count + path.count;
     String[] joined = new String[length];
-    System.arraycopy(left.elements, left.offset, joined, 0, left.count);
-    System.arraycopy(right.elements, right.offset, joined, left.count, right.count);
-    return new TPath(joined);
+    System.arraycopy(elements, offset, joined, 0, count);
+    System.arraycopy(path.elements, path.offset, joined, count, path.count);
+    return new TPath(headElement, joined);
   }
 
   public TPath intern() {
-    return null;// TODO
+    if (offset == 0 && count == elements.length) {
+      return this;
+    }
+    String[] newElements = new String[count];
+    System.arraycopy(elements, offset, newElements, 0, count);
+    return new TPath(headElement, newElements);
   }
 
   public boolean equals(Object o) {
@@ -163,18 +172,20 @@ public final class TPath implements Comparable<TPath> {
 
     if (o instanceof TPath) {
       TPath tPath = (TPath) o;
-      int n = count;
-      if (n == tPath.count) {
-        String[] e1 = elements;
-        String[] e2 = tPath.elements;
-        int i = offset;
-        int j = tPath.offset;
-        while (n-- != 0) {
-          if (!e1[i++].equals(e2[j++])) {
-            return false;
+      if (headElement == tPath.headElement || headElement.equals(tPath.headElement)) {
+        int n = count;
+        if (n == tPath.count) {
+          String[] e1 = elements;
+          String[] e2 = tPath.elements;
+          int i = offset;
+          int j = tPath.offset;
+          while (n-- != 0) {
+            if (!e1[i++].equals(e2[j++])) {
+              return false;
+            }
           }
+          return true;
         }
-        return true;
       }
     }
     return false;
@@ -183,6 +194,8 @@ public final class TPath implements Comparable<TPath> {
   public int hashCode() {
     int h = hash;
     if (h == 0) {
+      h = 29 * h + headElement.hashCode();
+
       int off = offset;
       for (int i = 0; i < count; i++) {
         h = 29 * h + elements[off++].hashCode();
@@ -214,46 +227,38 @@ public final class TPath implements Comparable<TPath> {
     if (pathString == null || pathString.length() == 0) {
       throw new IllegalArgumentException("null or empty path string is not allowed");
     }
-    String head = "";
-    if (pathString.startsWith(WINDOWS_NETWORK_PATH)) {
-      head = WINDOWS_NETWORK_PATH;
-      pathString = pathString.substring(WINDOWS_NETWORK_PATH.length());
+    Pattern currentDir = Pattern.compile("(\\.)|(\\.(\\\\|/)(.*))");
+    Pattern windowsRoot = Pattern.compile("([A-Z|a-z]:)[\\\\|/]?(.*)");
+    String headElement;
+    Matcher matcher;
+    if (pathString.startsWith(WINDOWS_NETWORK_ROOT_HEAD)) {
+      headElement = WINDOWS_NETWORK_ROOT_HEAD;
+      pathString = pathString.substring(WINDOWS_NETWORK_ROOT_HEAD.length());
     }
-    return new TPath(convertToElementArray(head + pathString.replaceAll(WINDOWS_SEPERATOR_PATTERN, NATIVE_SEPERATOR)));
-  }
-
-  private static String[] convertToElementArray(String pathString) {
-    boolean identifiedAsReferencedByRoot = false;
+    else if (pathString.startsWith("\\") || pathString.startsWith("/")) {
+      headElement = ROOT_HEAD;
+      pathString = pathString.substring(1);
+    }
+    else if ((matcher = currentDir.matcher(pathString)).matches()) {
+      headElement = CURRENT_DIR_HEAD;
+      pathString = matcher.group(4);
+      if (pathString == null) {
+        pathString = "";
+      }
+    }
+    else if ((matcher = windowsRoot.matcher(pathString)).matches()) {
+      headElement = matcher.group(1);
+      pathString = matcher.group(2);
+    }
+    else {
+      headElement = CURRENT_DIR_HEAD;
+    }
+    pathString = pathString.replaceAll(WINDOWS_SEPARATOR_PATTERN, NATIVE_SEPARATOR);
     List<String> list = new ArrayList<String>();
-    if (pathString.startsWith("/")) {
-      list.add("");
-      identifiedAsReferencedByRoot = true;
-    }
-    for (StringTokenizer tokenizer = new StringTokenizer(pathString, NATIVE_SEPERATOR); tokenizer.hasMoreTokens();) {
+    for (StringTokenizer tokenizer = new StringTokenizer(pathString, NATIVE_SEPARATOR); tokenizer.hasMoreTokens();) {
       list.add(tokenizer.nextToken());
     }
-    if (!identifiedAsReferencedByRoot
-        && !isTopElementADrivePath(list)
-        && !isTopElementWorkingDirectory(list)
-        && !isTopElementWindowsNetworkHost(list)) {
-      list.add(0, ".");
-    }
-    return list.toArray(new String[list.size()]);
-  }
-
-  private static boolean isTopElementWorkingDirectory(List<String> list) {
-    String top = list.get(0);
-    return top.equals(".");
-  }
-
-  private static boolean isTopElementADrivePath(List<String> list) {
-    String top = list.get(0);
-    return top.matches("[A-Z|a-z]:");
-  }
-
-  private static boolean isTopElementWindowsNetworkHost(List<String> list) {
-    String top = list.get(0);
-    return top.startsWith(WINDOWS_NETWORK_PATH);
+    return new TPath(headElement, list.toArray(new String[list.size()]));
   }
 
   public String toPathString() {
@@ -269,12 +274,18 @@ public final class TPath implements Comparable<TPath> {
   }
 
   private String toPathStringImpl(char seperator) {
-    StringBuffer buffer = new StringBuffer();
-    for (String element : elements) {
-      buffer.append(element).append(seperator);
+    StringBuilder buffer = new StringBuilder();
+    if (headElement == ROOT_HEAD) {
+      if (count == 0) {
+        buffer.append(seperator);
+      }
     }
-    if (buffer.length() > 1) {
-      buffer.delete(buffer.length() - 1, buffer.length());
+    else {
+      buffer.append(headElement);
+    }
+    int off = offset;
+    for (int i = 0; i < count; i++) {
+      buffer.append(seperator).append(elements[off++]);
     }
     return buffer.toString();
   }
@@ -289,17 +300,17 @@ public final class TPath implements Comparable<TPath> {
    * @see TDirectory#isChildOf(TDirectory)
    */
   public boolean isChildOf(TPath path) {
-    if (elements.length <= path.elements.length) {
+    if (count <= path.count) {
       return false;
     }
-    return checkCommonElements(elements, path.elements) == path.elements.length;
+    return checkCommonElements(path) == path.count;
   }
 
   private boolean isParentDirectoryReference(String element) {
     return "..".equals(element);
   }
 
-  private boolean isCurrentDirectory(String element) {
+  private boolean isCurrentDirectoryReference(String element) {
     return ".".equals(element);
   }
 
@@ -309,7 +320,7 @@ public final class TPath implements Comparable<TPath> {
    * @return true if the current path is a relative path.
    */
   public boolean isRelative() {
-    return isCurrentDirectory(elements[0]);
+    return headElement == CURRENT_DIR_HEAD;
   }
 
   /**
@@ -322,21 +333,24 @@ public final class TPath implements Comparable<TPath> {
     if (isRelative() ^ path.isRelative()) {
       throw new IllegalArgumentException("path passed in should be the same kind of relative or absolute path:" + path);
     }
-    int index = checkCommonElements(elements, path.elements);
-    int numberOfParentsToGo = path.elements.length - index;
-    String[] relativePath = new String[elements.length - index + 1 + numberOfParentsToGo];
-    relativePath[0] = ".";
-    for (int i = 1; i <= numberOfParentsToGo; i++) {
+    int index = checkCommonElements(path);
+    int numberOfThisExcessElements = count - index;
+    int numberOfThatExcessElements = path.count - index;
+    String[] relativePath = new String[numberOfThatExcessElements + numberOfThisExcessElements];
+    for (int i = 0; i < numberOfThatExcessElements; i++) {
       relativePath[i] = "..";
     }
-    System.arraycopy(elements, index, relativePath, 1 + numberOfParentsToGo, elements.length - index);
-    return new TPath(relativePath);
+    System.arraycopy(elements, index, relativePath, numberOfThatExcessElements, numberOfThisExcessElements);
+    return new TPath(CURRENT_DIR_HEAD, relativePath);
   }
 
-  private int checkCommonElements(String[] elements1, String[] elements2) {
-    int max = Math.min(elements1.length, elements2.length);
+  private int checkCommonElements(TPath path) {
+    if (!headElement.equals(path.headElement)) {
+      return 0;
+    }
     int i = 0;
-    while (i < max && elements1[i].equals(elements2[i])) {
+    int max = Math.min(count, path.count);
+    while (i < max && elements[offset + i].equals(path.elements[path.offset + i])) {
       i++;
     }
     return i;
@@ -349,13 +363,13 @@ public final class TPath implements Comparable<TPath> {
    * @return comparing result
    */
   public int compareTo(TPath that) {
-    int len1 = this.elements.length;
-    int len2 = that.elements.length;
+    int len1 = count;
+    int len2 = that.count;
     int n = Math.min(len1, len2);
     String v1[] = elements;
     String v2[] = that.elements;
-    int i = 0;
-    int j = 0;
+    int i = offset;
+    int j = that.offset;
 
     if (i == j) {
       int k = i;
@@ -394,7 +408,14 @@ public final class TPath implements Comparable<TPath> {
       return this;
     }
     else {
-      return new TPath(offset + beginIndex, endIndex - beginIndex, elements);
+      String head;
+      if (beginIndex == 0) {
+        head = this.headElement;
+      }
+      else {
+        head = CURRENT_DIR_HEAD;
+      }
+      return new TPath(head, offset + beginIndex, endIndex - beginIndex, elements);
     }
   }
 
@@ -406,10 +427,10 @@ public final class TPath implements Comparable<TPath> {
     int len = count;
     int st = 0;
     
-    while (st < len && isCurrentDirectory(elements[offset + st])) {
+    while (st < len && isCurrentDirectoryReference(elements[offset + st])) {
       st++;
     }
-    while (st < len && isCurrentDirectory(elements[offset + len - 1])) {
+    while (st < len && isCurrentDirectoryReference(elements[offset + len - 1])) {
       len--;
     }
     return (st > 0 || len < count) ? subpath(st, len) : this;
@@ -417,13 +438,6 @@ public final class TPath implements Comparable<TPath> {
 
   public int length() {
     return count;
-  }
-
-  TPath withNoLeadingDot() {
-    if (count > 0 && isCurrentDirectory(elements[offset])) {
-      return subpath(1);
-    }
-    return this;
   }
 
   String[] toElementArray() {
