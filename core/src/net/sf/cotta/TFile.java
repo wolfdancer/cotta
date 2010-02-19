@@ -190,11 +190,11 @@ public class TFile extends TEntry {
     }
   }
 
-  public long length() throws TIoException {
+  public long length() {
     return filesystem().fileLength(path);
   }
 
-  public long lastModified() throws TIoException {
+  public long lastModified() {
     return filesystem().fileLastModified(path);
   }
 

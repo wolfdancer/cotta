@@ -252,11 +252,7 @@ public class TestFtpServerFileSystem implements FileSystem {
     }
 
     public long getSize() {
-      try {
-        return file.length();
-      } catch (TIoException e) {
-        throw new TIoRuntimeException(e);
-      }
+      return file.length();
     }
 
     public void delete() throws TIoException {
