@@ -1,6 +1,15 @@
 package net.sf.cotta.memory;
 
-import net.sf.cotta.*;
+import net.sf.cotta.PathContent;
+import net.sf.cotta.PathSeparator;
+import net.sf.cotta.TDirectory;
+import net.sf.cotta.TDirectoryNotFoundException;
+import net.sf.cotta.TFile;
+import net.sf.cotta.TFileFactory;
+import net.sf.cotta.TFileNotFoundException;
+import net.sf.cotta.TIoException;
+import net.sf.cotta.TPath;
+import net.sf.cotta.TestCase;
 import net.sf.cotta.io.OutputMode;
 import net.sf.cotta.test.assertion.CodeBlock;
 import net.sf.cotta.utils.PlatformInfoUtil;
@@ -11,15 +20,17 @@ import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
 
-public class InMemoryFileSystemTest extends TestCase {
+public abstract class InMemoryFileSystemTest extends TestCase {
   public TFileFactory factory;
   public InMemoryFileSystem fileSystem;
 
   public void beforeMethod() throws Exception {
     super.beforeMethod();
-    fileSystem = new InMemoryFileSystem();
+    fileSystem = createFileSystem();
     factory = new TFileFactory(fileSystem);
   }
+
+  protected abstract InMemoryFileSystem createFileSystem();
 
   public void testHaveBasicDirectoryExisting() throws Exception {
     ensure.that(fileSystem.dirExists(TPath.parse("/"))).eq(true);

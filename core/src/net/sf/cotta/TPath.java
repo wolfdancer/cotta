@@ -436,6 +436,10 @@ public final class TPath implements Comparable<TPath> {
     return (st > 0 || len < count) ? subpath(st, len) : this;
   }
 
+  public String elementAt(int i) {
+    return elements[i];
+  }
+
   public int length() {
     return count;
   }

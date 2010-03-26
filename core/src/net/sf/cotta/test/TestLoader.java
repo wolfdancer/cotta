@@ -10,6 +10,7 @@ import net.sf.cotta.utils.ClassCollector;
 import net.sf.cotta.utils.ClassPathEntryLocator;
 import net.sf.cotta.utils.ClassPathEntryProcessor;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -30,7 +31,10 @@ public class TestLoader {
     }
     TestSuite testSuite = new TestSuite();
     for (String name : classNames) {
-      testSuite.addTestSuite(loadClass(name));
+      Class<? extends TestCase> clazz = loadClass(name);
+      if (!Modifier.isAbstract(clazz.getModifiers())) {
+        testSuite.addTestSuite(clazz);
+      }
     }
     return testSuite;
   }
