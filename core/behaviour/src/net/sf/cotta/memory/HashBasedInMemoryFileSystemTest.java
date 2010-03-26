@@ -1,6 +1,6 @@
 package net.sf.cotta.memory;
 
-public class HashBasedInMemoryFileSystemTest extends InMemoryFileSystemTest {
+public class HashBasedInMemoryFileSystemTest extends InMemoryFileSystemTestBase {
 
   @Override
   protected InMemoryFileSystem createFileSystem() {

@@ -1,6 +1,6 @@
 package net.sf.cotta.memory;
 
-public class TreeBasedInMemoryFileSystemTest extends InMemoryFileSystemTest {
+public class TreeBasedInMemoryFileSystemTest extends InMemoryFileSystemTestBase {
 
   @Override
   protected InMemoryFileSystem createFileSystem() {

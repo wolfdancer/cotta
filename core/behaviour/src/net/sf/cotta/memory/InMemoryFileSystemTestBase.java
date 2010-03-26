@@ -20,7 +20,7 @@ import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
 
-public abstract class InMemoryFileSystemTest extends TestCase {
+public abstract class InMemoryFileSystemTestBase extends TestCase {
   public TFileFactory factory;
   public InMemoryFileSystem fileSystem;
 

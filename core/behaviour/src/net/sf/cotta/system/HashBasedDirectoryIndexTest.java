@@ -3,7 +3,7 @@ package net.sf.cotta.system;
 import net.sf.cotta.PathSeparator;
 import net.sf.cotta.memory.ListingOrder;
 
-public class HashBasedDirectoryIndexTest extends AbstractDirectoryIndexTest {
+public class HashBasedDirectoryIndexTest extends AbstractDirectoryIndexTestBase {
 
   @Override
   protected DirectoryIndex<DummyFileContent> newDirectoryIndexWithSort() {

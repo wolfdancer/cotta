@@ -8,7 +8,7 @@ import net.sf.cotta.test.assertion.CodeBlock;
 
 import java.util.List;
 
-public abstract class AbstractDirectoryIndexTest extends TestCase {
+public abstract class AbstractDirectoryIndexTestBase extends TestCase {
 
   protected abstract DirectoryIndex<DummyFileContent> newDirectoryIndexWithSort();
 
