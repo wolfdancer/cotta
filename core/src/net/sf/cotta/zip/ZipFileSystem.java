@@ -3,6 +3,7 @@ package net.sf.cotta.zip;
 import net.sf.cotta.*;
 import net.sf.cotta.io.OutputMode;
 import net.sf.cotta.memory.InMemoryFileSystem;
+import net.sf.cotta.system.FileSystem;
 
 import java.io.File;
 import java.io.IOException;

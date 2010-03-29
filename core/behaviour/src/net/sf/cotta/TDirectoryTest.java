@@ -3,6 +3,7 @@ package net.sf.cotta;
 import net.sf.cotta.memory.InMemoryFileSystem;
 import net.sf.cotta.memory.ListingOrder;
 import net.sf.cotta.physical.PhysicalFileSystemTestCase;
+import net.sf.cotta.system.FileSystem;
 import net.sf.cotta.test.assertion.CodeBlock;
 import net.sf.cotta.zip.ZipFileSystem;
 import org.jmock.Expectations;

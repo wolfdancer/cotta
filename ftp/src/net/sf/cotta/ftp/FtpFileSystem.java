@@ -1,6 +1,6 @@
 package net.sf.cotta.ftp;
 
-import net.sf.cotta.FileSystem;
+import net.sf.cotta.system.FileSystem;
 import net.sf.cotta.PathContent;
 import net.sf.cotta.TIoException;
 import net.sf.cotta.TPath;

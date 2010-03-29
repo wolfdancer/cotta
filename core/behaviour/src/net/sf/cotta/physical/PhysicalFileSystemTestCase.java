@@ -2,6 +2,7 @@ package net.sf.cotta.physical;
 
 import net.sf.cotta.*;
 import net.sf.cotta.acceptance.TfsTestCase;
+import net.sf.cotta.system.FileSystem;
 
 public class PhysicalFileSystemTestCase extends TfsTestCase {
   protected FileSystem fileSystem;

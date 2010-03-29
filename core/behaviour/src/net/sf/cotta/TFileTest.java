@@ -2,6 +2,7 @@ package net.sf.cotta;
 
 import net.sf.cotta.io.*;
 import net.sf.cotta.memory.InMemoryFileSystem;
+import net.sf.cotta.system.FileSystem;
 import net.sf.cotta.test.TestCase;
 import org.jmock.Expectations;
 import org.jmock.Mockery;

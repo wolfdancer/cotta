@@ -2,6 +2,7 @@ package net.sf.cotta;
 
 import net.sf.cotta.memory.InMemoryFileSystem;
 import net.sf.cotta.physical.PhysicalFileSystem;
+import net.sf.cotta.system.FileSystem;
 
 import java.io.File;
 import java.net.MalformedURLException;

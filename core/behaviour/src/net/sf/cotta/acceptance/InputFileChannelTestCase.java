@@ -4,6 +4,7 @@ import net.sf.cotta.*;
 import net.sf.cotta.io.InputManager;
 import net.sf.cotta.io.InputProcessor;
 import net.sf.cotta.memory.AccesssUtil;
+import net.sf.cotta.system.FileSystem;
 import net.sf.cotta.test.assertion.CodeBlock;
 
 import java.io.IOException;

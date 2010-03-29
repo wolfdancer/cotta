@@ -2,6 +2,7 @@ package net.sf.cotta;
 
 import net.sf.cotta.io.OutputManager;
 import net.sf.cotta.io.OutputProcessor;
+import net.sf.cotta.system.FileSystem;
 
 import java.io.File;
 import java.io.IOException;

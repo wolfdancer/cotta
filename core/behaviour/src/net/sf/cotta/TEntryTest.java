@@ -1,5 +1,6 @@
 package net.sf.cotta;
 
+import net.sf.cotta.system.FileSystem;
 import net.sf.cotta.test.TestCase;
 import org.jmock.Expectations;
 import org.jmock.Mockery;

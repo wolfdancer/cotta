@@ -1,6 +1,6 @@
 package net.sf.cotta.zip;
 
-import net.sf.cotta.FileSystem;
+import net.sf.cotta.system.FileSystem;
 import net.sf.cotta.*;
 import net.sf.cotta.io.OutputMode;
 import net.sf.cotta.test.assertion.CodeBlock;

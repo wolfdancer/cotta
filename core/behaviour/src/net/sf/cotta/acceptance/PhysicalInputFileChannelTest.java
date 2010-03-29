@@ -1,6 +1,6 @@
 package net.sf.cotta.acceptance;
 
-import net.sf.cotta.FileSystem;
+import net.sf.cotta.system.FileSystem;
 import net.sf.cotta.TFile;
 import net.sf.cotta.io.InputManager;
 import net.sf.cotta.io.InputProcessor;

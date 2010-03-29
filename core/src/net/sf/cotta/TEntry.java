@@ -1,5 +1,7 @@
 package net.sf.cotta;
 
+import net.sf.cotta.system.FileSystem;
+
 import java.io.File;
 
 /**

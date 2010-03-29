@@ -2,6 +2,7 @@ package net.sf.cotta.acceptance;
 
 import net.sf.cotta.*;
 import net.sf.cotta.physical.PhysicalFileSystem;
+import net.sf.cotta.system.FileSystem;
 
 public class PhysicalTfsTest extends TfsTestCase {
 
