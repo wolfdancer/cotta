@@ -10,6 +10,9 @@ import org.jmock.Mockery;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 
 public class TFileTest extends TestCase {
 
@@ -302,6 +305,20 @@ public class TFileTest extends TestCase {
     TFile file = TFileFactory.physical().file(pathString);
     ensure.that(file.toPath()).eq(TPath.parse(pathString));
     ensure.that(file.toCanonicalFile()).eq(file.factory().file(file.toCanonicalPath()));
+  }
+
+  public void testToUri() {
+    String path = "/one/two/three.txt";
+    TFile file = TFileFactory.physical().file(path);
+    URI uri = file.toUri();
+    ensure.that(uri).eq(file.toJavaFile().toURI());
+  }
+  
+  public void testToUrl() throws MalformedURLException {
+    String path = "/one/two/three.txt";
+    TFile file = TFileFactory.physical().file(path);
+    URL url = file.toUrl();
+    ensure.that(url).eq(file.toJavaFile().toURL());
   }
 
 }

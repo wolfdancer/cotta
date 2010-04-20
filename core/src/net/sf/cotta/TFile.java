@@ -1,9 +1,12 @@
 package net.sf.cotta;
 
 import net.sf.cotta.io.*;
-import net.sf.cotta.system.*;
+import net.sf.cotta.system.FileSystem;
 
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +21,6 @@ import java.util.List;
  * @see TDirectory#file(TPath)
  */
 public class TFile extends TEntry {
-  private static final int READ_BUFFER_SIZE = 64;
 
   /**
    * Create TFile instance backed up by the file system
@@ -285,22 +287,7 @@ public class TFile extends TEntry {
    * @throws TIoException error in reading the file
    */
   public String load() throws TIoException {
-    final StringBuffer buffer = new StringBuffer();
-    read(new InputProcessor() {
-      public void process(InputManager io) throws IOException {
-        loadContent(buffer, io.reader());
-      }
-    });
-    return buffer.toString();
-  }
-
-  private void loadContent(StringBuffer content, Reader reader) throws IOException {
-    char[] buffer = new char[READ_BUFFER_SIZE];
-    int read = 0;
-    while (read != -1) {
-      content.append(buffer, 0, read);
-      read = reader.read(buffer, 0, buffer.length);
-    }
+    return Input.with(streamFactory()).load();
   }
 
   /**
@@ -346,5 +333,13 @@ public class TFile extends TEntry {
    */
   public TFile toCanonicalFile() {
     return factory().file(toCanonicalPath());
+  }
+
+  public URI toUri() {
+    return filesystem().toUri(toPath());
+  }
+
+  public URL toUrl() throws MalformedURLException {
+    return toUri().toURL();
   }
 }

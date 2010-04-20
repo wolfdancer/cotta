@@ -1,14 +1,24 @@
 package net.sf.cotta.zip;
 
-import net.sf.cotta.system.FileSystem;
-import net.sf.cotta.*;
+import net.sf.cotta.TDirectory;
+import net.sf.cotta.TFileNotFoundException;
+import net.sf.cotta.TIoException;
+import net.sf.cotta.TPath;
+import net.sf.cotta.TestCase;
+import net.sf.cotta.io.Input;
 import net.sf.cotta.io.OutputMode;
+import net.sf.cotta.system.FileSystem;
 import net.sf.cotta.test.assertion.CodeBlock;
 import net.sf.cotta.utils.ClassPathEntry;
 import net.sf.cotta.utils.ClassPathEntryLocator;
 import net.sf.cotta.utils.ClassPathType;
 
-import java.io.*;
+import java.io.Closeable;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.List;
 
 public class ZipFileSystemTest extends TestCase {
@@ -96,6 +106,13 @@ public class ZipFileSystemTest extends TestCase {
   public void testGetLength() throws Exception {
     TPath path = TPath.parse("/test/test.txt");
     ensure.that(zip.fileLength(path)).eq(TEST_TXT_CONTENT.getBytes().length);
+  }
+
+  public void testToUri() throws IOException {
+    TPath path = TPath.parse("/test/test.txt");
+    InputStream inputStream = zip.toUri(path).toURL().openStream();
+    String content = Input.with(inputStream).load();
+    ensure.that(content).eq(TEST_TXT_CONTENT);
   }
 
   public void testNotImplementCreateDir() throws Exception {

@@ -2,6 +2,7 @@ package net.sf.cotta;
 
 import net.sf.cotta.memory.InMemoryFileSystem;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;

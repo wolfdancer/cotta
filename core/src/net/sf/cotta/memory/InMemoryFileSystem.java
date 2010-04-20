@@ -16,6 +16,8 @@ import net.sf.cotta.system.TreeBasedDirectoryIndex;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.channels.FileChannel;
 
 /**
@@ -167,6 +169,14 @@ public class InMemoryFileSystem implements FileSystem, ContentManager<InMemoryFi
 
   public int hashCode(TPath path) {
     return dirIndex.hashCode(path);
+  }
+
+  public URI toUri(TPath path) {
+    try {
+      return new URI("memory", null, path.toPathString(), null);
+    } catch (URISyntaxException e) {
+      throw new Error(e.getMessage(), e);
+    }
   }
 
   public File toJavaFile(TPath path) {

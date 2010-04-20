@@ -8,6 +8,7 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
 import java.io.*;
+import java.net.URI;
 
 public final class CommonsNetFtpClient implements FtpClient {
 

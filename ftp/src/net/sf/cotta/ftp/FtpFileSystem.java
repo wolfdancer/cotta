@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.nio.channels.FileChannel;
 
 public class FtpFileSystem implements FileSystem {
@@ -157,6 +158,10 @@ public class FtpFileSystem implements FileSystem {
 
   public int hashCode(TPath path) {
     return path.hashCode();
+  }
+
+  public URI toUri(TPath path) {
+    throw new UnsupportedOperationException();
   }
 
   private boolean isConstantPath(TPath path) {

@@ -50,7 +50,7 @@ public class TFileFactory {
     this.defaultEncoding = defaultEncoding;
   }
 
-  FileSystem getFileSystem() {
+  public FileSystem getFileSystem() {
     return fileSystem;
   }
 

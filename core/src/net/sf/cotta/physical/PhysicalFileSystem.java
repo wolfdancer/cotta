@@ -5,6 +5,7 @@ import net.sf.cotta.*;
 import net.sf.cotta.io.OutputMode;
 
 import java.io.*;
+import java.net.URI;
 import java.nio.channels.FileChannel;
 
 /**
@@ -136,6 +137,10 @@ public class PhysicalFileSystem implements FileSystem {
 
   public int hashCode(TPath path) {
     return file(path).hashCode();
+  }
+
+  public URI toUri(TPath path) {
+    return toJavaFile(path).toURI();
   }
 
   public File toJavaFile(TPath path) {

@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.channels.FileChannel;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
@@ -22,6 +24,7 @@ public class ZipFileSystem implements FileSystem, TResource {
   private ZipFile file;
   private InMemoryFileSystem entrySystem;
   private TFileFactory factory;
+  private File jarFile;
 
   public ZipFileSystem(File jarFile) throws IOException {
     entrySystem = new InMemoryFileSystem();
@@ -29,6 +32,7 @@ public class ZipFileSystem implements FileSystem, TResource {
     entrySystem.setFileSizeIncrement(0);
     factory = new TFileFactory(entrySystem);
     load(jarFile);
+    this.jarFile = jarFile;
   }
 
   private void load(File jarFile) throws IOException {
@@ -134,12 +138,20 @@ public class ZipFileSystem implements FileSystem, TResource {
     return path.hashCode();
   }
 
+  public URI toUri(TPath path) {
+    try {
+      return new URI("jar:" + jarFile.toURI().toString() + "!" + path.toPathString());
+    } catch (URISyntaxException e) {
+      throw new Error(e.getMessage(), e);
+    }
+  }
+
   public File toJavaFile(TPath path) {
     throw new UnsupportedOperationException("ZipFileSystem");
   }
 
   public String toCanonicalPath(TPath path) {
-    return "Zip://" + pathString(path);
+    return "jar://" + pathString(path);
   }
 
   public FileChannel createInputChannel(TPath path) throws TIoException {

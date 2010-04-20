@@ -8,6 +8,7 @@ import net.sf.cotta.io.OutputMode;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.nio.channels.FileChannel;
 
 /**
@@ -90,4 +91,10 @@ public interface FileSystem {
    */
   int hashCode(TPath path);
 
+  /**
+   * Returns the URI for the path
+   * @param path path
+   * @return URI
+   */
+  URI toUri(TPath path);
 }

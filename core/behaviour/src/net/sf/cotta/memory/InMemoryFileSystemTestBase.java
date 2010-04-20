@@ -32,10 +32,17 @@ public abstract class InMemoryFileSystemTestBase extends TestCase {
 
   protected abstract InMemoryFileSystem createFileSystem();
 
+  public void testToUri() {
+    fileSystem.toUri(TPath.parse("/test"));
+  }
+
   public void testHaveBasicDirectoryExisting() throws Exception {
     ensure.that(fileSystem.dirExists(TPath.parse("/"))).eq(true);
     ensure.that(fileSystem.dirExists(TPath.parse("."))).eq(true);
-    ensure.that(fileSystem.dirExists(TPath.parse("C:\\"))).eq(PlatformInfoUtil.isWindows());
+  }
+
+  public void testDoesNotHaveDrive() {
+    ensure.that(fileSystem.dirExists(TPath.parse("C:\\"))).eq(false);
   }
 
   public void testInstantiateFileWithCorrectName() throws Exception {

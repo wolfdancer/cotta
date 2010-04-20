@@ -6,6 +6,7 @@ import net.sf.cotta.system.FileSystem;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.nio.channels.FileChannel;
 
 /**
@@ -118,6 +119,10 @@ public class ControlledFileSystem implements FileSystem {
   public int hashCode(TPath path) {
     readControl(path);
     return fileSystem.hashCode(path);
+  }
+
+  public URI toUri(TPath path) {
+    return fileSystem.toUri(path);
   }
 
   private void readControl(TPath path) {

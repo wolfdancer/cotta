@@ -209,4 +209,10 @@ public class PhysicalFileSystemTest extends PhysicalFileSystemTestCase {
       }
     }).throwsException(TIoException.class);
   }
+  
+  public void testToUri() {
+    TPath path = TPath.parse("tmp/test.txt");
+    ensure.that(fileSystem.toUri(path))
+            .eq(fileSystem.toJavaFile(path).toURI());
+  }
 }

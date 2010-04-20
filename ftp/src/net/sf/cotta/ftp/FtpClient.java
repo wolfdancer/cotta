@@ -5,6 +5,7 @@ import net.sf.cotta.TPath;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 
 public interface FtpClient {
 

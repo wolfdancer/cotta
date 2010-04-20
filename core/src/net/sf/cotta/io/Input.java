@@ -6,12 +6,16 @@ import net.sf.cotta.TPath;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.nio.channels.FileChannel;
 
 /**
  * Input processing class used to expose the API in the right context
  */
 public class Input {
+
+  private static final int READ_BUFFER_SIZE = 64;
+
   private InputManager manager;
 
   public Input(InputManager manager) {
@@ -19,20 +23,20 @@ public class Input {
   }
 
   /**
-   * Read the file with an input processor
+   * Read the input with an input processor
    *
    * @param processor processor for the input
-   * @throws TIoException error in reading the file
+   * @throws TIoException error in reading the input
    */
   public void read(InputProcessor processor) throws TIoException {
     manager.open(processor);
   }
 
   /**
-   * Read the file with a line processor
+   * Read the input with a line processor
    *
    * @param lineProcessor line processor for the lines
-   * @throws TIoException error in reading the file
+   * @throws TIoException error in reading the input
    */
   public void readLines(final LineProcessor lineProcessor) throws TIoException {
     read(new InputProcessor() {
@@ -45,6 +49,31 @@ public class Input {
         }
       }
     });
+  }
+
+  /**
+   * Load the content of the input into string using system default encoding
+   *
+   * @return content of the input
+   * @throws TIoException error in reading the input
+   */
+  public String load() throws TIoException {
+    final StringBuffer buffer = new StringBuffer();
+    read(new InputProcessor() {
+      public void process(InputManager io) throws IOException {
+        loadContent(buffer, io.reader());
+      }
+    });
+    return buffer.toString();
+  }
+
+  private void loadContent(StringBuffer content, Reader reader) throws IOException {
+    char[] buffer = new char[READ_BUFFER_SIZE];
+    int read = 0;
+    while (read != -1) {
+      content.append(buffer, 0, read);
+      read = reader.read(buffer, 0, buffer.length);
+    }
   }
 
   /**
