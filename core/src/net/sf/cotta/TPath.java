@@ -91,6 +91,15 @@ public final class TPath implements Comparable<TPath> {
     return subpath(0, count - 1);
   }
 
+
+  /**
+   * The root path of the current path
+   * @return root path of the path
+   */
+  public TPath root() {
+    return subpath(0, 0);
+  }
+
   /**
    * Join with a path element to form a new path.  Used by TDirectory to get subdirectory or file
    *
@@ -426,7 +435,7 @@ public final class TPath implements Comparable<TPath> {
   public TPath trim() {
     int len = count;
     int st = 0;
-    
+
     while (st < len && isCurrentDirectoryReference(elements[offset + st])) {
       st++;
     }

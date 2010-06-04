@@ -288,6 +288,22 @@ public class TPathTest extends TestCase {
     ensure.that(joined.toElementArray()).eq("one", "two", "three", "four");
   }
 
+  public void testRootPathReturnsRootPath() {
+    TPath path = TPath.parse("/root/one/two");
+    ensure.that(path.root()).eq(TPath.parse("/"));
+  }
+
+  public void testRootPathReturnsRootPathForDriveLetter() {
+    TPath path = TPath.parse("C:/root/one/two");
+    ensure.that(path.root()).eq(TPath.parse("C:/"));
+  }
+
+  public void testRootPathRetursSelf() {
+    TPath path = TPath.parse("/");
+    ensure.that(path.root()).eq(path);
+    ensure.that(path.root()).sameAs(path);
+  }
+
   public void testTrim() {
     TPath path = TPath.parse("one/two");
     ensure.that(path.trim()).sameAs(path);

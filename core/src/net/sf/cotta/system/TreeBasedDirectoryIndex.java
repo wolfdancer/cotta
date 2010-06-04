@@ -87,13 +87,7 @@ public class TreeBasedDirectoryIndex<F extends FileContent> extends AbstractDire
   }
 
   public void createDir(TPath path) throws TIoException {
-    if (dirExists(path)) {
-      throw new IllegalArgumentException(path.toPathString() + " already exists");
-    }
-    if (fileExists(path)) {
-      throw new TIoException(path, "already exists as a file");
-    }
-
+    validateBeforeCreateDir(path);
     DirTreeNode current = roots.get(path.headElement());
     for (int i = 0; i < path.length(); i++) {
       DirTreeNode child = current.getDir(path.elementAt(i));

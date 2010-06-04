@@ -56,5 +56,9 @@ public abstract class AbstractDirectoryIndex<F extends FileContent> implements D
     if (fileExists(path)) {
       throw new TIoException(path, "already exists as a file");
     }
+    TPath root = path.root();
+    if (!dirExists(root)) {
+      throw new IllegalStateException("The root of path of <" + path + "> does not exist:<" + root + ">");
+    }
   }
 }

@@ -12,6 +12,19 @@ public abstract class AbstractDirectoryIndexTestBase extends TestCase {
 
   protected abstract DirectoryIndex<DummyFileContent> newDirectoryIndexWithSort();
 
+  public void testCreatFileUnderInvalidRoot() throws TIoException {
+    final DirectoryIndex<DummyFileContent> directoryIndex = newDirectoryIndexWithSort();
+
+    final TPath path = TPath.parse("C:/path/path2");
+    ensure.that(new CodeBlock() {
+      public void execute() throws Exception {
+        directoryIndex.createDir(path);
+      }
+    }).throwsException(IllegalStateException.class)
+            .message().contains(path.toPathString())
+            .contains(path.root().toPathString());
+  }
+
   public void testCreateFile() throws Exception {
     final DirectoryIndex<DummyFileContent> dirIndex = newDirectoryIndexWithSort();
 

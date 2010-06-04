@@ -17,6 +17,7 @@ import net.sf.cotta.utils.PlatformInfoUtil;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.Date;
 import java.util.List;
 
@@ -33,7 +34,8 @@ public abstract class InMemoryFileSystemTestBase extends TestCase {
   protected abstract InMemoryFileSystem createFileSystem();
 
   public void testToUri() {
-    fileSystem.toUri(TPath.parse("/test"));
+    URI uri = fileSystem.toUri(TPath.parse("/test"));
+    ensure.that(uri.getPath()).eq("/test");
   }
 
   public void testHaveBasicDirectoryExisting() throws Exception {
