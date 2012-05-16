@@ -1,10 +1,9 @@
+.idea
+*.iml
 *.iws
-asserts/bin/*
-build/*
-tmp/*
+build
+tmp
 classes
-core/bin/*
-ftp/bin/*
-testbase/bin/*
-website/output/*
-.idea/*
+*/target
+*/bin
+website/output
