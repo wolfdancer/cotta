@@ -42,5 +42,11 @@
       <artifactId>commons-net</artifactId>
       <version>1.4.1</version>
     </dependency>
+    <dependency>
+      <groupId>org.mockftpserver</groupId>
+      <artifactId>MockFtpServer</artifactId>
+      <version>2.3</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>

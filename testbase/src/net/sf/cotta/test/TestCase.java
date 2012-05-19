@@ -149,7 +149,7 @@ abstract public class TestCase extends junit.framework.TestCase {
     }
     for (Field field : getClass().getFields()) {
       ForFixture forFixture = field.getAnnotation(ForFixture.class);
-      if (forFixture != null && field.getType().equals(value.getClass())) {
+      if (forFixture != null && field.getType().isAssignableFrom(value.getClass())) {
         try {
           field.set(this, value);
         } catch (IllegalAccessException e) {
