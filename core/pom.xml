@@ -36,6 +36,7 @@
       <groupId>net.sf.cotta</groupId>
       <artifactId>cotta-testbase</artifactId>
       <version>3.0-SNAPSHOT</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>
