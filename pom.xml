@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>net.sf.cotta</groupId>
+  <groupId>com.guidewire.tools</groupId>
   <artifactId>cotta</artifactId>
   <packaging>pom</packaging>
   <version>3.0-SNAPSHOT</version>
@@ -33,4 +33,15 @@
       </plugin>
     </plugins>
   </build>
+
+  <distributionManagement>
+    <repository>
+      <id>gw.releases</id>
+      <url>http://nexus/content/repositories/releases</url>
+    </repository>
+    <snapshotRepository>
+      <id>gw.snapshots</id>
+      <url>http://nexus/content/repositories/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
 </project>

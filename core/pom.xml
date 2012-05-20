@@ -5,12 +5,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>net.sf.cotta</groupId>
+    <groupId>com.guidewire.tools</groupId>
     <artifactId>cotta</artifactId>
     <version>3.0-SNAPSHOT</version>
   </parent>
 
-  <groupId>net.sf.cotta</groupId>
+  <groupId>com.guidewire.tools</groupId>
   <artifactId>cotta-core</artifactId>
   <version>3.0-SNAPSHOT</version>
 
@@ -33,7 +33,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>net.sf.cotta</groupId>
+      <groupId>com.guidewire.tools</groupId>
       <artifactId>cotta-testbase</artifactId>
       <version>3.0-SNAPSHOT</version>
       <scope>test</scope>
