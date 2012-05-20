@@ -6,6 +6,7 @@ import net.sf.cotta.TPath;
 import net.sf.cotta.ftp.client.commonsNet.CommonsNetFtpClient;
 import net.sf.cotta.io.OutputMode;
 import org.apache.commons.io.IOUtils;
+import org.mockftpserver.fake.filesystem.FileEntry;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -22,11 +23,9 @@ public class FtpFileSystemTest extends FtpTestCase {
   }
 
   public void testTellFileExistsOrNot() throws TIoException {
-    boolean exists = fileSystem.fileExists(_("/testFile"));
-    ensure.that(exists).isFalse();
-    rootDir.file("testFile").save("");
-    exists = fileSystem.fileExists(_("/testFile"));
-    ensure.that(exists).isTrue();
+    ensure.that(fileSystem.fileExists(_("/testFile"))).isFalse();
+    ftpServerFileSystem.add(new FileEntry("/testFile"));
+    ensure.that(fileSystem.fileExists(_("/testFile"))).isTrue();
   }
 
   public void testTellDirExistsOrNot() throws IOException {
@@ -53,9 +52,10 @@ public class FtpFileSystemTest extends FtpTestCase {
   }
 
   public void testBeAbleToCreateDirectory() throws IOException {
+    fileSystem.createDir(_("hello"));
     fileSystem.createDir(_("hello/world"));
-    ensure.that(ftpClient.listNames()[0]).eq("hello/");
-    ensure.that(ftpClient.listNames("hello")[0]).eq("world/");
+    ensure.that(ftpClient.listNames()[0]).eq("hello");
+    ensure.that(ftpClient.listNames("hello")[0]).eq("world");
   }
 
   public void testNotCountFileWhenListingDir() throws IOException {
@@ -82,7 +82,7 @@ public class FtpFileSystemTest extends FtpTestCase {
     fileSystem.createFile(_("abc"));
     fileSystem.createDir(_("hello"));
     fileSystem.moveFile(_("abc"), _("hello/abc"));
-    ensure.that(ftpClient.listNames()[0]).eq("hello/");
+    ensure.that(ftpClient.listNames()[0]).eq("hello");
     ensure.that(ftpClient.listNames("hello")[0]).eq("abc");
   }
 
@@ -90,8 +90,8 @@ public class FtpFileSystemTest extends FtpTestCase {
     fileSystem.createDir(_("abc"));
     fileSystem.createDir(_("hello"));
     fileSystem.moveDirectory(_("abc"), _("hello/abc"));
-    ensure.that(ftpClient.listNames()[0]).eq("hello/");
-    ensure.that(ftpClient.listNames("hello")[0]).eq("abc/");
+    ensure.that(ftpClient.listNames()[0]).eq("hello");
+    ensure.that(ftpClient.listNames("hello")[0]).eq("abc");
   }
 
   public void testBeAbleToTellFileLength() throws IOException {

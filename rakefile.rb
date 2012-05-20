@@ -49,12 +49,11 @@ ftp = BuildMaster::JavaProject.new(root.dir('ftp')) do |project|
   project.tests_with testbase
 end
 
-task :default => [:test, :package, :javadoc]
+task :default => [:package, :javadoc]
 task :make_testbase => [:make_asserts]
 task :make_cotta => [:make_testbase]
 task :make_ftp => [:make_cotta]
 task :compile => [:make_ftp]
-task :test => [:make_cotta, :make_ftp, :make_testbase, :make_asserts]
 
 task :make_asserts do
   asserts.make
@@ -74,18 +73,6 @@ end
 
 task :clean do
   build.delete
-end
-
-task :test do
-  cobertura = root.file('lib/cobertura/cobertura-1.9.1.jar')
-  asserts.junit(report.dir('asserts')).for_tests('*Test.java').with_coverage(cobertura).run
-  testbase.junit(report.dir('testbase')).for_tests('*Test.java').with_coverage(cobertura).run
-  core.junit(report.dir('core')).for_tests('*Test.java').with_coverage(cobertura).run
-  junit = ftp.junit(report.dir('ftp'))
-  # ftp_test = junit.for_tests('*Test.java')
-  ftp_test = junit.for_test('net.sf.cotta.ftp.AllTests')
-  ftp_test.jvmargs.push('-Xmx512m')
-  # ftp_test.with_coverage(cobertura).run
 end
 
 task :package do
