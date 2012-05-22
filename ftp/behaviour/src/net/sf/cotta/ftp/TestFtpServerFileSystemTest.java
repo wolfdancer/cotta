@@ -1,52 +1,46 @@
 package net.sf.cotta.ftp;
 
-import net.sf.cotta.TDirectory;
 import net.sf.cotta.TFileFactory;
 import net.sf.cotta.TFileNotFoundException;
-import net.sf.cotta.io.InputManager;
-import net.sf.cotta.io.InputProcessor;
-import net.sf.cotta.io.OutputManager;
-import net.sf.cotta.io.OutputProcessor;
 import net.sf.cotta.test.assertion.CodeBlock;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.net.ftp.FTPClient;
+import org.mockftpserver.fake.filesystem.DirectoryEntry;
+import org.mockftpserver.fake.filesystem.FileEntry;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.List;
+import java.io.InputStream;
+import java.util.Arrays;
 
 public class TestFtpServerFileSystemTest extends FtpTestCase {
   public void testBeAtRootAndNoFileInitially() throws InterruptedException, IOException {
     String workingDirectory = ftpClient.printWorkingDirectory();
     ensure.that(workingDirectory).eq("/");
-    String[] listedNames = ftpClient.listNames();
-    ensure.that(listedNames).eq();
+    ensure.that(ftpClient.listNames()).eq();
   }
 
   public void testBeAbleToListFiles() throws IOException {
-    rootDir.file("testFile").ensureExists();
+    ftpServerFileSystem.add(new FileEntry("/testFile"));
     String[] listedNames = ftpClient.listNames();
     ensure.that(listedNames).eq("testFile");
   }
 
   public void testBeAbleToListDirectories() throws IOException {
-    rootDir.file("testDir").ensureExists();
-    String[] listedNames = ftpClient.listNames();
-    ensure.that(listedNames).eq("testDir");
+    ftpServerFileSystem.add(new DirectoryEntry("/testDir"));
+    ensure.that(ftpClient.listNames()).eq("testDir");
   }
 
   public void testBeAbleToMakeDirectory() throws IOException {
-    boolean success = ftpClient.makeDirectory("testDir");
-    ensure.that(success).isTrue();
-    List<TDirectory> listedDirs = rootDir.list().dirs();
-    ensure.that(listedDirs).eq(rootDir.dir("testDir"));
+    ensure.that(ftpClient.makeDirectory("testDir")).isTrue();
+    ensure.that(((DirectoryEntry) ftpServerFileSystem.listFiles("/").get(0)).getPath()).eq("/testDir");
   }
 
   public void testBeAbleToRemoveDirectory() throws IOException {
     ftpClient.makeDirectory("testDir");
     ftpClient.removeDirectory("testDir");
-    ensure.that(rootDir.list().dirs()).eq();
+    ensure.that(ftpServerFileSystem.listFiles("/")).eq();
   }
 
   public void testBeAbleToChangeWorkingDirectory() throws IOException {
@@ -57,15 +51,15 @@ public class TestFtpServerFileSystemTest extends FtpTestCase {
   }
 
   public void testBeAbleToStoreFile() throws IOException {
-    final byte[] fileContent = createTestFileContent();
-    ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
-    ftpClient.storeFile("testFile", new ByteArrayInputStream(fileContent));
-    rootDir.file("testFile").read(new InputProcessor() {
-      public void process(InputManager inputManager) throws IOException {
-        byte[] fileContentRead = IOUtils.toByteArray(inputManager.inputStream());
-        ensure.that(fileContentRead).eq(fileContentRead);
-      }
-    });
+    String fileContent = "Doogie Howser";
+    ftpClient.setFileType(FTPClient.ASCII_FILE_TYPE);
+    ftpClient.storeFile("testFile", new ByteArrayInputStream(fileContent.getBytes()));
+    InputStream inputStream = ((FileEntry) ftpServerFileSystem.getEntry("/testFile")).createInputStream();
+    try {
+      ensure.that(IOUtils.toString(inputStream)).eq(fileContent);
+    } finally {
+      inputStream.close();
+    }
   }
 
   public void testFileNotFoundOnServer() throws IOException {
@@ -79,28 +73,24 @@ public class TestFtpServerFileSystemTest extends FtpTestCase {
   }
 
   public void testBeAbleToRetrieveFile() throws IOException {
-    final byte[] fileContent = createTestFileContent();
-    rootDir.file("testFile").write(new OutputProcessor() {
-      public void process(OutputManager manager) throws IOException {
-        IOUtils.write(fileContent, manager.outputStream());
-      }
-    });
+    String fileContent = "Hello, world!";
+    ftpServerFileSystem.add(new FileEntry("/testFile", fileContent));
     ByteArrayOutputStream fileContentReadBuffer = new ByteArrayOutputStream();
-    ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
+    ftpClient.setFileType(FTPClient.ASCII_FILE_TYPE);
     ftpClient.retrieveFile("testFile", fileContentReadBuffer);
-    ensure.that(fileContentReadBuffer.toByteArray()).eq(fileContent);
+    ensure.that(fileContentReadBuffer.toString()).eq(fileContent);
   }
 
   public void testBeAbleToRenameFile() throws IOException {
-    rootDir.file("testFile").save("");
+    ftpServerFileSystem.add(new FileEntry("/testFile"));
     ftpClient.rename("testFile", "renamedTestFile");
-    ensure.that(rootDir.list().files()).eq(rootDir.file("renamedTestFile"));
+    ensure.that(((FileEntry) ftpServerFileSystem.listFiles("/").get(0)).getPath()).eq("/renamedTestFile");
   }
 
   public void testBeAbleToRenameDirectory() throws IOException {
-    rootDir.dir("testDir").ensureExists();
+    ftpServerFileSystem.add(new DirectoryEntry("/testDir"));
     ftpClient.rename("testDir", "renamedTestDir");
-    ensure.that(rootDir.list().dirs()).eq(rootDir.dir("renamedTestDir"));
+    ensure.that(((DirectoryEntry) ftpServerFileSystem.listFiles("/").get(0)).getPath()).eq("/renamedTestDir");
   }
 
   public void testBeAbleToChangeToParentDirectory() throws IOException {

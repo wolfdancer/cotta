@@ -52,8 +52,6 @@
     <pathelement location="${cls.ftp.behaviour}"/>
   </path>
 
-  <taskdef resource="emma_ant.properties" classpathref="dep.cls.prod.instr"/>
-
   <target name="cls.prod">
     <mkdir dir="${cls.prod}"/>
     <javac srcdir="${src.prod}" destdir="${cls.prod}" source="1.5" target="1.5" debug="true"
@@ -84,14 +82,6 @@
   </target>
 
   <target name="cls.prod.instr" depends="cls.prod">
-    <emma enabled="true">
-      <instr instrpath="${cls.prod}"
-             destdir="${cls.prod.instr}"
-             metadatafile="${report.coverage.metadata}"
-             merge="true">
-        <filter value="${cfg.coverage.includes}"/>
-      </instr>
-    </emma>
     <copy todir="${cls.prod.instr}">
       <fileset dir="${cls.prod}" excludes="**/*.class"/>
     </copy>
@@ -100,14 +90,6 @@
   <target name="report.coverage" depends="cls.prod.instr, cls.behaviour, cls.ftp.behaviour">
     <mkdir dir="${report.test}/core"/>
     <mkdir dir="${report.test}/ftp"/>
-    <junit printsummary="yes" fork="yes" haltonerror="yes" haltonfailure="yes">
-      <classpath refid="dep.report.coverage"/>
-      <jvmarg line="-Demma.coverage.out.file=${report.coverage}"/>
-      <jvmarg line="-Demma.coverage.out.merge=true"/>
-      <test name="net.sf.cotta.acceptance.AllTests" todir="${report.test}/core">
-        <formatter type="xml"/>
-      </test>
-    </junit>
     <junit fork="yes" haltonerror="yes" haltonfailure="yes">
       <classpath refid="dep.report.coverage"/>
       <!--<jvmarg line="-Demma.coverage.out.file=${report.coverage}"/>-->
@@ -117,47 +99,6 @@
         <formatter type="plain"/>
       </test>
     </junit>
-  </target>
-
-  <target name="report.coverage.summary" depends="report.coverage">
-    <emma enabled="true">
-      <report sourcepath="${src.prod}" metrics="${cfg.coverage.metrics}" columns="class,method,block,line,name">
-        <fileset dir=".">
-          <include name="${report.coverage}"/>
-          <include name="${report.coverage.metadata}"/>
-        </fileset>
-        <txt outfile="${basedir}/${report.covereage.txt}"/>
-        <html outfile="${basedir}/${report.covereage.html}"/>
-      </report>
-    </emma>
-    <loadfile srcfile="${basedir}/${report.covereage.txt}" property="report.coverage.summary">
-      <filterchain>
-        <linecontains>
-          <contains value="all classes"/>
-        </linecontains>
-      </filterchain>
-    </loadfile>
-    <echo>Coverage Summary:${line.separator}class, method, block, line${line.separator}${report.coverage.summary}
-    </echo>
-    <condition property="coverage.istoolow">
-      <contains string="${report.coverage.summary}" substring="!"/>
-    </condition>
-    <fail message="Coverage is below threshold: ${cfg.coverage.metrics}" if="coverage.istoolow"/>
-  </target>
-
-  <target name="report.duplication">
-    <taskdef name="cpd" classname="net.sourceforge.pmd.cpd.CPDTask">
-      <classpath>
-        <fileset dir="../lib/pmd">
-          <include name="**/*.jar"/>
-        </fileset>
-      </classpath>
-    </taskdef>
-    <cpd minimumTokenCount="50" outputFile="${report.duplicaiton}">
-      <fileset dir="${src.prod}">
-        <include name="**/*.java"/>
-      </fileset>
-    </cpd>
   </target>
 
   <target name="report.javadoc">
@@ -195,7 +136,7 @@
     <delete dir="build"/>
   </target>
 
-  <target name="reports" depends="report.coverage.summary, report.duplication, report.javadoc"/>
+  <target name="reports" depends="report.javadoc"/>
   <target name="all" depends="clean.env, reports, dist"/>
 
 </project>
