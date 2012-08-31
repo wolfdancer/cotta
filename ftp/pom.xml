@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>net.sf.cotta</groupId>
     <artifactId>cotta</artifactId>
-    <version>3.0-SNAPSHOT</version>
+    <version>3.0</version>
   </parent>
 
   <groupId>net.sf.cotta.ftp</groupId>
   <artifactId>cotta-ftp</artifactId>
-  <version>3.0-SNAPSHOT</version>
+  <version>3.0</version>
 
   <name>cotta-ftp</name>
 
@@ -26,16 +24,46 @@
     </testResources>
   </build>
 
+  <profiles>
+    <profile>
+      <id>release-sign-artifacts</id>
+      <activation>
+        <property>
+          <name>performRelease</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.1</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
   <dependencies>
     <dependency>
       <groupId>net.sf.cotta.core</groupId>
       <artifactId>cotta</artifactId>
-      <version>3.0-SNAPSHOT</version>
+      <version>3.0</version>
     </dependency>
     <dependency>
       <groupId>net.sf.cotta.testbase</groupId>
       <artifactId>cotta-testbase</artifactId>
-      <version>3.0-SNAPSHOT</version>
+      <version>3.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
