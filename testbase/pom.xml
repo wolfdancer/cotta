@@ -5,12 +5,12 @@
   <parent>
     <groupId>net.sf.cotta</groupId>
     <artifactId>cotta</artifactId>
-    <version>3.0</version>
+    <version>3.1-SNAPSHOT</version>
   </parent>
 
   <groupId>net.sf.cotta.testbase</groupId>
   <artifactId>cotta-testbase</artifactId>
-  <version>3.0</version>
+  <version>3.1-SNAPSHOT</version>
 
   <name>cotta-testbase</name>
 
@@ -53,7 +53,7 @@
     <dependency>
       <groupId>net.sf.cotta.asserts</groupId>
       <artifactId>cotta-asserts</artifactId>
-      <version>3.0</version>
+      <version>3.1-SNAPSHOT</version>
     </dependency>
   </dependencies>
 </project>

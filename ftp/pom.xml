@@ -5,12 +5,12 @@
   <parent>
     <groupId>net.sf.cotta</groupId>
     <artifactId>cotta</artifactId>
-    <version>3.0</version>
+    <version>3.1-SNAPSHOT</version>
   </parent>
 
   <groupId>net.sf.cotta.ftp</groupId>
   <artifactId>cotta-ftp</artifactId>
-  <version>3.0</version>
+  <version>3.1-SNAPSHOT</version>
 
   <name>cotta-ftp</name>
 
@@ -58,12 +58,12 @@
     <dependency>
       <groupId>net.sf.cotta.core</groupId>
       <artifactId>cotta</artifactId>
-      <version>3.0</version>
+      <version>3.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>net.sf.cotta.testbase</groupId>
       <artifactId>cotta-testbase</artifactId>
-      <version>3.0</version>
+      <version>3.1-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
