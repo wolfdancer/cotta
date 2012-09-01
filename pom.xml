@@ -27,7 +27,7 @@
 
   <scm>
     <connection>scm:git:git://github.com/wolfdancer/cotta.git</connection>
-    <developerConnection>scm:git:git://github.com/wolfdancer/cotta.git</developerConnection>
+    <developerConnection>scm:git:git@github.com:wolfdancer/cotta.git</developerConnection>
     <url>git@github.com:wolfdancer/cotta.git</url>
   </scm>
 
