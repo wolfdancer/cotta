@@ -57,7 +57,7 @@ public class TFileFactoryTest extends PhysicalFileSystemTestCase {
     TFile file = TFileFactory.fileFromUrl(url);
     //Ensure
     ensure.that(file.extname()).eq("jar");
-    ensure.that(file.basename()).eq("rt");
+    ensure.that(file.basename().equals("rt") || file.basename().equals("classes")).eq(true);
     ensure.that(file.exists()).eq(true);
   }
 
