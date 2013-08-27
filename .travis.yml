@@ -4,13 +4,15 @@ jdk:
   - openjdk7
   - openjdk6
 notifications:
-   email:
-     receipients: 
-       - cotta@googlegroups.com
-     on_success: change
-     on_failure: always
-  irc:
-    channels: 
-      - "irc.freenode.net#cotta"
-    on_success: always
-    on_failure: always
+  -
+    email:
+      receipients: 
+        - cotta@googlegroups.com
+      on_success: change
+      on_failure: always
+  -
+    irc:
+      channels: 
+        - "irc.freenode.net#cotta"
+      on_success: always
+      on_failure: always
