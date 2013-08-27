@@ -10,5 +10,6 @@ public class OutputModeTest extends TestCase {
 
   public void testNotBeAppendingModeForOverwrite() throws Exception {
     ensure.that(OutputMode.OVERWRITE.isAppend()).eq(false);
+    fail("trigger failure");
   }
 }
