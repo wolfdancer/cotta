@@ -4,8 +4,7 @@ jdk:
   - openjdk7
   - openjdk6
 notifications:
-  irc:
-    channels: 
-      - "chat.freenode.net#cotta"
-    on_success: always
-    on_failure: always
+  irc: "irc.freenode.net#cotta"
+  email:
+    recepients:
+      - shane.duan@rackspace.com
