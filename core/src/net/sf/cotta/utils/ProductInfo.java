@@ -29,7 +29,7 @@ public class ProductInfo {
     boolean loadingPassed = false;
     try {
       TDirectory pathRoot = pathEntry.openAsDirectory();
-      is = pathRoot.dir("META-INF").file("MANIFEST.MF").io().inputStream();
+      is = pathRoot.dir("META-INF").file("MANIFEST.MF").inputStream();
       manifest = new Manifest(is);
       loadingPassed = true;
     } catch (IOException e) {

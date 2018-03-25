@@ -1,0 +1,32 @@
+group = 'net.sf.cotta.core'
+description = 'cotta-core'
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src']
+        }
+        resources {
+            srcDirs = ['resources']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['behaviour/src']
+        }
+        resources {
+            srcDirs = ['behaviour/resources']
+        }
+    }
+}
+
+test {
+    include "**/*Test.class"
+}
+
+dependencies {
+    testCompile project(':cotta-testbase')
+    testCompile 'junit:junit:4.11+'
+    testCompile 'org.jmock:jmock:2.6.0'
+
+}

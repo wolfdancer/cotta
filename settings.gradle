@@ -1,0 +1,12 @@
+rootProject.name = 'cotta'
+include ':cotta-asserts'
+include ':cotta'
+include ':cotta-ftp'
+include ':cotta-testbase'
+include ':cotta-website'
+
+project(':cotta-asserts').projectDir = "$rootDir/asserts" as File
+project(':cotta').projectDir = "$rootDir/core" as File
+project(':cotta-ftp').projectDir = "$rootDir/ftp" as File
+project(':cotta-testbase').projectDir = "$rootDir/testbase" as File
+project(':cotta-website').projectDir = "$rootDir/website" as File

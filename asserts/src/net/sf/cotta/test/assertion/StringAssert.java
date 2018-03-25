@@ -1,6 +1,7 @@
 package net.sf.cotta.test.assertion;
 
 import org.hamcrest.BaseMatcher;
+import org.hamcrest.CoreMatchers;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.core.AllOf;
@@ -43,18 +44,18 @@ public class StringAssert extends BaseAssert<String, StringAssert> {
 
   public StringAssert contains(String... expectedValues) {
     Matcher<String> matcher = expectedValues.length == 1 ?
-            JUnitMatchers.containsString(expectedValues[0]) :
+            CoreMatchers.containsString(expectedValues[0]) :
             allof(expectedValues);
     matches(matcher);
     return this;
   }
 
   private Matcher<String> allof(String[] expectedValues) {
-    List<Matcher<? extends String>> matchers = new ArrayList<Matcher<? extends String>>(expectedValues.length);
+    List<Matcher<? super String>> matchers = new ArrayList<Matcher<? super String>>(expectedValues.length);
     for (String item : expectedValues) {
-      matchers.add(JUnitMatchers.containsString(item));
+      matchers.add(CoreMatchers.containsString(item));
     }
-    return new AllOf<String>(matchers);
+    return new AllOf<>(matchers);
   }
 
 }

@@ -10,9 +10,9 @@ import java.io.PrintStream;
 
 public class ProductInfoTest extends TestCase {
   public void testLoadWithThePathPointingToClass() throws Exception {
-    ProductInfo productInfo = ProductInfo.forClass(ProductInfo.class);
+    ProductInfo productInfo = forCottaResource();
     TDirectory directory = productInfo.loadedPath().openAsDirectory();
-    ensure.that(directory.file("net/sf/cotta/utils/ProductInfo.class").exists()).eq(true);
+    ensure.that(directory.file("META-INF/cotta.txt").exists()).eq(true);
   }
 
   public void testThrowTIoExceptionIfManifestNotFound() throws Exception {
@@ -24,7 +24,7 @@ public class ProductInfoTest extends TestCase {
   }
 
   public void testAquireInformationFromManifest() throws Exception {
-    ProductInfo productInfo = ProductInfo.forClass(ProductInfo.class);
+    ProductInfo productInfo = forCottaResource();
     ensure.that(productInfo.mainAttributeValue("Not-Available")).isNull();
     ensure.that(productInfo.otherAttributeValue("No-Such-Section", "Name")).isNull();
     ensure.that(productInfo.mainAttributeValue("Implementation-Title")).eq("Cotta");
@@ -32,7 +32,7 @@ public class ProductInfoTest extends TestCase {
   }
 
   public void testUnderstandPredefinedInformation() throws TIoException {
-    ProductInfo productInfo = ProductInfo.forClass(ProductInfo.class);
+    ProductInfo productInfo = forCottaResource();
     ensure.that(productInfo.title()).eq("Cotta");
     ensure.that(productInfo.vendor()).eq("SourceForge Cotta");
     ensure.that(productInfo.url()).eq("http://cotta.sourceforge.net");
@@ -43,9 +43,14 @@ public class ProductInfoTest extends TestCase {
   public void testPrintOutInfo() throws Exception {
     ByteArrayOutputStream output = new ByteArrayOutputStream();
     PrintStream printer = new PrintStream(output);
-    ProductInfo.forClass(ProductInfo.class).info(printer);
+    forCottaResource().info(printer);
     String result = output.toString();
     ensure.that(result).contains("SourceForge Cotta");
+  }
+
+  private ProductInfo forCottaResource() throws TIoException {
+    ClassPathEntry pathEntry = new ClassPathEntryLocator("/META-INF/cotta.txt").locateEntry();
+    return new ProductInfo(pathEntry);
   }
 
 }

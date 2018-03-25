@@ -44,7 +44,7 @@ public class ZipFileSystemTest extends TestCase {
   }
 
   private FileSystem filesystem() throws TIoException {
-    ClassPathEntryLocator classPathEntryLocator = new ClassPathEntryLocator(getClass());
+    ClassPathEntryLocator classPathEntryLocator = new ClassPathEntryLocator("/test.zip");
     final ClassPathEntry pathEntry = classPathEntryLocator.locateEntry();
     // "This test only works if behaviour class is not in a jar"
     ensure.that(pathEntry.type()).eq(ClassPathType.DIRECTORY);

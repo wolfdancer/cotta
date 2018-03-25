@@ -1,0 +1,26 @@
+allprojects  {
+  apply plugin: 'maven'
+
+  group = 'net.sf.cotta'
+version = '3.1-SNAPSHOT'
+}
+
+subprojects {
+  apply plugin: 'java'
+  tasks.withType(JavaCompile) {
+  	options.encoding = 'UTF-8'
+  }
+
+  
+  repositories {
+    mavenCentral()
+  }
+
+  configurations.all {
+  }
+
+  dependencies {
+    testCompile 'junit:junit:4.11+', project(':cotta-testbase')
+  }
+  
+}

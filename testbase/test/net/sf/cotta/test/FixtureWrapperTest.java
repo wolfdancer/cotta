@@ -10,7 +10,7 @@ public class FixtureWrapperTest extends TestCase {
     final TestFixture fixture = context.mock(TestFixture.class);
     context.checking(new Expectations() {
       {
-        one(fixture).setUp();
+        oneOf(fixture).setUp();
       }
     });
     FixtureWrapper wrapper = new FixtureWrapper(fixture);
@@ -24,7 +24,7 @@ public class FixtureWrapperTest extends TestCase {
     final TestFixture fixture = context.mock(TestFixture.class);
     context.checking(new Expectations() {
       {
-        one(fixture).tearDown();
+        oneOf(fixture).tearDown();
       }
     });
     FixtureWrapper wrapper = new FixtureWrapper(fixture);
@@ -40,10 +40,10 @@ public class FixtureWrapperTest extends TestCase {
     final TestFixture fixture = context.mock(TestFixture.class);
     context.checking(new Expectations() {
       {
-        one(fixture).setUp();
-        one(fixture).tearDown();
-        one(fixture).setUp();
-        one(fixture).tearDown();
+        oneOf(fixture).setUp();
+        oneOf(fixture).tearDown();
+        oneOf(fixture).setUp();
+        oneOf(fixture).tearDown();
       }
     });
     FixtureWrapper wrapper = new FixtureWrapper(fixture);
