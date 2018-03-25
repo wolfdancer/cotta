@@ -25,7 +25,11 @@ public class BaseAssert<T, A> extends Assert {
     this.value = value;
   }
 
-  @SuppressWarnings({"unchecked"})
+  /**
+   * Returns this instance with the proper type
+   * @return this instance with the proper type
+   */
+  @SuppressWarnings("unchecked")
   protected A self() {
     return (A) this;
   }
@@ -87,7 +91,7 @@ public class BaseAssert<T, A> extends Assert {
   }
 
   public A isNull() {
-    matches(Matchers.<T>nullValue());
+    matches(new IsNull<T>());
     return self();
   }
 

@@ -1,0 +1,26 @@
+group = 'net.sf.cotta.testbase'
+description = 'cotta-testbase'
+
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['test']
+        }
+    }
+}
+
+dependencies {
+    compile project(':cotta-asserts')
+    implementation 'junit:junit:4.11+'
+    implementation 'org.jmock:jmock:2.6.0'
+}
+
+test {
+    exclude 'net/sf/cotta/test/FixtureRepositoryTest$*'
+}

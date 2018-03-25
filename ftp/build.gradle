@@ -1,0 +1,26 @@
+group = 'net.sf.cotta.ftp'
+description = 'cotta-ftp'
+
+sourceSets {
+  main {
+    java {
+      srcDirs = ['src']
+    }
+  }
+  test {
+    java {
+      srcDirs = ['behaviour/src']
+    }
+    resources {
+      srcDirs = ['behaviour/resources']
+    }
+  }
+}
+
+dependencies {
+  compile project(':cotta')
+    compile group: 'commons-io', name: 'commons-io', version:'1.4'
+    compile group: 'commons-net', name: 'commons-net', version:'1.4.1'
+  testCompile project(':cotta-testbase')
+    testCompile group: 'org.mockftpserver', name: 'MockFtpServer', version:'2.3'
+}
