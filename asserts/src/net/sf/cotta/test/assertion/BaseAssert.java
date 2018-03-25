@@ -1,14 +1,10 @@
 package net.sf.cotta.test.assertion;
 
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
+import org.hamcrest.*;
 import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsNot;
 import org.hamcrest.core.IsNull;
 import org.junit.Assert;
-import org.junit.matchers.JUnitMatchers;
 
 /**
  * Basic assertion class to be extended by all.  Type T is the type of the value
@@ -29,7 +25,7 @@ public class BaseAssert<T, A> extends Assert {
    * Returns this instance with the proper type
    * @return this instance with the proper type
    */
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({"unchecked", "WeakerAccess"})
   protected A self() {
     return (A) this;
   }
@@ -70,6 +66,7 @@ public class BaseAssert<T, A> extends Assert {
     return self();
   }
 
+  @SuppressWarnings("WeakerAccess")
   public A matches(Matcher<T> matcher) {
     assertThat(description, value(), matcher);
     return self();
@@ -81,7 +78,7 @@ public class BaseAssert<T, A> extends Assert {
   }
 
   public A notNull() {
-    matches(IsNot.not(new IsNull<T>()));
+    matches(IsNot.not(new IsNull<>()));
     return self();
   }
 
@@ -91,7 +88,7 @@ public class BaseAssert<T, A> extends Assert {
   }
 
   public A isNull() {
-    matches(new IsNull<T>());
+    matches(new IsNull<>());
     return self();
   }
 
@@ -114,7 +111,7 @@ public class BaseAssert<T, A> extends Assert {
   }
 
   public A eqWithHash(T expected) {
-    matches(JUnitMatchers.both(IsEqual.equalTo(expected)).and(hashEq(expected)));
+    matches(CoreMatchers.both(IsEqual.equalTo(expected)).and(hashEq(expected)));
     return self();
   }
 

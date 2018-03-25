@@ -5,7 +5,6 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
 public class OutputManagerTest extends TestCase {
   public Mockery context = new Mockery();
@@ -14,16 +13,12 @@ public class OutputManagerTest extends TestCase {
     final OutputStreamFactory factory = context.mock(OutputStreamFactory.class);
     context.checking(new Expectations() {
       {
-        one(factory).outputStream();
+        oneOf(factory).outputStream();
         will(returnValue(new ByteArrayOutputStream()));
       }
     });
     OutputManager output = new OutputManager(factory, null);
-    output.open(new OutputProcessor() {
-      public void process(OutputManager manager) throws IOException {
-        manager.outputStream();
-      }
-    });
+    output.open(OutputManager::outputStream);
     context.assertIsSatisfied();
   }
 
@@ -36,13 +31,11 @@ public class OutputManagerTest extends TestCase {
       }
     });
     OutputManager output = new OutputManager(factory, null);
-    output.open(new OutputProcessor() {
-      public void process(OutputManager manager) throws IOException {
-        manager.registerResource(manager.outputStream());
-        manager.registerResource(manager.printWriter());
-        manager.registerResource(manager.writer());
-        manager.bufferedWriter();
-      }
+    output.open(manager -> {
+      manager.registerResource(manager.outputStream());
+      manager.registerResource(manager.printWriter());
+      manager.registerResource(manager.writer());
+      manager.bufferedWriter();
     });
     context.assertIsSatisfied();
   }
