@@ -22,7 +22,7 @@ public class InputFactoryTest extends TestCase {
     final InputStreamFactory factory = context.mock(InputStreamFactory.class);
     context.checking(new Expectations() {
       {
-        one(factory).inputStream();
+        oneOf(factory).inputStream();
         will(returnValue(stub));
       }
     });
@@ -43,7 +43,7 @@ public class InputFactoryTest extends TestCase {
     final InputStreamFactory InputStreamFactory = mockFactoryForInput(inputStream);
     Reader reader = new InputFactory(InputStreamFactory, null).reader("utf-16");
     char[] ch = new char[2];
-    reader.read(ch, 0, 2);
+    ensure.that(reader.read(ch, 0, 2)).eq(2);
     reader.close();
     ensure.that(new String(ch)).eq(value);
   }

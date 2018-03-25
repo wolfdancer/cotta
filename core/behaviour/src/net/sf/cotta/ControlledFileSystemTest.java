@@ -74,8 +74,8 @@ public class ControlledFileSystemTest extends TestCase {
 
     context.checking(new Expectations() {
       {
-        one(controller).readOperationControl(path);
-        one(fileSystemMock).createInputStream(path);
+        oneOf(controller).readOperationControl(path);
+        oneOf(fileSystemMock).createInputStream(path);
         will(returnValue(expected));
       }
     });
@@ -93,8 +93,8 @@ public class ControlledFileSystemTest extends TestCase {
     final FileSystem fileSystemMock = context.mock(FileSystem.class);
     context.checking(new Expectations() {
       {
-        one(controller).readOperationControl(path);
-        one(fileSystemMock).fileExists(path);
+        oneOf(controller).readOperationControl(path);
+        oneOf(fileSystemMock).fileExists(path);
         will(returnValue(expected));
       }
     });
@@ -112,8 +112,8 @@ public class ControlledFileSystemTest extends TestCase {
     final FileSystem fileSystemMock = context.mock(FileSystem.class);
     context.checking(new Expectations() {
       {
-        one(controller).readOperationControl(path);
-        one(fileSystemMock).dirExists(path);
+        oneOf(controller).readOperationControl(path);
+        oneOf(fileSystemMock).dirExists(path);
         will(returnValue(expected));
       }
     });
@@ -131,8 +131,8 @@ public class ControlledFileSystemTest extends TestCase {
     final FileSystem fileSystemMock = context.mock(FileSystem.class);
     context.checking(new Expectations() {
       {
-        one(controller).readOperationControl(path);
-        one(fileSystemMock).fileLength(path);
+        oneOf(controller).readOperationControl(path);
+        oneOf(fileSystemMock).fileLength(path);
         will(returnValue(expected));
       }
     });
@@ -150,8 +150,8 @@ public class ControlledFileSystemTest extends TestCase {
     final FileSystem fileSystemMock = context.mock(FileSystem.class);
     context.checking(new Expectations() {
       {
-        one(controller).readOperationControl(path);
-        one(fileSystemMock).fileLastModified(path);
+        oneOf(controller).readOperationControl(path);
+        oneOf(fileSystemMock).fileLastModified(path);
         will(returnValue(expected));
       }
     });
@@ -170,9 +170,9 @@ public class ControlledFileSystemTest extends TestCase {
     final FileSystem fileSystem = context.mock(FileSystem.class);
     context.checking(new Expectations() {
       {
-        one(controller).readOperationControl(path1);
-        one(controller).readOperationControl(path2);
-        one(fileSystem).compare(path1, path2);
+        oneOf(controller).readOperationControl(path1);
+        oneOf(controller).readOperationControl(path2);
+        oneOf(fileSystem).compare(path1, path2);
         will(returnValue(expected));
       }
     });
@@ -189,8 +189,8 @@ public class ControlledFileSystemTest extends TestCase {
     final int value = 1234546;
     context.checking(new Expectations() {
       {
-        one(controller).readOperationControl(path);
-        System.out.println(one(fileSystem).hashCode(path));
+        oneOf(controller).readOperationControl(path);
+        System.out.println(oneOf(fileSystem).hashCode(path));
         will(returnValue(value));
       }
     });

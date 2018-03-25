@@ -2,7 +2,6 @@ package net.sf.cotta;
 
 import net.sf.cotta.memory.InMemoryFileSystem;
 import net.sf.cotta.physical.PhysicalFileSystemTestCase;
-import net.sf.cotta.test.assertion.CodeBlock;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -25,32 +24,28 @@ public class TFileFactoryTest extends PhysicalFileSystemTestCase {
 
   public void testFailConvertingFromHttpUrl() throws Exception {
     final URL url = new URL("http://cotta.sourceforge.net");
-    ensure.code(new CodeBlock() {
-      public void execute() throws Exception {
-        TFileFactory.fileFromUrl(url);
-      }
-    }).throwsException(IllegalArgumentException.class);
+    ensure.code(() -> TFileFactory.fileFromUrl(url)).throwsException(IllegalArgumentException.class);
   }
 
   public void testSupportFileUrl() throws Exception {
     File file = new File("/tmp/directory/file.txt");
-    URL url = file.toURL();
+    URL url = file.toURI().toURL();
     ensure.that(TFileFactory.canConvertUrl(url)).eq(true);
   }
 
   public void testConvertFromFileUrl() throws Exception {
     File file = new File("/tmp/directory/file.txt");
-    URL url = file.toURL();
+    URL url = file.toURI().toURL();
     TFile tfile = TFileFactory.fileFromUrl(url);
     ensure.that("file.txt").eq(tfile.name());
   }
 
-  public void testSupportJarUrl() throws Exception {
+  public void testSupportJarUrl() {
     final URL url = String.class.getResource("String.class");
     ensure.that(TFileFactory.canConvertUrl(url)).eq(true);
   }
 
-  public void testLoadTFileFromResourceUrl() throws TIoException {
+  public void testLoadTFileFromResourceUrl() {
     //Given
     URL url = getClass().getResource("/" + String.class.getName().replace('.', '/') + ".class");
     //When

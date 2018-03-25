@@ -12,11 +12,11 @@ import java.io.Writer;
 public class OutputFactoryTest extends TestCase {
   private Mockery context;
 
-  public void beforeMethod() throws Exception {
+  public void beforeMethod() {
     context = new Mockery();
   }
 
-  public void afterMethod() throws Exception {
+  public void afterMethod() {
     context.assertIsSatisfied();
   }
 
@@ -30,7 +30,7 @@ public class OutputFactoryTest extends TestCase {
     final OutputStreamFactory factory = context.mock(OutputStreamFactory.class);
     context.checking(new Expectations() {
       {
-        one(factory).outputStream();
+        oneOf(factory).outputStream();
         will(returnValue(output));
       }
     });

@@ -37,7 +37,7 @@ public class TEntryTest extends TestCase {
     final FileSystem fileSystem = context.mock(FileSystem.class);
     context.checking(new Expectations() {
       {
-        one(fileSystem).compare(TPath.parse("one/two/a.txt"), TPath.parse("one/two/b.txt"));
+        oneOf(fileSystem).compare(TPath.parse("one/two/a.txt"), TPath.parse("one/two/b.txt"));
         will(returnValue(-1));
       }
     });

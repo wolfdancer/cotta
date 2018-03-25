@@ -4,7 +4,6 @@ import net.sf.cotta.memory.InMemoryFileSystem;
 import net.sf.cotta.memory.ListingOrder;
 import net.sf.cotta.physical.PhysicalFileSystemTestCase;
 import net.sf.cotta.system.FileSystem;
-import net.sf.cotta.test.assertion.CodeBlock;
 import net.sf.cotta.zip.ZipFileSystem;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -26,7 +25,7 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
     ensure.that(anotherDirectory.exists()).eq(true);
   }
 
-  public void testTakePathForDir() throws Exception {
+  public void testTakePathForDir() {
     TFileFactory factory = factory();
     TDirectory dir = factory.dir("test");
     TDirectory subOne = dir.dir("one/two.txt");
@@ -44,7 +43,7 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
     return new TFileFactory(new InMemoryFileSystem(order));
   }
 
-  public void testBeCreatedWithCorrectNameAndNotExists() throws Exception {
+  public void testBeCreatedWithCorrectNameAndNotExists() {
     TDirectory directory = factory().dir("directory");
     ensure.that(directory.exists()).eq(false);
     ensure.that(directory.name()).eq("directory");
@@ -56,18 +55,18 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
     directory.ensureExists();
   }
 
-  public void testBeInstantiateANoneExistingFile() throws Exception {
+  public void testBeInstantiateANoneExistingFile() {
     TDirectory directory = factory().dir("test");
     TFile file = directory.file("test.txt");
     ensure.that(file.exists()).eq(false);
   }
 
-  public void testBeAbleToInstantiateASubDirectory() throws TIoException {
+  public void testBeAbleToInstantiateASubDirectory() {
     TDirectory directory = factory().dir("parent").dir("test").dir("sub");
     ensure.that(directory.exists()).eq(false);
   }
 
-  public void testInstantiateAFileGivenRelativePath() throws Exception {
+  public void testInstantiateAFileGivenRelativePath() {
     TFileFactory factory = factory();
     TDirectory directory = factory.dir("one/two");
     ensure.that(directory.file(TPath.parse("../three/txt.txt"))).eq(factory.file("one/three/txt.txt"));
@@ -86,7 +85,7 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
     ensure.that(directory.dir("/one/two")).eq(factory.dir("/one/two"));
   }
 
-  public void testInstantiateADirectoryGivenRelativePath() throws Exception {
+  public void testInstantiateADirectoryGivenRelativePath() {
     TFileFactory factory = factory();
     TDirectory directory = factory.dir("one/two");
     ensure.that(directory.dir(TPath.parse("../three/four"))).eq(factory.dir("one/three/four"));
@@ -117,11 +116,7 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
     TDirectory a = root.dir("a").ensureExists();
     TDirectory b = root.dir("b").ensureExists();
     root.dir("c").ensureExists();
-    List<TDirectory> actual = root.list(new TDirectoryFilter() {
-      public boolean accept(TDirectory directory) {
-        return !directory.name().equals("c");
-      }
-    }).ordered().dirs();
+    List<TDirectory> actual = root.list((TDirectoryFilter) directory -> !directory.name().equals("c")).ordered().dirs();
     ensure.that(actual).eq(a, b);
   }
 
@@ -144,11 +139,7 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
     TFile a = root.file("a.txt").create();
     TFile b = root.file("b.txt").create();
     root.file("c.zip").create();
-    ensure.that(root.list(new TFileFilter() {
-      public boolean accept(TFile file) {
-        return file.extname().equals("txt");
-      }
-    }).ordered().files()).eq(a, b);
+    ensure.that(root.list((TFileFilter) file -> file.extname().equals("txt")).ordered().files()).eq(a, b);
   }
 
   public void testListShouldReturnEntriesInCurrentDir() throws TIoException {
@@ -167,14 +158,14 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
     ensure.that(root.list().ordered()).eq(c, a, b);
   }
 
-  public void testBeEqualToAnotherDirectoryWithTheSamePathAndFactory() throws Exception {
+  public void testBeEqualToAnotherDirectoryWithTheSamePathAndFactory() {
     TFileFactory factory = factory();
     TDirectory one = factory.dir("/tmp/one/two");
     TDirectory two = factory.dir("/tmp/one/two");
     ensure.that(one).eqWithHash(two);
   }
 
-  public void testKnowItsParent() throws Exception {
+  public void testKnowItsParent() {
     TDirectory directory = factory().dir("/tmp/one");
     ensure.that(directory.parent().name()).eq("tmp");
   }
@@ -200,34 +191,26 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
     ensure.that(directory.exists()).eq(false);
   }
 
-  public void testEqualIfPathAndFileSystemEqual() throws Exception {
+  public void testEqualIfPathAndFileSystemEqual() {
     FileSystem fileSystem = new InMemoryFileSystem();
     TDirectory directory1 = new TDirectory(new TFileFactory(fileSystem), TPath.parse("/tmp/test"));
     TDirectory directory2 = new TDirectory(new TFileFactory(fileSystem), TPath.parse("/tmp/test"));
     ensure.that(directory1.equals(directory2)).eq(true);
   }
 
-  public void testThrowExceptionIfDirectoryNotFoundInListingDirectories() throws Exception {
+  public void testThrowExceptionIfDirectoryNotFoundInListingDirectories() {
     FileSystem fileSystem = new InMemoryFileSystem();
     final TDirectory directory = new TDirectory(new TFileFactory(fileSystem), TPath.parse("/tmp/test"));
-    ensure.code(new CodeBlock() {
-      public void execute() throws Exception {
-        directory.list().dirs();
-      }
-    }).throwsException(TDirectoryNotFoundException.class);
+    ensure.code(() -> directory.list().dirs()).throwsException(TDirectoryNotFoundException.class);
   }
 
-  public void testThrowExceptionIfDirectoryNotFoundInListingFiles() throws Exception {
+  public void testThrowExceptionIfDirectoryNotFoundInListingFiles() {
     FileSystem fileSystem = new InMemoryFileSystem();
     final TDirectory directory = new TDirectory(new TFileFactory(fileSystem), TPath.parse("/tmp/test"));
-    ensure.code(new CodeBlock() {
-      public void execute() throws Exception {
-        directory.list().files();
-      }
-    }).throwsException(TDirectoryNotFoundException.class);
+    ensure.code(() -> directory.list().files()).throwsException(TDirectoryNotFoundException.class);
   }
 
-  public void testGetPath() throws Exception {
+  public void testGetPath() {
     FileSystem fileSystem = new InMemoryFileSystem();
     TPath path = TPath.parse("/tmp/test");
     TDirectory directory = new TDirectory(new TFileFactory(fileSystem), path);
@@ -282,7 +265,7 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
     final FileSystem fileSystem = context.mock(FileSystem.class);
     context.checking(new Expectations() {
       {
-        one(fileSystem).toJavaFile(path);
+        oneOf(fileSystem).toJavaFile(path);
         will(returnValue(expected));
       }
     });
@@ -361,11 +344,7 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
     TFile expected = factory.file("/directory/one.txt").create();
     factory.file("/directory/two.txt").create();
     TDirectory directory = factory.dir("/directory");
-    List<TFile> files = directory.list(new TFileFilter() {
-      public boolean accept(TFile file) {
-        return file.name().equals("one.txt");
-      }
-    }).files();
+    List<TFile> files = directory.list((TFileFilter) file -> file.name().equals("one.txt")).files();
     ensure.that(files.size()).eq(1);
     ensure.that(files.get(0)).eq(expected);
   }
@@ -375,16 +354,12 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
     TDirectory expected = factory.dir("/directory/one").ensureExists();
     factory.dir("/directory/two").ensureExists();
     TDirectory directory = factory.dir("/directory");
-    List<TDirectory> dirs = directory.list(new TDirectoryFilter() {
-      public boolean accept(TDirectory directory) {
-        return directory.name().equals("one");
-      }
-    }).dirs();
+    List<TDirectory> dirs = directory.list((TDirectoryFilter) directory1 -> directory1.name().equals("one")).dirs();
     ensure.that(dirs.size()).eq(1);
     ensure.that(dirs.get(0)).eq(expected);
   }
 
-  public void testExposePathBehaviours() throws Exception {
+  public void testExposePathBehaviours() {
     TDirectory directory = new TDirectory(new TFileFactory(new InMemoryFileSystem()), TPath.parse("/one/two"));
     TDirectory subDirectory = directory.dir(TPath.parse("three/four"));
     ensure.that(subDirectory.isChildOf(directory)).eq(true);
@@ -397,7 +372,7 @@ public class TDirectoryTest extends PhysicalFileSystemTestCase {
     final FileVisitor fileVisitor = context.mock(FileVisitor.class);
     context.checking(new Expectations() {
       {
-        one(fileVisitor).visit(directory);
+        oneOf(fileVisitor).visit(directory);
       }
     });
     directory.visit(fileVisitor);
